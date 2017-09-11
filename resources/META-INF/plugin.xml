@@ -1,0 +1,36 @@
+<idea-plugin>
+  <id>artsiomch.cmake</id>
+  <name>CMake simple highlighter</name>
+  <version>0.0.1</version>
+  <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
+
+  <description><![CDATA[
+     This is the plugin for CMake style project support.<br>
+     It provides basic syntax highlight.
+]]></description>
+
+  <change-notes><![CDATA[
+      In this version syntax highlighting is provided. <br>
+    ]]>
+  </change-notes>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="145.0"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+    <fileTypeFactory implementation="com.cmakeplugin.CMakeFileTypeFactory"/>
+
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
+
+</idea-plugin>
