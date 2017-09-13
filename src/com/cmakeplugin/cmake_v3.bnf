@@ -1,5 +1,8 @@
 {
   parserClass="com.cmakeplugin.parsing.CMakeParser"
+//  parserUtilClass="com.cmakeplugin.parsing.CMakeParserUtil"
+//  psiImplUtilClass="com.cmakeplugin.parsing.CMakeParserUtilImpl"
+//  parserImports=["static com.cmakeplugin.global.CMakeNamesValidator.*"]
 
   extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
 
@@ -11,10 +14,91 @@
   elementTypeHolderClass="com.cmakeplugin.psi.CMakeTypes"
   elementTypeClass="com.cmakeplugin.psi.CMakeElementType"
   tokenTypeClass="com.cmakeplugin.psi.CMakeTokenType"
-}
 
-cmakefile ::= item_*
+  tokens = [
+    endfunction="regexp:endfunction|ENDFUNCTION"
+    function="regexp:function|FUNCTION"
+    elseif="regexp:elseif|ELSIF"
+    else="regexp:else|ELSE"
+    endif="regexp:endif|ENDIF"
+    if="regexp:if|IF"
+    endmacro="regexp:endmacro|ENDMACRO"
+    macro="regexp:macro|MACRO"
+    endforeach="regexp:endforeach|ENDFOREACH"
+    foreach="regexp:foreach|FOREACH"
+    endwhile="regexp:endwhile|ENDWHILE"
+    while="regexp:while|ENDWHILE"
+    lpar='('
+    rpar=')'
+    bracket_comment = 'regexp:(\#\[=*\[)([^\]]|\n)*?(\]=*\])'
+    bracket_argument = 'regexp:(\[=*\[)([^\]]|\n)*?(\]=*\])'
+    line_comment='regexp:\#.*'
+    quoted_argument='regexp:(")([^"]\\\n|[^"])*(")'
+    unquoted_argument="regexp:([^\(\)\#\"\\ ]|\\\( | \\\) | \\\# | \\\" | (\\ ) | \\\\ | \\\$ | \\\@ | \\\^ | \\t | \\r | \\n| \\;)*"
+    identifier="regexp:[A-Za-z_][A-Za-z0-9_]*"
+  ]
 
-private item_ ::= (property|COMMENT|CRLF)
 
-property ::= (KEY? SEPARATOR VALUE?) | KEY
+    mixin("command_name")="com.cmakeplugin.psi.impl.CMakeNamedElementImpl"
+    implements("command_name")="com.cmakeplugin.psi.CMakeNamedElement"
+    methods("command_name")=[getNameIdentifier getName setName]
+    methods("command_expr")=[getPresentation]
+ }
+
+ file         ::= file_element* <<eof>> { pin=1 }
+ file_element ::= funmacro                    |
+                  loop                        |
+                  cond                        |
+                  cmd                         |
+                  line_comment                |
+                  bracket_comment
+
+ private line_ending  ::=  ( bracket_comment | line_comment )
+
+ // Rules
+ meta compound_expr  ::= <<ebegin>> <<ebody>> <<eend>> { pin=1 }
+ meta predicate_expr ::= <<pred>> <<pbody>>
+ meta command_expr   ::= <<c>> '(' arguments ')' { pin=2 }
+
+ // Function/macro definition need to be separated
+ funmacro  ::= <<compound_expr fbegin body fend>> | <<compound_expr mbegin body mend>>
+ fbegin ::= <<command_expr (function)>>
+ fend   ::= <<command_expr (endfunction)>>
+ mbegin ::= <<command_expr (macro)>>
+ mend   ::= <<command_expr (endmacro)>>
+
+ // Loops and conditions can nest
+ // Loop block
+ loop       ::= <<compound_expr forbegin body forend>> | <<compound_expr whilebegin body whileend>>
+ forbegin   ::= <<command_expr ( foreach )>>
+ forend     ::= <<command_expr ( endforeach )>>
+ whilebegin ::= <<command_expr ( while )>>
+ whileend   ::= <<command_expr ( endwhile )>>
+
+ // Condition block
+ cond             ::=<<predicate_expr (if_expr) body>>
+                     <<predicate_expr (elseif_expr) body>>*
+                     <<compound_expr (elseif_expr|else_expr) body (endif_expr)>>
+                    |<<compound_expr (if_expr) body (endif_expr)>>
+
+ if_expr          ::= <<command_expr (if)>>
+ elseif_expr      ::= <<command_expr (elseif)>>
+ else_expr        ::= <<command_expr (else)>>
+ endif_expr       ::= <<command_expr (endif)>>
+
+ // Body
+ // Allow nested functions
+ body                ::=  file_element+
+ // Single command invocation
+ cmd                 ::=  <<command_expr command_name>>
+ command_name        ::= identifier
+ // Arguments
+ arguments           ::=  argument? bracket_comment*  separated_argument*
+ separated_argument  ::=  ( argument | '(' arguments ')')
+
+ // Single argument
+ argument            ::=  bracket_argument |
+                          quoted_argument  |
+                          unquoted_argument
+
+
