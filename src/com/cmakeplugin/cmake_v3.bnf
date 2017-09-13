@@ -1,0 +1,20 @@
+{
+  parserClass="com.cmakeplugin.parsing.CMakeParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="CMake"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.cmakeplugin.psi"
+  psiImplPackage="com.cmakeplugin.psi.impl"
+
+  elementTypeHolderClass="com.cmakeplugin.psi.CMakeTypes"
+  elementTypeClass="com.cmakeplugin.psi.CMakeElementType"
+  tokenTypeClass="com.cmakeplugin.psi.CMakeTokenType"
+}
+
+cmakefile ::= item_*
+
+private item_ ::= (property|COMMENT|CRLF)
+
+property ::= (KEY? SEPARATOR VALUE?) | KEY

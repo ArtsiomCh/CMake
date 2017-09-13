@@ -26,6 +26,9 @@
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
     <fileTypeFactory implementation="com.cmakeplugin.CMakeFileTypeFactory"/>
+    <lang.parserDefinition language="CMake" implementationClass="com.cmakeplugin.CMakeParserDefinition"/>
+    <lang.syntaxHighlighterFactory key="CMake" implementationClass="com.cmakeplugin.CMakeSyntaxHighlighterFactory"/>
+    <colorSettingsPage implementation="com.cmakeplugin.CMakeColorSettingsPage"/>
 
   </extensions>
 
