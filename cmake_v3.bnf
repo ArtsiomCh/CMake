@@ -36,13 +36,14 @@
     quoted_argument='regexp:(")([^"]\\\n|[^"])*(")'
     unquoted_argument="regexp:([^\(\)\#\"\\ ]|\\\( | \\\) | \\\# | \\\" | (\\ ) | \\\\ | \\\$ | \\\@ | \\\^ | \\t | \\r | \\n| \\;)*"
     identifier="regexp:[A-Za-z_][A-Za-z0-9_]*"
+    cmake_keyword="cmake_keyword"
   ]
 
 
-    mixin("command_name")="com.cmakeplugin.psi.impl.CMakeNamedElementImpl"
-    implements("command_name")="com.cmakeplugin.psi.CMakeNamedElement"
-    methods("command_name")=[getNameIdentifier getName setName]
-    methods("command_expr")=[getPresentation]
+//    mixin("command_name")="com.cmakeplugin.psi.impl.CMakeNamedElementImpl"
+//    implements("command_name")="com.cmakeplugin.psi.CMakeNamedElement"
+//    methods("command_name")=[getNameIdentifier getName setName]
+//    methods("command_expr")=[getPresentation]
  }
 
  file         ::= file_element* <<eof>> { pin=1 }
@@ -78,8 +79,10 @@
  // Condition block
  cond             ::=<<predicate_expr (if_expr) body>>
                      <<predicate_expr (elseif_expr) body>>*
-                     <<compound_expr (elseif_expr|else_expr) body (endif_expr)>>
-                    |<<compound_expr (if_expr) body (endif_expr)>>
+                     <<predicate_expr (else_expr) body>>?
+                     endif_expr
+//                     <<compound_expr (elseif_expr|else_expr) body (endif_expr)>>
+//                    |<<compound_expr (if_expr) body (endif_expr)>>
 
  if_expr          ::= <<command_expr (if)>>
  elseif_expr      ::= <<command_expr (elseif)>>
@@ -91,7 +94,7 @@
  body                ::=  file_element+
  // Single command invocation
  cmd                 ::=  <<command_expr command_name>>
- command_name        ::= identifier
+ command_name        ::= cmake_keyword | identifier
  // Arguments
  arguments           ::=  argument? bracket_comment*  separated_argument*
  separated_argument  ::=  ( argument | '(' arguments ')')

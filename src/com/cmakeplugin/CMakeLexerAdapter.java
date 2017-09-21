@@ -6,6 +6,6 @@ import java.io.Reader;
 
 public class CMakeLexerAdapter extends FlexAdapter {
   public CMakeLexerAdapter() {
-    super(new CMakeLexer((Reader) null));
+    super(new _CMakeLexer((Reader) null));
   }
 }

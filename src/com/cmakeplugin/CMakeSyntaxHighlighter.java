@@ -22,6 +22,7 @@ import java.util.Map;
 public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
   private static final Map<IElementType, TextAttributesKey> keys1;
   private static final Map<IElementType, TextAttributesKey> keys2;
+
   @NotNull
   @Override
   public Lexer getHighlightingLexer() {
@@ -94,14 +95,24 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
     //keys1.put(CMakeTypes.ESCAPED_CHAR,ESCAPED_CHAR);
     keys1.put(CMakeTypes.BRACKET_COMMENT,BLOCK_COMMENT);
     // Keywords moved to the annotator
+    keys1.put(CMakeTypes.CMAKE_KEYWORD, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+    keys1.put(CMakeTypes.UNQUOTED_ARGUMENT, STRING);
+
+    // If condition highlight
+    keys1.put(CMakeTypes.IF, KEYWORD);
+    keys1.put(CMakeTypes.ELSEIF, KEYWORD);
+    keys1.put(CMakeTypes.ENDIF, KEYWORD);
+    keys1.put(CMakeTypes.ELSE, KEYWORD);
+
   }
   @NotNull
   @Override
   public TextAttributesKey[] getTokenHighlights(IElementType iElementType) {
     return SyntaxHighlighterBase.pack(keys1.get(iElementType), keys2.get(iElementType));
   }
+
   //TODO: Fill the map to use it in the ColorsPage
-  public static final Map<TextAttributesKey, Pair<String, HighlightSeverity>> DISPLAY_NAMES = new THashMap<TextAttributesKey, Pair<String, HighlightSeverity>>(6);
+/*  public static final Map<TextAttributesKey, Pair<String, HighlightSeverity>> DISPLAY_NAMES = new THashMap<>(6);
 
   static {
     DISPLAY_NAMES.put(KEYWORD, new Pair<String, HighlightSeverity>("Keyword",null));
@@ -110,5 +121,5 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
     DISPLAY_NAMES.put(COMMENT, new Pair<String, HighlightSeverity>("Comment", null));
     DISPLAY_NAMES.put(IDENTIFIER, new Pair<String, HighlightSeverity>("Identifier", null));
     DISPLAY_NAMES.put(BADCHAR, Pair.create("Bad Character", HighlightSeverity.WARNING));
-  }
+  }*/
 }
