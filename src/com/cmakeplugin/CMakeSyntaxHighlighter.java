@@ -95,8 +95,11 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
     //keys1.put(CMakeTypes.ESCAPED_CHAR,ESCAPED_CHAR);
     keys1.put(CMakeTypes.BRACKET_COMMENT,BLOCK_COMMENT);
     // Keywords moved to the annotator
-    keys1.put(CMakeTypes.CMAKE_KEYWORD, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
-    keys1.put(CMakeTypes.UNQUOTED_ARGUMENT, STRING);
+    keys1.put(CMakeTypes.CMAKE_COMMAND, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+    keys1.put(CMakeTypes.BRACKET_ARGUMENT, STRING);
+    keys1.put(CMakeTypes.CMAKE_VARIABLE, DefaultLanguageHighlighterColors.CONSTANT);
+
+    keys1.put(CMakeTypes.VARIABLE, DefaultLanguageHighlighterColors.INSTANCE_FIELD);
 
     // If condition highlight
     keys1.put(CMakeTypes.IF, KEYWORD);
