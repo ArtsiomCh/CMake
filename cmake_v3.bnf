@@ -48,7 +48,7 @@
 //    methods("command_expr")=[getPresentation]
  }
 
- file         ::= file_element* <<eof>> { pin=1 }
+ file         ::= file_element*
  file_element ::= funmacro                    |
                   loop                        |
                   cond                        |
@@ -58,13 +58,28 @@
 
  lpar ::='('
  rpar ::=')'
- var_ref_begin ::= '${'
- var_ref_end ::= '}'
+ brace::='"'
+// var_ref_begin::= "${" | "$"?"ENV{"
+// var_ref_end::='}'
 
  // Rules
  meta compound_expr  ::= <<ebegin>> <<ebody>> <<eend>> { pin=1 }
  meta predicate_expr ::= <<pred>> <<pbody>>
- meta command_expr   ::= <<c>> lpar argument* rpar { pin=2 }
+ meta command_expr   ::= <<c>>  arguments
+
+ // Arguments
+ arguments           ::= lpar ( argument | arguments )* rpar
+ argument            ::=  bracket_argument | unquoted_argument | unquoted_legacy
+                         | bracket_comment |line_comment
+                         | cmake_property | cmake_operator | path_url
+                         | brace quoted_argument? brace
+                         | variables | cmake_variable
+
+ variables ::= var_ref_begin ( cmake_variable | variable | variables )+ var_ref_end
+
+// Single command invocation
+ cmd                 ::=  <<command_expr command_name>>
+ command_name        ::= cmake_command | identifier
 
  // Function/macro definition need to be separated
  funmacro  ::= <<compound_expr fbegin body fend>> | <<compound_expr mbegin body mend>>
@@ -86,8 +101,6 @@
                      <<predicate_expr (elseif_expr) body>>*
                      <<predicate_expr (else_expr) body>>?
                      endif_expr
-//                     <<compound_expr (elseif_expr|else_expr) body (endif_expr)>>
-//                    |<<compound_expr (if_expr) body (endif_expr)>>
 
  if_expr          ::= <<command_expr (if)>>
  elseif_expr      ::= <<command_expr (elseif)>>
@@ -97,24 +110,3 @@
  // Body
  // Allow nested functions
  body                ::=  file_element+
- // Single command invocation
- cmd                 ::=  <<command_expr command_name>>
- command_name        ::= cmake_command | identifier
-
- // Single argument
- argument            ::=  bracket_argument |
-                          quoted_argument  |
-                          unquoted_argument|
-                          cmake_variable   |
-                          variable
-
- // Arguments
-// arguments           ::= argument* separation*
-//
-// line_ending  ::=  line_comment? newline
-// space        ::=  '[\ \t]+'
-// newline      ::=  "\r"|"\n"|"\r\n"
-// separation   ::=  space | line_ending
-
-//   argument? bracket_comment*  separated_argument*
-// separated_argument  ::=  ( argument | lpar arguments rpar)

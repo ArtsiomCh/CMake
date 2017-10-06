@@ -94,18 +94,39 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
     keys1.put(TokenType.BAD_CHARACTER, BADCHAR);
     //keys1.put(CMakeTypes.ESCAPED_CHAR,ESCAPED_CHAR);
     keys1.put(CMakeTypes.BRACKET_COMMENT,BLOCK_COMMENT);
+
     // Keywords moved to the annotator
+    keys1.put(com.intellij.psi.TokenType.WHITE_SPACE, KEYWORD);
     keys1.put(CMakeTypes.CMAKE_COMMAND, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
     keys1.put(CMakeTypes.BRACKET_ARGUMENT, STRING);
+    keys1.put(CMakeTypes.UNQUOTED_LEGACY, DefaultLanguageHighlighterColors.DOC_COMMENT_TAG);
+
     keys1.put(CMakeTypes.CMAKE_VARIABLE, DefaultLanguageHighlighterColors.CONSTANT);
-
     keys1.put(CMakeTypes.VARIABLE, DefaultLanguageHighlighterColors.INSTANCE_FIELD);
+    keys1.put(CMakeTypes.VAR_REF_BEGIN, COMMENT);
+    keys1.put(CMakeTypes.VAR_REF_END, COMMENT);
 
-    // If condition highlight
+    keys1.put(CMakeTypes.CMAKE_PROPERTY, DefaultLanguageHighlighterColors.METADATA);
+    keys1.put(CMakeTypes.CMAKE_OPERATOR, DefaultLanguageHighlighterColors.NUMBER);
+    keys1.put(CMakeTypes.PATH_URL, DefaultLanguageHighlighterColors.DOC_COMMENT_TAG_VALUE);
+
+    // IF, FOR, WHILE, MACRO, FUNCTION keywords highlight
     keys1.put(CMakeTypes.IF, KEYWORD);
     keys1.put(CMakeTypes.ELSEIF, KEYWORD);
     keys1.put(CMakeTypes.ENDIF, KEYWORD);
     keys1.put(CMakeTypes.ELSE, KEYWORD);
+
+    keys1.put(CMakeTypes.FOREACH, KEYWORD);
+    keys1.put(CMakeTypes.ENDFOREACH, KEYWORD);
+
+    keys1.put(CMakeTypes.WHILE, KEYWORD);
+    keys1.put(CMakeTypes.ENDWHILE, KEYWORD);
+
+    keys1.put(CMakeTypes.MACRO, KEYWORD);
+    keys1.put(CMakeTypes.ENDMACRO, KEYWORD);
+
+    keys1.put(CMakeTypes.FUNCTION, KEYWORD);
+    keys1.put(CMakeTypes.ENDFUNCTION, KEYWORD);
 
   }
   @NotNull

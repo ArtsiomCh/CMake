@@ -32,32 +32,57 @@ import java.util.LinkedList;
 %type IElementType
 %unicode
 %ignorecase
+
 %include CMake_keywords.txt
 
 ESCAPE_SEQUENCE=  {ESCAPE_IDENTITY} | {ESCAPE_ENCODED} | {ESCAPE_SEMICOLON}
-ESCAPE_IDENTITY=\\[^A-Za-z0-9;]
-ESCAPE_ENCODED= \t | \r | \n
-ESCAPE_SEMICOLON= \;
+ESCAPE_IDENTITY= \\[^A-Za-z0-9;]
+ESCAPE_ENCODED= \\t | \\r | \\n
+ESCAPE_SEMICOLON= \\;
 
-EOL= \r | \n | \r\n
-LINE_WS=[\ \t\f]
+EOL= (\r|\n|\r\n|\f)
+LINE_WS=[\ \t]
 WHITE_SPACE=({LINE_WS}|{EOL})+
+DELIMITER={WHITE_SPACE}|";"
 
-BRACKET_COMMENT=(\#\[=*\[)([^\]]|\n)*?(\]=*\])
-BRACKET_ARGUMENT=(\[=*\[)([^\]]|\n)*?(\]=*\])
-LINE_COMMENT=\#.*
-QUOTED_ARGUMENT=(\") ( [^\"]\\\n | [^\"] | \\\" )* (\")
-UNQUOTED_ARGUMENT=([^\(\)\#\"\;\ \$\r\n\t])*
+BRACKET_COMMENT=\#{BRACKET_ARGUMENT}
+
+// TODO infinite {lenght} (throght states?)
+BRACKET_ARGUMENT=(\[\[)~(\]\])          |
+                 (\[=\[)~(\]=\])        |
+                 (\[={2}\[)~(\]={2}\])  |
+                 (\[={3}\[)~(\]={3}\])  |
+                 (\[={4}\[)~(\]={4}\])  |
+                 (\[={5}\[)~(\]={5}\])
+
+LINE_COMMENT= # ( [^\[\r\n] | \[=*[^\[=\r\n] ).* | #\[=* | #
+
+QUOTED_ARGUMENT=( [^\"] | \\\n | \\\" )*
+
+// TODO fix some bugs with corner cases with [$E] in PATH_URL and begining of LEGACY
+UNQUOTED_ELEMENT= [^()#\"\\;/\s$E] | {ESCAPE_SEQUENCE}
+UNQUOTED_ARGUMENT=({UNQUOTED_ELEMENT})+
+
+UNQUOTED_LEGACY=( ({UNQUOTED_ELEMENT}|\/)+ | ("$("({UNQUOTED_ELEMENT}|\/)*")") )
+                (\"{QUOTED_ARGUMENT}\")*
+                (({UNQUOTED_ELEMENT}|\/)+)?
+
+UNQUOTED_PATH_URL=({UNQUOTED_ARGUMENT}[$E]*)?\/({UNQUOTED_ARGUMENT})?
+
 IDENTIFIER=[A-Za-z_][A-Za-z0-9_]*
 
-VAR_REF_BEGIN= "${" | "$ENV{"
+VAR_REF_BEGIN= "${" | \$?"ENV{"
 VARIABLE_NAME=([A-Za-z0-9/_.+-]|{ESCAPE_SEQUENCE})*
 VAR_REF_END="}"
 
 %state IN_ARGLIST
+%state IN_QUOTED_ARG
+%state IN_VAR_REF
+
 %%
+
 <YYINITIAL> {
-  {WHITE_SPACE}            { return com.intellij.psi.TokenType.WHITE_SPACE; }
+  {DELIMITER}            { return com.intellij.psi.TokenType.WHITE_SPACE; }
 
   "("                      { yypushstate(IN_ARGLIST);return LPAR; }
 
@@ -74,39 +99,53 @@ VAR_REF_END="}"
   "ENDWHILE"               { return ENDWHILE; }
   "WHILE"                  { return WHILE; }
   {BRACKET_COMMENT}        { return BRACKET_COMMENT; }
-  {LINE_COMMENT}           { return LINE_COMMENT; }
-
-  {CMAKE_Commands_Scripting}|
-  {CMAKE_Commands_Project}|
-  {CMAKE_Commands_CTest}|
-  {CMAKE_Commands_Deprecated}   { return CMAKE_COMMAND; }
-
+  {LINE_COMMENT}/{EOL}           { return LINE_COMMENT; }
+  {CMAKE_Commands}         { return CMAKE_COMMAND; }
   {IDENTIFIER}             { return IDENTIFIER; }
-
-  [^] { return com.intellij.psi.TokenType.BAD_CHARACTER; }
 }
 
 <IN_ARGLIST> {
-  {WHITE_SPACE}|";"            { return com.intellij.psi.TokenType.WHITE_SPACE; }
+  {DELIMITER}            { return com.intellij.psi.TokenType.WHITE_SPACE; }
 
   "("                      { yypushstate(IN_ARGLIST);return LPAR; }
   ")"                      { yypopstate();return RPAR; }
 
+  \"                       { yybegin(IN_QUOTED_ARG); return BRACE; }
+  {VAR_REF_BEGIN}          { yypushstate(IN_VAR_REF); return VAR_REF_BEGIN; }
+
   {CMAKE_Variables}        { return CMAKE_VARIABLE; }
-  {VAR_REF_BEGIN} {CMAKE_Variables} {VAR_REF_END}        { return CMAKE_VARIABLE; }
-  {VAR_REF_BEGIN} {VARIABLE_NAME} {VAR_REF_END}               { return VARIABLE; }
 
   {BRACKET_COMMENT}        { return BRACKET_COMMENT; }
-  {LINE_COMMENT}           { return LINE_COMMENT; }
+  {LINE_COMMENT}/{EOL}           { return LINE_COMMENT; }
+
   {BRACKET_ARGUMENT}       { return BRACKET_ARGUMENT; }
-  {QUOTED_ARGUMENT}        { return QUOTED_ARGUMENT; }
-  {UNQUOTED_ARGUMENT}      { return UNQUOTED_ARGUMENT; }
-  [^] { return com.intellij.psi.TokenType.BAD_CHARACTER; }
+
+  {CMAKE_Property}         { return CMAKE_PROPERTY;}
+  {CMAKE_Operator}         { return CMAKE_OPERATOR;}
+
+  ({UNQUOTED_ARGUMENT}* | {UNQUOTED_PATH_URL}*)[$E]+   { }
+
+  {UNQUOTED_PATH_URL}+[$E]*
+        / ([()#\"\\;/\s] | {VAR_REF_BEGIN})      { return PATH_URL;}
+
+  {UNQUOTED_ARGUMENT} | {UNQUOTED_ARGUMENT}*[$E]+
+        / ([()#\"\\;/\s] | {VAR_REF_BEGIN})      { return UNQUOTED_ARGUMENT; }
+
+  {UNQUOTED_LEGACY}+[$E]*
+        / ([()#\"\\;\s] | {VAR_REF_BEGIN})       { return UNQUOTED_LEGACY; }
 }
 
-//<IN_VAR_REF> {
-//  "}"                      { yypopstate(); return VAR_REF_END; }
-//  {CMAKE_Variables}        { return CMAKE_VARIABLE; }
-//  {IDENTIFIER}             { return IDENTIFIER; }
-//  [^] { return com.intellij.psi.TokenType.BAD_CHARACTER; }
-//}
+<IN_QUOTED_ARG> {
+  \"                       { yybegin(IN_ARGLIST); return BRACE; }
+  {QUOTED_ARGUMENT}        { return QUOTED_ARGUMENT; }
+}
+
+<IN_VAR_REF> {
+  {VAR_REF_BEGIN}          { yypushstate(IN_VAR_REF); return VAR_REF_BEGIN; }
+  {VAR_REF_END}            { yypopstate(); return VAR_REF_END; }
+
+  {CMAKE_Variables}        { return CMAKE_VARIABLE; }
+  {VARIABLE_NAME}          { return VARIABLE; }
+}
+
+[^] { return com.intellij.psi.TokenType.BAD_CHARACTER; }
