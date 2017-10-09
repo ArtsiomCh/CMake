@@ -72,7 +72,7 @@
  argument            ::=  bracket_argument | unquoted_argument | unquoted_legacy
                          | bracket_comment |line_comment
                          | cmake_property | cmake_operator | path_url
-                         | brace quoted_argument? brace
+                         | brace (quoted_argument | variables)* brace
                          | variables | cmake_variable
 
  variables ::= var_ref_begin ( cmake_variable | variable | variables )+ var_ref_end

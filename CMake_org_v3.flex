@@ -7,12 +7,7 @@ import java.util.LinkedList;
 %%
 
 %{
-  public _CMakeLexer() {
-    this((java.io.Reader)null);
-  }
-
-  // Stolen from Mathematica support plugin
-  // This adds support for nested states. I'm no JFlex pro, so maybe this is overkill, but it works quite well.
+  // Stolen from Mathematica support plugin. This adds support for nested states.
   private final LinkedList<Integer> states = new LinkedList();
 
   private void yypushstate(int state) {
@@ -43,7 +38,7 @@ ESCAPE_SEMICOLON= \\;
 EOL= (\r|\n|\r\n|\f)
 LINE_WS=[\ \t]
 WHITE_SPACE=({LINE_WS}|{EOL})+
-DELIMITER={WHITE_SPACE}|";"
+ARG_SEPARATOR={WHITE_SPACE}|";"
 
 BRACKET_COMMENT=\#{BRACKET_ARGUMENT}
 
@@ -57,21 +52,24 @@ BRACKET_ARGUMENT=(\[\[)~(\]\])          |
 
 LINE_COMMENT= # ( [^\[\r\n] | \[=*[^\[=\r\n] ).* | #\[=* | #
 
-QUOTED_ARGUMENT=( [^\"] | \\\n | \\\" )*
+QUOTED_ARGUMENT=( [^\"$] | \\\n | \\\" | \\\$ )+
 
-// TODO fix some bugs with corner cases with [$E] in PATH_URL and begining of LEGACY
-UNQUOTED_ELEMENT= [^()#\"\\;/\s$E] | {ESCAPE_SEQUENCE}
+UNQUOTED_ELEMENT= [^()#\"\\;/\s$] | {ESCAPE_SEQUENCE}
 UNQUOTED_ARGUMENT=({UNQUOTED_ELEMENT})+
 
-UNQUOTED_LEGACY=( ({UNQUOTED_ELEMENT}|\/)+ | ("$("({UNQUOTED_ELEMENT}|\/)*")") )
-                (\"{QUOTED_ARGUMENT}\")*
-                (({UNQUOTED_ELEMENT}|\/)+)?
-
-UNQUOTED_PATH_URL=({UNQUOTED_ARGUMENT}[$E]*)?\/({UNQUOTED_ARGUMENT})?
+UNQUOTED_LEGACY_ELEMENT={UNQUOTED_ELEMENT}|[/$]
+UNQUOTED_LEGACY=(((({UNQUOTED_LEGACY_ELEMENT}+ | ("$("{UNQUOTED_LEGACY_ELEMENT}*")")+)
+                   (\"({QUOTED_ARGUMENT}|[/$])*\")+
+                  )| ({UNQUOTED_LEGACY_ELEMENT}* ("$("{UNQUOTED_LEGACY_ELEMENT}*")")+)
+                 ) {UNQUOTED_LEGACY_ELEMENT}*
+                )+
+// TODO fix some bugs with corner cases with [$] in PATH_URL
+UNQUOTED_PATH_URL=(({UNQUOTED_ARGUMENT}[$]*)?\/({UNQUOTED_ARGUMENT})?)+
 
 IDENTIFIER=[A-Za-z_][A-Za-z0-9_]*
 
-VAR_REF_BEGIN= "${" | \$?"ENV{"
+//TODO set of ENV{} recognition
+VAR_REF_BEGIN= \$ ( \{ | ENV\{ )
 VARIABLE_NAME=([A-Za-z0-9/_.+-]|{ESCAPE_SEQUENCE})*
 VAR_REF_END="}"
 
@@ -82,7 +80,7 @@ VAR_REF_END="}"
 %%
 
 <YYINITIAL> {
-  {DELIMITER}            { return com.intellij.psi.TokenType.WHITE_SPACE; }
+  {ARG_SEPARATOR}            { return com.intellij.psi.TokenType.WHITE_SPACE; }
 
   "("                      { yypushstate(IN_ARGLIST);return LPAR; }
 
@@ -105,13 +103,15 @@ VAR_REF_END="}"
 }
 
 <IN_ARGLIST> {
-  {DELIMITER}            { return com.intellij.psi.TokenType.WHITE_SPACE; }
+  {ARG_SEPARATOR}            { return com.intellij.psi.TokenType.WHITE_SPACE; }
 
   "("                      { yypushstate(IN_ARGLIST);return LPAR; }
   ")"                      { yypopstate();return RPAR; }
 
   \"                       { yybegin(IN_QUOTED_ARG); return BRACE; }
-  {VAR_REF_BEGIN}          { yypushstate(IN_VAR_REF); return VAR_REF_BEGIN; }
+  {VAR_REF_BEGIN}           { yypushstate(IN_VAR_REF); return VAR_REF_BEGIN; }
+
+  ENV\{ / (({VARIABLE_NAME}|{VAR_REF_BEGIN})+({VARIABLE_NAME}|{VAR_REF_END})+)        { yypushstate(IN_VAR_REF); return VAR_REF_BEGIN; }
 
   {CMAKE_Variables}        { return CMAKE_VARIABLE; }
 
@@ -123,21 +123,25 @@ VAR_REF_END="}"
   {CMAKE_Property}         { return CMAKE_PROPERTY;}
   {CMAKE_Operator}         { return CMAKE_OPERATOR;}
 
-  ({UNQUOTED_ARGUMENT}* | {UNQUOTED_PATH_URL}*)[$E]+   { }
+  ({UNQUOTED_ARGUMENT} | {UNQUOTED_PATH_URL})?[$]+    { }
 
-  {UNQUOTED_PATH_URL}+[$E]*
-        / ([()#\"\\;/\s] | {VAR_REF_BEGIN})      { return PATH_URL;}
+  {UNQUOTED_PATH_URL} / {VAR_REF_BEGIN}?      { return PATH_URL; }
+  {UNQUOTED_PATH_URL}[$]+ / [()#\";\s]|{VAR_REF_BEGIN}      { return PATH_URL; }
 
-  {UNQUOTED_ARGUMENT} | {UNQUOTED_ARGUMENT}*[$E]+
-        / ([()#\"\\;/\s] | {VAR_REF_BEGIN})      { return UNQUOTED_ARGUMENT; }
+//-  {UNQUOTED_ARGUMENT}                        { return UNQUOTED_ARGUMENT; }
+  {UNQUOTED_ARGUMENT} / {VAR_REF_BEGIN}?      { return UNQUOTED_ARGUMENT; }
+  {UNQUOTED_ARGUMENT}?[$]+ / [()#\";\s]|{VAR_REF_BEGIN}      { return UNQUOTED_ARGUMENT; }
+//-  [$]+ / ([()#\";\s]|{VAR_REF_BEGIN})      { return UNQUOTED_ARGUMENT; }
 
-  {UNQUOTED_LEGACY}+[$E]*
-        / ([()#\"\\;\s] | {VAR_REF_BEGIN})       { return UNQUOTED_LEGACY; }
+  {UNQUOTED_LEGACY}      { return UNQUOTED_LEGACY; }
 }
 
 <IN_QUOTED_ARG> {
   \"                       { yybegin(IN_ARGLIST); return BRACE; }
-  {QUOTED_ARGUMENT}        { return QUOTED_ARGUMENT; }
+  {VAR_REF_BEGIN}          { yypushstate(IN_VAR_REF); return VAR_REF_BEGIN; }
+  {QUOTED_ARGUMENT} | {QUOTED_ARGUMENT}?[$]+
+        / (\" | {VAR_REF_BEGIN})      { return QUOTED_ARGUMENT; }
+  {QUOTED_ARGUMENT}[$]*      { }
 }
 
 <IN_VAR_REF> {
