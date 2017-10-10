@@ -11,6 +11,8 @@ Commands, Variables, Property and Operator was taken from [vim CMake support plu
 
 There are few known syntax highlights bugs, mostly around `$` symbol, because it's used to recognise Variable references in arguments. But those bugs could be reproduced mostly on synthetic tests while real `CMakeLists.txt` files shown correctly.  
 
+![Screenshot](Screenshot from 2017-10-10 16-46-53.png)
+
 ## **Binary**
 If you wish to use compiled version of pluging, please take `CMake.jar` from the root dir of that project and place file to the `<YOUR_IntelliJ_IDE>\config\plugins`  folder [(where to find it)](http://www.jetbrains.org/intellij/sdk/docs/basics/settings_caches_logs.html), and then restart your IDE so the changes may take effect. More details at [JetBrains manual](http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/deploying_plugin.html).
 
