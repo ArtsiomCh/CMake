@@ -28,6 +28,7 @@ import java.util.LinkedList;
 %unicode
 %ignorecase
 
+// Place CMake keywords in this file
 %include CMake_keywords.txt
 
 ESCAPE_SEQUENCE=  {ESCAPE_IDENTITY} | {ESCAPE_ENCODED} | {ESCAPE_SEMICOLON}
@@ -42,7 +43,7 @@ ARG_SEPARATOR={WHITE_SPACE}|";"
 
 BRACKET_COMMENT=\#{BRACKET_ARGUMENT}
 
-// TODO infinite {lenght} (throght states?)
+// TODO infinite {lenght} (through states?)
 BRACKET_ARGUMENT=(\[\[)~(\]\])          |
                  (\[=\[)~(\]=\])        |
                  (\[={2}\[)~(\]={2}\])  |
@@ -54,7 +55,7 @@ LINE_COMMENT= # ( [^\[\r\n] | \[=*[^\[=\r\n] ).* | #\[=* | #
 
 QUOTED_ARGUMENT=( [^\"$] | \\\n | \\\" | \\\$ )+
 
-UNQUOTED_ELEMENT= [^()#\"\\;/\s$] | {ESCAPE_SEQUENCE}
+UNQUOTED_ELEMENT= [^()#\"\\;\s/$] | {ESCAPE_SEQUENCE}
 UNQUOTED_ARGUMENT=({UNQUOTED_ELEMENT})+
 
 UNQUOTED_LEGACY_ELEMENT={UNQUOTED_ELEMENT}|[/$]
@@ -63,14 +64,12 @@ UNQUOTED_LEGACY=(((({UNQUOTED_LEGACY_ELEMENT}+ | ("$("{UNQUOTED_LEGACY_ELEMENT}*
                   )| ({UNQUOTED_LEGACY_ELEMENT}* ("$("{UNQUOTED_LEGACY_ELEMENT}*")")+)
                  ) {UNQUOTED_LEGACY_ELEMENT}*
                 )+
-// TODO fix some bugs with corner cases with [$] in PATH_URL
 UNQUOTED_PATH_URL=(({UNQUOTED_ARGUMENT}[$]*)?\/({UNQUOTED_ARGUMENT})?)+
 
 IDENTIFIER=[A-Za-z_][A-Za-z0-9_]*
 
-//TODO set of ENV{} recognition
 VAR_REF_BEGIN= \$ ( \{ | ENV\{ )
-VARIABLE_NAME=([A-Za-z0-9/_.+-]|{ESCAPE_SEQUENCE})*
+VARIABLE_NAME=([A-Za-z0-9/_.+-]|{ESCAPE_SEQUENCE})+
 VAR_REF_END="}"
 
 %state IN_ARGLIST
@@ -80,7 +79,7 @@ VAR_REF_END="}"
 %%
 
 <YYINITIAL> {
-  {ARG_SEPARATOR}            { return com.intellij.psi.TokenType.WHITE_SPACE; }
+  {ARG_SEPARATOR}          { return com.intellij.psi.TokenType.WHITE_SPACE; }
 
   "("                      { yypushstate(IN_ARGLIST);return LPAR; }
 
@@ -97,43 +96,42 @@ VAR_REF_END="}"
   "ENDWHILE"               { return ENDWHILE; }
   "WHILE"                  { return WHILE; }
   {BRACKET_COMMENT}        { return BRACKET_COMMENT; }
-  {LINE_COMMENT}/{EOL}           { return LINE_COMMENT; }
+  {LINE_COMMENT}/{EOL}     { return LINE_COMMENT; }
   {CMAKE_Commands}         { return CMAKE_COMMAND; }
   {IDENTIFIER}             { return IDENTIFIER; }
 }
 
 <IN_ARGLIST> {
-  {ARG_SEPARATOR}            { return com.intellij.psi.TokenType.WHITE_SPACE; }
+  {ARG_SEPARATOR}          { yybegin(IN_ARGLIST); return com.intellij.psi.TokenType.WHITE_SPACE; }
 
   "("                      { yypushstate(IN_ARGLIST);return LPAR; }
   ")"                      { yypopstate();return RPAR; }
 
   \"                       { yybegin(IN_QUOTED_ARG); return BRACE; }
-  {VAR_REF_BEGIN}           { yypushstate(IN_VAR_REF); return VAR_REF_BEGIN; }
-
-  ENV\{ / (({VARIABLE_NAME}|{VAR_REF_BEGIN})+({VARIABLE_NAME}|{VAR_REF_END})+)        { yypushstate(IN_VAR_REF); return VAR_REF_BEGIN; }
+  ( {VAR_REF_BEGIN} | ENV\{ )
+        / (({VARIABLE_NAME}|{VAR_REF_BEGIN})+({VARIABLE_NAME}|{VAR_REF_END})+)
+                           { yypushstate(IN_VAR_REF); return VAR_REF_BEGIN; }
 
   {CMAKE_Variables}        { return CMAKE_VARIABLE; }
 
   {BRACKET_COMMENT}        { return BRACKET_COMMENT; }
-  {LINE_COMMENT}/{EOL}           { return LINE_COMMENT; }
+  {LINE_COMMENT}/{EOL}     { return LINE_COMMENT; }
 
   {BRACKET_ARGUMENT}       { return BRACKET_ARGUMENT; }
 
   {CMAKE_Property}         { return CMAKE_PROPERTY;}
   {CMAKE_Operator}         { return CMAKE_OPERATOR;}
 
-  ({UNQUOTED_ARGUMENT} | {UNQUOTED_PATH_URL})?[$]+    { }
+  {UNQUOTED_PATH_URL} / {VAR_REF_BEGIN}?                     { return PATH_URL; }
+  {UNQUOTED_PATH_URL}[$]+ / [()#\";\s]|{VAR_REF_BEGIN}       { return PATH_URL; }
 
-  {UNQUOTED_PATH_URL} / {VAR_REF_BEGIN}?      { return PATH_URL; }
-  {UNQUOTED_PATH_URL}[$]+ / [()#\";\s]|{VAR_REF_BEGIN}      { return PATH_URL; }
+  {UNQUOTED_ARGUMENT} / {VAR_REF_BEGIN}?                     {  return UNQUOTED_ARGUMENT;}
+  {UNQUOTED_ARGUMENT}?[$]+ / [()#\";\s]|{VAR_REF_BEGIN}      {  return UNQUOTED_ARGUMENT;}
 
-//-  {UNQUOTED_ARGUMENT}                        { return UNQUOTED_ARGUMENT; }
-  {UNQUOTED_ARGUMENT} / {VAR_REF_BEGIN}?      { return UNQUOTED_ARGUMENT; }
-  {UNQUOTED_ARGUMENT}?[$]+ / [()#\";\s]|{VAR_REF_BEGIN}      { return UNQUOTED_ARGUMENT; }
-//-  [$]+ / ([()#\";\s]|{VAR_REF_BEGIN})      { return UNQUOTED_ARGUMENT; }
+// TODO fix some bugs with corner cases with [$] in PATH_URL and $<CMAKE_Var or Commands>
+  ({UNQUOTED_ARGUMENT} | {UNQUOTED_PATH_URL})?[$]+           { }
 
-  {UNQUOTED_LEGACY}      { return UNQUOTED_LEGACY; }
+  {UNQUOTED_LEGACY}        { return UNQUOTED_LEGACY; }
 }
 
 <IN_QUOTED_ARG> {
@@ -141,7 +139,7 @@ VAR_REF_END="}"
   {VAR_REF_BEGIN}          { yypushstate(IN_VAR_REF); return VAR_REF_BEGIN; }
   {QUOTED_ARGUMENT} | {QUOTED_ARGUMENT}?[$]+
         / (\" | {VAR_REF_BEGIN})      { return QUOTED_ARGUMENT; }
-  {QUOTED_ARGUMENT}[$]*      { }
+  {QUOTED_ARGUMENT}?[$]+              { }
 }
 
 <IN_VAR_REF> {

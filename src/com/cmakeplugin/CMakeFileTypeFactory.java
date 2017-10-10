@@ -17,8 +17,7 @@ public class CMakeFileTypeFactory extends FileTypeFactory {
 
               @Override
               public boolean acceptsCharSequence(CharSequence fileName) {
-                return fileName.toString().matches("CMakeLists.*");
-//                return fileName.toString().matches("(CMakeLists[.]txt)|(.*[.]cmake)");
+                return fileName.toString().matches("(CMakeLists[.]txt)|(.*[.]cmake)");
               }
 
             }

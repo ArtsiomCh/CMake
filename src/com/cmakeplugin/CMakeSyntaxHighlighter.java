@@ -1,17 +1,14 @@
 package com.cmakeplugin;
 
-import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import com.cmakeplugin.psi.CMakeTypes;
-//import com.cmakeplugin.parsing.CMakeLexerAdapter;
 
 import java.util.Map;
 
@@ -29,58 +26,51 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
     return new CMakeLexerAdapter();
   }
 
-  // TODO: Add text highlighting attributes
-  // TODO: Add mapping between token and its highlighting properties
   // Highlighting styles
-  public static final TextAttributesKey KEYWORD = TextAttributesKey.createTextAttributesKey(
-          "Keyword",
-          DefaultLanguageHighlighterColors.KEYWORD
-  );
+  public static final TextAttributesKey COMMENT = TextAttributesKey.createTextAttributesKey("Line comment",
+          DefaultLanguageHighlighterColors.LINE_COMMENT  );
 
-  public static final TextAttributesKey COMMENT = TextAttributesKey.createTextAttributesKey(
-          "Line comment",
-          DefaultLanguageHighlighterColors.LINE_COMMENT
-  );
+  public static final TextAttributesKey STRING = TextAttributesKey.createTextAttributesKey("String literal",
+          DefaultLanguageHighlighterColors.STRING  );
 
-  public static final TextAttributesKey STRING = TextAttributesKey.createTextAttributesKey(
-          "Srting literal",
-          DefaultLanguageHighlighterColors.STRING
-  );
+  public static final TextAttributesKey BRACES = TextAttributesKey.createTextAttributesKey("CMAKE.BRACES",
+          DefaultLanguageHighlighterColors.BRACES  );
 
-  public static final TextAttributesKey BRACES = TextAttributesKey.createTextAttributesKey(
-          "CMAKE.BRACES",
-          DefaultLanguageHighlighterColors.BRACES
-  );
+  public static final TextAttributesKey SEPARATOR = TextAttributesKey.createTextAttributesKey("Separator",
+          DefaultLanguageHighlighterColors.KEYWORD  );
 
-  public static final TextAttributesKey BADCHAR = TextAttributesKey.createTextAttributesKey(
-          "CMAKE.BADCHAR",
-          DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE
-  );
+  public static final TextAttributesKey BADCHAR = TextAttributesKey.createTextAttributesKey("CMAKE.BADCHAR",
+          DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE  );
 
-  public static final TextAttributesKey VAREXP = TextAttributesKey.createTextAttributesKey(
-          "CMAKE.VAREXP",
-          DefaultLanguageHighlighterColors.IDENTIFIER
-  );
+  public static final TextAttributesKey KEYWORD = TextAttributesKey.createTextAttributesKey("Keyword",
+          DefaultLanguageHighlighterColors.KEYWORD  );
 
-  public static final TextAttributesKey ESCAPED_CHAR = TextAttributesKey.createTextAttributesKey(
-          "CMAKE.ESCAPED_CHAR",
-          DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE
-  );
+  public static final TextAttributesKey CMAKE_COMMAND = TextAttributesKey.createTextAttributesKey("CMAKE.COMMAND",
+          DefaultLanguageHighlighterColors.FUNCTION_DECLARATION  );
 
-  public static final TextAttributesKey BLOCK_COMMENT = TextAttributesKey.createTextAttributesKey(
-          "CMAKE.BLOCK_COMMENT",
-          DefaultLanguageHighlighterColors.BLOCK_COMMENT
-  );
+  public static final TextAttributesKey UNQUOTED_LEGACY = TextAttributesKey.createTextAttributesKey("CMAKE.UNQUOTED_LEGACY",
+          DefaultLanguageHighlighterColors.DOC_COMMENT_TAG  );
 
-  public static final TextAttributesKey NUMBER = TextAttributesKey.createTextAttributesKey(
-          "CMAKE.NUMBER",
-          DefaultLanguageHighlighterColors.NUMBER
-  );
+  public static final TextAttributesKey CMAKE_VARIABLE = TextAttributesKey.createTextAttributesKey("CMAKE.CMAKE_VARIABLE",
+          DefaultLanguageHighlighterColors.CONSTANT  );
 
-  public static final TextAttributesKey IDENTIFIER = TextAttributesKey.createTextAttributesKey(
-          "CMAKE.IDENTIFIER",
-          DefaultLanguageHighlighterColors.IDENTIFIER
-  );
+  public static final TextAttributesKey VARIABLE = TextAttributesKey.createTextAttributesKey("CMAKE.VARIABLE",
+          DefaultLanguageHighlighterColors.INSTANCE_FIELD  );
+
+  public static final TextAttributesKey VAR_REF = TextAttributesKey.createTextAttributesKey("VARIABLE REFS",
+          DefaultLanguageHighlighterColors.LINE_COMMENT  );
+
+  public static final TextAttributesKey BRACKET_ARGUMENT = TextAttributesKey.createTextAttributesKey("BRACKET_ARGUMENT",
+          DefaultLanguageHighlighterColors.STRING  );
+
+  public static final TextAttributesKey CMAKE_OPERATOR = TextAttributesKey.createTextAttributesKey("CMAKE.OPERATOR",
+          DefaultLanguageHighlighterColors.METADATA  );
+
+  public static final TextAttributesKey CMAKE_PATH_URL = TextAttributesKey.createTextAttributesKey("CMAKE.PATH_URL",
+          DefaultLanguageHighlighterColors.DOC_COMMENT_TAG_VALUE  );
+
+  public static final TextAttributesKey CMAKE_PROPERTY = TextAttributesKey.createTextAttributesKey("CMAKE.PROPERTY",
+          DefaultLanguageHighlighterColors.NUMBER  );
 
   static {
     keys1 = new THashMap<IElementType, TextAttributesKey>();
@@ -92,39 +82,37 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
     keys1.put(CMakeTypes.LPAR, BRACES);
     keys1.put(CMakeTypes.RPAR, BRACES);
     keys1.put(TokenType.BAD_CHARACTER, BADCHAR);
-    //keys1.put(CMakeTypes.ESCAPED_CHAR,ESCAPED_CHAR);
-    keys1.put(CMakeTypes.BRACKET_COMMENT,BLOCK_COMMENT);
+    keys1.put(CMakeTypes.BRACKET_COMMENT, COMMENT);
 
-    // Keywords moved to the annotator
-    keys1.put(com.intellij.psi.TokenType.WHITE_SPACE, KEYWORD);
-    keys1.put(CMakeTypes.CMAKE_COMMAND, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
-    keys1.put(CMakeTypes.BRACKET_ARGUMENT, STRING);
-    keys1.put(CMakeTypes.UNQUOTED_LEGACY, DefaultLanguageHighlighterColors.DOC_COMMENT_TAG);
+    keys1.put(com.intellij.psi.TokenType.WHITE_SPACE, SEPARATOR);
+    keys1.put(CMakeTypes.CMAKE_COMMAND, CMAKE_COMMAND);
+    keys1.put(CMakeTypes.BRACKET_ARGUMENT, BRACKET_ARGUMENT);
+    keys1.put(CMakeTypes.UNQUOTED_LEGACY, UNQUOTED_LEGACY);
 
-    keys1.put(CMakeTypes.CMAKE_VARIABLE, DefaultLanguageHighlighterColors.CONSTANT);
-    keys1.put(CMakeTypes.VARIABLE, DefaultLanguageHighlighterColors.INSTANCE_FIELD);
-    keys1.put(CMakeTypes.VAR_REF_BEGIN, COMMENT);
-    keys1.put(CMakeTypes.VAR_REF_END, COMMENT);
+    keys1.put(CMakeTypes.CMAKE_VARIABLE, CMAKE_VARIABLE);
+    keys1.put(CMakeTypes.VARIABLE, VARIABLE);
+    keys1.put(CMakeTypes.VAR_REF_BEGIN, VAR_REF);
+    keys1.put(CMakeTypes.VAR_REF_END, VAR_REF);
 
-    keys1.put(CMakeTypes.CMAKE_PROPERTY, DefaultLanguageHighlighterColors.METADATA);
-    keys1.put(CMakeTypes.CMAKE_OPERATOR, DefaultLanguageHighlighterColors.NUMBER);
-    keys1.put(CMakeTypes.PATH_URL, DefaultLanguageHighlighterColors.DOC_COMMENT_TAG_VALUE);
+    keys1.put(CMakeTypes.CMAKE_PROPERTY, CMAKE_PROPERTY);
+    keys1.put(CMakeTypes.CMAKE_OPERATOR, CMAKE_OPERATOR);
+    keys1.put(CMakeTypes.PATH_URL, CMAKE_PATH_URL);
 
-    // IF, FOR, WHILE, MACRO, FUNCTION keywords highlight
+    // IF keywords highlight
     keys1.put(CMakeTypes.IF, KEYWORD);
     keys1.put(CMakeTypes.ELSEIF, KEYWORD);
     keys1.put(CMakeTypes.ENDIF, KEYWORD);
     keys1.put(CMakeTypes.ELSE, KEYWORD);
-
+    // FOR keywords highlight
     keys1.put(CMakeTypes.FOREACH, KEYWORD);
     keys1.put(CMakeTypes.ENDFOREACH, KEYWORD);
-
+    // WHILE keywords highlight
     keys1.put(CMakeTypes.WHILE, KEYWORD);
     keys1.put(CMakeTypes.ENDWHILE, KEYWORD);
-
+    // MACRO keywords highlight
     keys1.put(CMakeTypes.MACRO, KEYWORD);
     keys1.put(CMakeTypes.ENDMACRO, KEYWORD);
-
+    // FUNCTION keywords highlight
     keys1.put(CMakeTypes.FUNCTION, KEYWORD);
     keys1.put(CMakeTypes.ENDFUNCTION, KEYWORD);
 
@@ -134,16 +122,4 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
   public TextAttributesKey[] getTokenHighlights(IElementType iElementType) {
     return SyntaxHighlighterBase.pack(keys1.get(iElementType), keys2.get(iElementType));
   }
-
-  //TODO: Fill the map to use it in the ColorsPage
-/*  public static final Map<TextAttributesKey, Pair<String, HighlightSeverity>> DISPLAY_NAMES = new THashMap<>(6);
-
-  static {
-    DISPLAY_NAMES.put(KEYWORD, new Pair<String, HighlightSeverity>("Keyword",null));
-    DISPLAY_NAMES.put(BRACES, new Pair<String, HighlightSeverity>("Braces", null));
-    DISPLAY_NAMES.put(STRING, new Pair<String, HighlightSeverity>("String", null));
-    DISPLAY_NAMES.put(COMMENT, new Pair<String, HighlightSeverity>("Comment", null));
-    DISPLAY_NAMES.put(IDENTIFIER, new Pair<String, HighlightSeverity>("Identifier", null));
-    DISPLAY_NAMES.put(BADCHAR, Pair.create("Bad Character", HighlightSeverity.WARNING));
-  }*/
 }
