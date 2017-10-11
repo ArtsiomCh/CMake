@@ -13,6 +13,10 @@ There are few known syntax highlights bugs, mostly around `$` symbol, because it
 
 <img src="Screenshot2017-10-10.png">
 
+In case you don't need such a detailed highlight (i.e. it looks too motley) you can always change colors at plugin settings.
+
+<img src="Screenshot_Settings2017-10-11.png">
+
 ## **Binary**
 If you wish to use compiled version of pluging, please take `CMake.jar` from the root dir of that project and place file to the `<YOUR_IntelliJ_IDE>\config\plugins`  folder [(where to find it)](http://www.jetbrains.org/intellij/sdk/docs/basics/settings_caches_logs.html), and then restart your IDE so the changes may take effect. More details at [JetBrains manual](http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/deploying_plugin.html).
 
