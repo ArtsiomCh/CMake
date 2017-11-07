@@ -53,7 +53,7 @@ BRACKET_ARGUMENT=(\[\[)~(\]\])          |
 
 LINE_COMMENT= # ( [^\[\r\n] | \[=*[^\[=\r\n] ).* | #\[=* | #
 
-QUOTED_ARGUMENT=( [^\"$] | \\\n | \\\" | \\\$ )+
+QUOTED_ARGUMENT=( [^\"\\$] | {ESCAPE_SEQUENCE} | \\{EOL} )+
 
 UNQUOTED_ELEMENT= [^()#\"\\;\s/$] | {ESCAPE_SEQUENCE}
 UNQUOTED_ARGUMENT=({UNQUOTED_ELEMENT})+
