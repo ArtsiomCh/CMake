@@ -18,15 +18,18 @@ In case you don't need such a detailed highlight (i.e. it looks too motley) you 
 <img src="Screenshot_Settings2017-10-11.png">
 
 ## **Binary**
-If you wish to use compiled version of pluging, please take `CMake.jar` from the root dir of that project and place file to the `<YOUR_IntelliJ_IDE>\config\plugins`  folder [(where to find it)](http://www.jetbrains.org/intellij/sdk/docs/basics/settings_caches_logs.html), and then restart your IDE so the changes may take effect. More details at [JetBrains manual](http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/deploying_plugin.html).
+Plugin was already submitted and approved in [JetBrains Plugins Repository](https://plugins.jetbrains.com/plugin/10089-cmake-simple-highlighter) and is available in search results at Settings|Plugins|Browse repositories.
 
-Plugin was already submitted into [JetBrains Plugins Repository](https://plugins.jetbrains.com/) and hopefully will be available in search results withing few days. In the meantime [direct link](https://plugins.jetbrains.com/plugin/10089-cmake-simple-highlighter) could be used.
+If you wish to use compiled version of pluging, please take `CMake.jar` from the root dir of that project and place file to the `<YOUR_IntelliJ_IDE>\config\plugins`  folder [(where to find it)](http://www.jetbrains.org/intellij/sdk/docs/basics/settings_caches_logs.html), and then restart your IDE so the changes may take effect. More details at [JetBrains manual](http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/deploying_plugin.html).
 
 ## **License**
 
 Plugin is open-source software and is licenced under GPL v3 licence.
 
 ## **Versions**
+
+**v.0.0.2**
+* Bug of not evaluating escaped escape symbol `\\` inside quoted argument fixed.
 
 **v.0.0.1**
 * Supports basic syntax highlight.
