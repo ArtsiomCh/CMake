@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>artsiomch.cmake</id>
   <name>CMake simple highlighter</name>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
   <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
 
   <description><![CDATA[
@@ -29,6 +29,7 @@
     <lang.parserDefinition language="CMake" implementationClass="com.cmakeplugin.CMakeParserDefinition"/>
     <lang.syntaxHighlighterFactory key="CMake" implementationClass="com.cmakeplugin.CMakeSyntaxHighlighterFactory"/>
     <colorSettingsPage implementation="com.cmakeplugin.CMakeColorSettingsPage"/>
+    <lang.braceMatcher language="CMake" implementationClass="com.cmakeplugin.CMakeBraceMatcher"/>
 
   </extensions>
 
