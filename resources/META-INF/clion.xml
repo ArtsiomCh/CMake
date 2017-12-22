@@ -1,0 +1,9 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here
+    <lang.syntaxHighlighterFactory key="CMake" implementationClass="com.cmakeplugin.CMakeSyntaxHighlighterFactory"/>
+    <colorSettingsPage implementation="com.cmakeplugin.CMakeColorSettingsPage"/>
+    -->
+    <annotator language="CMake" implementationClass="com.cmakeplugin.annotator.CMakeAnnotator"/>
+  </extensions>
+</idea-plugin>

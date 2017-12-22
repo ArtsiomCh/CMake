@@ -28,12 +28,13 @@ This is the first line of a quoted argument. \
 In fact it is the only line but since it is long \
 the source code uses line continuation.\
 ")
+set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};--include-path ${PROJECT_BINARY_DIR}/$\{build_configuration\};--expt-relaxed-constexpr)
 
 message( fff=ENV{not_variable} BadChar=\d\g\j
     fff=${variable_name} hh$$${R${f}}
     $ENV{VAR} ENV{VAR} fdddf=$ENV{VAR} ENV{d${f${t}f}f}
     ${outer_${inner_variable}_variable}
-    ${outer_${APPLE}_${variable}}
+    ${outer_${APPLE${variable}}}
     E $ $$$/hhh hhh$$/dd $/$f
 )
 
