@@ -40,9 +40,9 @@ message( fff=ENV{not_variable} BadChar=\d\g\j
 
 foreach(arg
     NoSpace
-    UnquotedLegacy"fff"ghg/g$$E${h}h""ghg
-    $/$//-Da="b c"" " -Da=$(v) a" "b"c"f$$$
-        $(bb)/f" "$(f)" "
+    UnquotedLegacy"fff"ghg/g$$E${h}h""ghg \"fff\"ghg
+    $/$//-Da="b c" d\" \" -Da=$(v) a" "b"c"f$$$
+        $(b$(b)) /f" "$(f)" "
     Escaped\ Space  space$$$ $$spacE s$$pacEN spac$ENV $$$$ $$$APPLE cENV${x}$/$d
     This;Divides;Into;Five;Arguments
     Escaped\;Semicolon

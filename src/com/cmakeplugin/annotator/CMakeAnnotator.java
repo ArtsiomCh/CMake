@@ -27,7 +27,7 @@ public class CMakeAnnotator implements Annotator {
         if (element.getFirstChild().getNode().getElementType() == CMakeTokenTypes.QUOTE) {
           // Annotate Quoted argument
           annotateVariables(cmakeLiteral, holder);
-        } else {
+        } else if (!(annotateLegacy(cmakeLiteral, holder))){
           // Annotate Unquoted argument
           annotatePathURL(cmakeLiteral, holder);
           annotateVariables(cmakeLiteral, holder);
@@ -38,6 +38,14 @@ public class CMakeAnnotator implements Annotator {
         }
       }
     }
+  }
+
+  private boolean annotateLegacy(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+    if (element.getText().matches("(.*[^\\\\]\"(.*[^\\\\])?\".*)|(.*\\$\\(.*\\).*)")) {
+      holder.createInfoAnnotation(element, null)
+              .setTextAttributes(DefaultLanguageHighlighterColors.DOC_COMMENT_TAG);
+      return true;
+    } else return false;
   }
 
   private void annotatePathURL(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
@@ -97,10 +105,11 @@ public class CMakeAnnotator implements Annotator {
     innerENVvarsList = new ArrayList<>();
     int varLevel = 0, maxVarLevel = Integer.MIN_VALUE;
     int outerVarBegin = 0, innerVarBegin = 0;
-    Pattern pattern = Pattern.compile("\\$(ENV)?\\{|}");
+    Pattern pattern = Pattern.compile("(\\$(ENV)?|^ENV)\\{|}");
     Matcher matcher = pattern.matcher(text);
     while (matcher.find()) {
-      if ( matcher.group().equals("${") || matcher.group().equals("$ENV{") ) {
+      if ( matcher.group().equals("${") || matcher.group().equals("$ENV{")
+              || matcher.group().equals("ENV{") ) {
         if (varLevel < 1) {
           varLevel = 0;
           outerVarBegin=matcher.start();
