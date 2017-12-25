@@ -1,13 +1,19 @@
 ## **CMake plugin for IntelliJ Idea CE and Android Studio**
 
-This is a CMake support plugin for IntelliJ Idea IDE. It brings syntax highlight support for CMake build and run system. The main goal was to make `CMakeLists.txt` files more readable in Android Studio.
+This is the plugin for CMake syntax highlight support.
+It provides:<br> 
+- Basic syntax highlight for <b>IntelliJ IDEA CE</b> and <b>Android Studio</b>.
+- Extend existed highlighting in <b>CLion</b>.
+
+The main goal was to make `CMakeLists.txt` files more readable in Android Studio.
 It is my play project to study intellij language support.  Please see [JetBrains manual](http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support.html) for more details. Work is still in progress.
 
 Plugin is inspired and based on [CMaker](https://github.com/dubrousky/CMaker) by [Aliaksandr Dubrouski](https://github.com/dubrousky)
 
 CMake Syntax from [cmake.org](https://cmake.org/cmake/help/latest/manual/cmake-language.7.html) is mostly implemented.
 
-Commands, Variables, Property and Operator was taken from [vim CMake support pluging](https://raw.githubusercontent.com/nickhutchinson/vim-cmake-syntax/master/syntax/cmake.vim)
+For <b>IntelliJ IDEA CE</b> and <b>Android Studio</b>: Commands, Variables, Property and Operator was taken from [vim CMake support pluging](https://raw.githubusercontent.com/nickhutchinson/vim-cmake-syntax/master/syntax/cmake.vim)<br>
+For <b>CLion</b>: Commands, Variables, Property and Operator was taken from official [cmake.org](https://cmake.org/cmake/help/latest/index.html) manuals.
 
 There are few known syntax highlights bugs, mostly around `$` symbol, because it's used to recognise Variable references in arguments. But those bugs could be reproduced mostly on synthetic tests while real `CMakeLists.txt` files shown correctly.  
 
@@ -27,6 +33,11 @@ If you wish to use compiled version of pluging, please take `CMake.jar` from the
 Plugin is open-source software and is licenced under GPL v3 licence.
 
 ## **Versions**
+**v.0.1.0**
+* CLion support added.
+
+**v.0.0.3**
+* BraceMatcher added. <br>
 
 **v.0.0.2**
 * Bug of not evaluating escaped escape symbol `\\` inside quoted argument fixed.
@@ -43,5 +54,5 @@ Plugin is open-source software and is licenced under GPL v3 licence.
 * In project properties set the `plugin.xml` location (`resources/META-INF/plugin.xml`)
 * Hover the `cmake_v3.bnf` and generate parser code
 * In project properties mark gen as source folder
-* Generate lexer class from `CMake_org_v3.flex` file
+* Generate lexer class from `CMake_org_v3.flex` file. (Due to not optimal architecture needs to be compiled with `-Xmx1512m` option. Will be fixed in the future.)
 * Build project and you are set to go

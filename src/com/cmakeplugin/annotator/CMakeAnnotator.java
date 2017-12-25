@@ -62,7 +62,7 @@ public class CMakeAnnotator implements Annotator {
   private void annotateVariables(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String argtext = element.getText();
     int pos = element.getTextRange().getStartOffset();
-    varsList(argtext);
+    parseVarsIntoLists(argtext);
     for ( TextRange outerVarRange: outerVarsList) {
       holder.createInfoAnnotation( outerVarRange.shiftRight(pos), null)
               .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
@@ -95,11 +95,11 @@ public class CMakeAnnotator implements Annotator {
   private ArrayList<TextRange> innerENVvarsList;
 
 /** Fill outerVarsList, innerVarsList and innerENVvarsList with indexes
- *  of outer and inner Variables reference inside given text
+ *  of outer and inner Variables inside given text
    * @param   text   the string to search in.
 */
 // TODO Should be more elegant way to implement that.
-  private void varsList(String text) {
+  private void parseVarsIntoLists(String text) {
     outerVarsList = new ArrayList<>();
     innerVarsList = new ArrayList<>();
     innerENVvarsList = new ArrayList<>();

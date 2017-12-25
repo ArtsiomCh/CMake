@@ -5,12 +5,16 @@
   <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
 
   <description><![CDATA[
-     This is the plugin for CMake style project support.<br>
-     It provides basic syntax highlight.
+     This is the plugin for CMake syntax highlight support.<br>
+     It provides basic syntax highlight for <b>IntelliJ IDEA CE</b> and <b>Android Studio</b>.<br>
+     Extend existed highlighting in <b>CLion</b>.
 ]]></description>
 
   <change-notes><![CDATA[
-      In this version syntax highlighting is provided. <br>
+      0.1.0 - CLion support added. <br>
+      0.0.3 - BraceMatcher added. <br>
+      0.0.2 - Fix bug of not evaluating escaped escape symbol `\\` inside quoted argument. <br>
+      0.0.1 - In this version syntax highlighting is provided. <br>
     ]]>
   </change-notes>
 
