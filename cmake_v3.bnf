@@ -7,10 +7,17 @@
   psiImplClassSuffix="Impl"
   psiPackage="com.cmakeplugin.psi"
   psiImplPackage="com.cmakeplugin.psi.impl"
+  psiImplUtilClass="com.cmakeplugin.psi.impl.CMakePsiImplUtil"
+  implements("unquoted_argument_container")="com.intellij.psi.PsiNameIdentifierOwner"
 
   elementTypeHolderClass="com.cmakeplugin.psi.CMakeTypes"
   elementTypeClass="com.cmakeplugin.psi.CMakeElementType"
   tokenTypeClass="com.cmakeplugin.psi.CMakeTokenType"
+
+  tokens = [
+    unquoted_argument = 'regexp:(_|\p{Alpha})\w*'
+    variable = 'regexp:(_|\p{Alpha})\w*'
+  ]
 
  }
 
@@ -33,13 +40,16 @@
 
  // Arguments
  arguments           ::= lpar ( argument | arguments )* rpar
- argument            ::=  bracket_argument | unquoted_argument | unquoted_legacy
+ argument            ::=  bracket_argument | unquoted_argument_container | unquoted_legacy
                          | bracket_comment |line_comment
                          | cmake_property | cmake_operator | path_url
                          | brace (quoted_argument | variables)* brace
                          | variables | cmake_variable
 
- variables ::= var_ref_begin ( cmake_variable | variable | variables )+ var_ref_end
+ unquoted_argument_container ::= unquoted_argument { methods=[getName setName getNameIdentifier] }
+
+ variables ::= var_ref_begin ( cmake_variable | variable_container | variables )+ var_ref_end
+ variable_container ::= variable  { methods=[getReference] }
 
 // Single command invocation
  cmd                 ::=  <<command_expr command_name>>

@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>artsiomch.cmake</id>
   <name>CMake simple highlighter</name>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
 
   <description><![CDATA[
@@ -11,6 +11,7 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      0.2.0 -  <br>
       0.1.0 - CLion support added. <br>
       0.0.3 - BraceMatcher added. <br>
       0.0.2 - Fix bug of not evaluating escaped escape symbol `\\` inside quoted argument. <br>
