@@ -12,15 +12,20 @@ public class CMakePsiElementFactory {
 
   private static PsiFile createFile(@NotNull Project project, @NotNull String text) {
     return PsiFileFactory.getInstance(project)
-            .createFileFromText("a.flex", CMakeLanguage.INSTANCE, text, false, false);
+            .createFileFromText("a.cmake", CMakeLanguage.INSTANCE, text, false, false);
   }
 
-  public static PsiElement createIdFromText(@NotNull Project project, @NotNull String text) {
-    return CMakePsiImplUtil.computeUnquotedArguments(createFile(project, "%%\n" + text+"="), CMakeUnquotedArgumentContainer.class)
+  public static PsiElement createVariableFromText(@NotNull Project project, @NotNull String text) {
+    return CMakePsiImplUtil.computeElements(createFile(project,"set(${" + text + "})"), CMakeVariableContainer.class)
+            .get(0).getVariable();
+  }
+
+  public static PsiElement createUnquotedArgumentFromText(@NotNull Project project, @NotNull String text) {
+    return CMakePsiImplUtil.computeElements(createFile(project,"set(" + text + ")"), CMakeUnquotedArgumentContainer.class)
             .get(0).getUnquotedArgument();
   }
 
-//  public static PsiElement createJavaCodeFromText(@NotNull Project project, @NotNull String text) {
+  //  public static PsiElement createJavaCodeFromText(@NotNull Project project, @NotNull String text) {
 //    return SyntaxTraverser.psiTraverser(createFile(project, text)).filter(JFlexJavaCode.class).first();
 //  }
 //

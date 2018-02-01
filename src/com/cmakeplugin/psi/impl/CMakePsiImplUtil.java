@@ -21,7 +21,7 @@ public class CMakePsiImplUtil {
 
   @NotNull
   public static PsiNameIdentifierOwner setName(PsiNameIdentifierOwner o, String newName) {
-    ObjectUtils.assertNotNull(o.getNameIdentifier()).replace(CMakePsiElementFactory.createIdFromText(o.getProject(), newName));
+    ObjectUtils.assertNotNull(o.getNameIdentifier()).replace(CMakePsiElementFactory.createUnquotedArgumentFromText(o.getProject(), newName));
     return o;
   }
 
@@ -59,7 +59,7 @@ public class CMakePsiImplUtil {
 
       @Override
       public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-        return getElement().getVariable().replace(CMakePsiElementFactory.createIdFromText(getElement().getProject(), newElementName));
+        return getElement().getVariable().replace(CMakePsiElementFactory.createVariableFromText(getElement().getProject(), newElementName));
       }
     };
   }
@@ -68,11 +68,11 @@ public class CMakePsiImplUtil {
     final PsiFile containingFile = context.getContainingFile();
     List<CMakeUnquotedArgumentContainer> macros = CachedValuesManager.getCachedValue(
             containingFile,
-            () -> CachedValueProvider.Result.create(computeUnquotedArguments(containingFile, CMakeUnquotedArgumentContainer.class), containingFile));
+            () -> CachedValueProvider.Result.create(computeElements(containingFile, CMakeUnquotedArgumentContainer.class), containingFile));
     return ContainerUtil.process(macros, processor);
   }
 
-  public static <T> List<T> computeUnquotedArguments(PsiFile psiFile, final Class<T> clazz) {
+  public static <T> List<T> computeElements(PsiFile psiFile, final Class<T> clazz) {
     final List<T> result = ContainerUtil.newArrayList();
     psiFile.acceptChildren(new PsiRecursiveElementWalkingVisitor() {
       @Override
