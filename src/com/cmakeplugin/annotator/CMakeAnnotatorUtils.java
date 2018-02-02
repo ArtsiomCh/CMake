@@ -1,50 +1,24 @@
 package com.cmakeplugin.annotator;
 
 //import com.cmakeplugin.CMakeSyntaxHighlighter;
+
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-import com.jetbrains.cidr.cpp.cmake.psi.*;
-//import static CMakeKeywords.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CMakeAnnotator implements Annotator {
+//import static CMakeKeywords.*;
 
-  @Override
-  public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {
-    if (element instanceof CMakeCommandName) {
-      annotateCommand(element, holder);
-    } else if (element instanceof CMakeArgument) {
-      if (((CMakeArgument) element).getBracketArgStart()==null) {
-        PsiElement cmakeLiteral = ((CMakeArgument) element).getCMakeLiteral();
-        assert cmakeLiteral!=null;
-        if (element.getFirstChild().getNode().getElementType() == CMakeTokenTypes.QUOTE) {
-          // Annotate Quoted argument
-          annotateVarReferences(cmakeLiteral, holder);
-        } else
-          // Annotate Unquoted argument
-          if ( !(  annotateLegacy(cmakeLiteral, holder)
-                  || annotateProperty(cmakeLiteral, holder)
-                  || annotateVariable(cmakeLiteral, holder)
-                  || annotateOperator(cmakeLiteral, holder) )) {
-            annotateVarReferences(cmakeLiteral, holder);
-            if (!(annotatePathURL(cmakeLiteral, holder))) {
-              holder.createInfoAnnotation(cmakeLiteral, null)
-                      .setTextAttributes(DefaultLanguageHighlighterColors.IDENTIFIER);
-            }
-          }
-      }
-    }
-  }
+public class CMakeAnnotatorUtils {
 
-  private boolean annotateLegacy(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+  protected static boolean annotateLegacy(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (element.getText().matches("(.*[^\\\\]\"(.*[^\\\\])?\".*)|(.*\\$\\(.*\\).*)")) {
       holder.createInfoAnnotation(element, null)
               .setTextAttributes(DefaultLanguageHighlighterColors.DOC_COMMENT_TAG);
@@ -52,7 +26,7 @@ public class CMakeAnnotator implements Annotator {
     } else return false;
   }
 
-  private boolean annotatePathURL(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+  protected static boolean annotatePathURL(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (element.getText().contains("/")) {
 //      TextRange range = new TextRange(element.getTextRange().getStartOffset(),
 //              element.getTextRange().getStartOffset() + element.getTextRange().getLength());
@@ -64,7 +38,7 @@ public class CMakeAnnotator implements Annotator {
     } else return false;
   }
 
-  private boolean annotateVariable(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+  protected static boolean annotateVariable(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     for (String varRegexp : CMakeKeywords.variables_All) {
       if (element.getText().matches(varRegexp)) {
         holder.createInfoAnnotation(element, null)
@@ -76,11 +50,11 @@ public class CMakeAnnotator implements Annotator {
     return false;
   }
 
-  private List<TextRange> outerVarRefsList;
-  private List<TextRange> innerVarsList;
-  private List<TextRange> innerENVvarsList;
+  private static List<TextRange> outerVarRefsList;
+  private static List<TextRange> innerVarsList;
+  private static List<TextRange> innerENVvarsList;
 
-  private void annotateVarReferences(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+  protected static void annotateVarReferences(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String argtext = element.getText();
     int pos = element.getTextRange().getStartOffset();
 
@@ -133,7 +107,7 @@ public class CMakeAnnotator implements Annotator {
    * @param   text   the string to search in.
 */
 // TODO Should be more elegant way to implement that.
-  private void parseVarsIntoLists(String text) {
+  private static void parseVarsIntoLists(String text) {
     outerVarRefsList = new ArrayList<>();
     innerVarsList = new ArrayList<>();
     innerENVvarsList = new ArrayList<>();
@@ -167,7 +141,7 @@ public class CMakeAnnotator implements Annotator {
     }
   }
 
-  private void annotateCommand(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+  protected static void annotateCommand(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String commandName = element.getText().toLowerCase();
     if (CMakeKeywords.commands_Project.contains(commandName)
             || CMakeKeywords.commands_Scripting.contains(commandName)
@@ -182,7 +156,7 @@ public class CMakeAnnotator implements Annotator {
     }
   }
 
-  private boolean annotateProperty(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+  protected static boolean annotateProperty(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String propertyName = element.getText().toUpperCase();
     for (String varRegexp: CMakeKeywords.properties_All){
       if (propertyName.matches(varRegexp)){
@@ -202,7 +176,7 @@ public class CMakeAnnotator implements Annotator {
     return false;
   }
 
-  private boolean annotateOperator(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+  protected static boolean annotateOperator(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String operatorName = element.getText().toUpperCase();
     if (CMakeKeywords.operators.contains(operatorName) ) {
       holder.createInfoAnnotation(element, null)

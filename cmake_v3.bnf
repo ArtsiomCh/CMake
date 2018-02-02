@@ -40,14 +40,16 @@
 
  // Arguments
  arguments           ::= lpar ( argument | arguments )* rpar
- argument            ::=  bracket_argument | unquoted_argument_container | unquoted_legacy
+ argument       ::=  bracket_argument_container | unquoted_argument_container | quoted_argument_container
                          | bracket_comment |line_comment
-                         | cmake_property | cmake_operator | path_url
-                         | brace (quoted_argument | variables)* brace
-                         | variables | cmake_variable
+                         // fixme: Delete it
+                         | cmake_property | cmake_operator | path_url | unquoted_legacy
 
  unquoted_argument_container ::= unquoted_argument { methods=[getName setName getNameIdentifier] }
+ quoted_argument_container ::= brace quoted_argument ? brace
+ bracket_argument_container ::= bracket_argument
 
+                         // fixme: Delete it
  variables ::= var_ref_begin ( cmake_variable | variable_container | variables )+ var_ref_end
  variable_container ::= variable  { methods=[getReference] }
 

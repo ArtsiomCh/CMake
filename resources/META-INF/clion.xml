@@ -4,6 +4,6 @@
     <lang.syntaxHighlighterFactory key="CMake" implementationClass="com.cmakeplugin.CMakeSyntaxHighlighterFactory"/>
     <colorSettingsPage implementation="com.cmakeplugin.CMakeColorSettingsPage"/>
     -->
-    <annotator language="CMake" implementationClass="com.cmakeplugin.annotator.CMakeAnnotator"/>
+    <annotator language="CMake" implementationClass="com.cmakeplugin.annotator.CMakeCLionAnnotator"/>
   </extensions>
 </idea-plugin>
