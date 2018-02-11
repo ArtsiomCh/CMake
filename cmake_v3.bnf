@@ -17,30 +17,38 @@
   tokens = [
     unquoted_argument = 'regexp:(_|\p{Alpha})\w*'
     variable = 'regexp:(_|\p{Alpha})\w*'
-  ]
+
+ lpar ='('
+ rpar =')'
+   ]
 
  }
 
- file         ::= file_element* <<eof>>
- file_element ::= funmacro                    |
+ file         ::= file_element_outer* <<eof>>
+ private file_element_outer::= file_element
+   {recoverWhile=root_recover} private root_recover::=!(identifier|if|function|foreach|while|macro)
+   //
+ private file_element ::=
+                 (funmacro                    |
                   loop                        |
                   cond                        |
                   cmd                         |
                   line_comment                |
-                  bracket_comment
+                  bracket_comment)
 
- lpar ::='('
- rpar ::=')'
  brace::='"'
 
  // Rules
- meta compound_expr  ::= <<ebegin>> <<ebody>> <<eend>> { pin=1 }
- meta predicate_expr ::= <<pred>> <<pbody>>
- meta command_expr   ::= <<c>>  arguments
+ private meta compound_expr  ::= <<ebegin>> <<ebody>> <<eend>> { pin=1 }
+ private meta predicate_expr ::= <<pred>> <<pbody>> //{ pin=1 }
+ private meta command_expr   ::= <<c>> arguments
 
  // Arguments
- arguments           ::= lpar ( argument | arguments )* rpar
- argument       ::=  bracket_argument_container | unquoted_argument_container | quoted_argument_container
+ arguments::=  lpar arguments_inner rpar { pin=1 }
+ private arguments_inner::= ( argument | arguments )*
+   { recoverWhile=argument_recover } private argument_recover::=!(rpar)
+
+ private argument       ::=  bracket_argument_container | unquoted_argument_container | quoted_argument_container
                          | bracket_comment |line_comment
                          // fixme: Delete it
                          | cmake_property | cmake_operator | path_url | unquoted_legacy
@@ -58,25 +66,35 @@
  command_name        ::= cmake_command | identifier
 
  // Function/macro definition need to be separated
- funmacro  ::= <<compound_expr fbegin body fend>> | <<compound_expr mbegin body mend>>
+ funmacro  ::= <<compound_expr fbegin funbody fend>> | <<compound_expr mbegin macrobody mend>>
  fbegin ::= <<command_expr (function)>>
+ funbody::=body
+   { recoverWhile=funbody_recover } private funbody_recover::=!(endfunction)
  fend   ::= <<command_expr (endfunction)>>
  mbegin ::= <<command_expr (macro)>>
+ macrobody::=body
+   { recoverWhile=macrobody_recover } private macrobody_recover::=!(endmacro)
  mend   ::= <<command_expr (endmacro)>>
 
  // Loops and conditions can nest
  // Loop block
- loop       ::= <<compound_expr forbegin body forend>> | <<compound_expr whilebegin body whileend>>
+ loop       ::= <<compound_expr forbegin forbody forend>> | <<compound_expr whilebegin whilebody whileend>>
  forbegin   ::= <<command_expr ( foreach )>>
+ forbody::=body
+   { recoverWhile=forbody_recover } private forbody_recover::=!(endforeach)
  forend     ::= <<command_expr ( endforeach )>>
  whilebegin ::= <<command_expr ( while )>>
+ whilebody::=body
+   { recoverWhile=whilebody_recover } private whilebody_recover::=!(endwhile)
  whileend   ::= <<command_expr ( endwhile )>>
 
  // Condition block
- cond             ::=<<predicate_expr (if_expr) body>>
-                     <<predicate_expr (elseif_expr) body>>*
-                     <<predicate_expr (else_expr) body>>?
-                     endif_expr
+ cond             ::=<<predicate_expr (if_expr) ifbody>>
+                     <<predicate_expr (elseif_expr) ifbody>>*
+                     <<predicate_expr (else_expr) ifbody>>?
+                     endif_expr {pin=1}
+ ifbody::= body
+    { recoverWhile=ifbody_recover } private ifbody_recover::=!(elseif|else|endif)
 
  if_expr          ::= <<command_expr (if)>>
  elseif_expr      ::= <<command_expr (elseif)>>
@@ -85,4 +103,5 @@
 
  // Body
  // Allow nested functions
- body                ::=  file_element+
+ body                ::=  file_element*
+

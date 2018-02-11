@@ -1,0 +1,44 @@
+{
+  tokens=[
+    LP='('
+    RP=')'
+
+    space='regexp:\s+'
+    comment='regexp://.*'
+    number='regexp:\d+(\.\d*)?'
+//    id='regexp:\p{Alpha}\w*'
+    cmd_name='cmd1'
+    arg1='arg1'
+    if='if'
+    endif='endif'
+
+//    string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+//    newline='regexp:\n+'
+
+  ]
+}
+
+root ::= root_item * <<eof>>
+private root_item ::= root_item_inner
+        {recoverWhile=root_recover} private root_recover::=!(cmd_name|if)
+private root_item_inner ::= cmd | cond
+
+private meta command_expr   ::= <<c>> args //{pin=1}
+
+cmd::= <<command_expr cmd_name>>
+args::=LP args_inner RP {pin=1 }
+args_inner::= (arg|args)* {recoverWhile=RP_recover} private RP_recover::=!(RP)
+arg::= number
+
+private meta predicate_expr ::= <<pred>> <<pbody>> //{pin=1}
+
+cond ::=<<predicate_expr (ife) body>> endife {pin=1 }
+
+endife::=  <<command_expr endif>>
+ife::= <<command_expr if>> //
+body::= root_item_inner*  {recoverWhile=if_recover} private if_recover::=!(endif)
+/*
+cmd1(007) cmd1(009 001() ) cmd1(007)
+if() cmd1()  cmd1(00) cmd1()
+endif() cmd1(007)//) endif()
+*/
