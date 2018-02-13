@@ -2,6 +2,7 @@ package com.cmakeplugin.annotator;
 
 //import com.cmakeplugin.CMakeSyntaxHighlighter;
 
+import com.cmakeplugin.utils.CMakeStringUtils;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
@@ -50,22 +51,16 @@ public class CMakeAnnotatorUtils {
     return false;
   }
 
-  private static List<TextRange> outerVarRefsList;
-  private static List<TextRange> innerVarsList;
-  private static List<TextRange> innerENVvarsList;
-
   protected static void annotateVarReferences(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String argtext = element.getText();
     int pos = element.getTextRange().getStartOffset();
 
-    parseVarsIntoLists(argtext);
-
-    for ( TextRange outerVarRange: outerVarRefsList) {
+    for ( TextRange outerVarRange: CMakeStringUtils.getOuterVarRefs(argtext)) {
       holder.createInfoAnnotation( outerVarRange.shiftRight(pos), null)
               .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
 //              .setTextAttributes(CMakeSyntaxHighlighter.VARIABLE);
     }
-    for ( TextRange innerVarRange: innerVarsList ) {
+    for ( TextRange innerVarRange: CMakeStringUtils.getInnerVars(argtext) ) {
       String innerVar = argtext.substring(innerVarRange.getStartOffset(),innerVarRange.getEndOffset());
 
 //      markVarInit(innerVar, element, holder);
@@ -79,7 +74,7 @@ public class CMakeAnnotatorUtils {
         }
       }
     }
-    for ( TextRange innerVarRange: innerENVvarsList ) {
+    for ( TextRange innerVarRange: CMakeStringUtils.getInnerEnvVars(argtext) ) {
       for (String varRegexp: CMakeKeywords.variables_ENV ) {
         if (argtext.substring(innerVarRange.getStartOffset(),innerVarRange.getEndOffset())
                 .matches(varRegexp)) {
@@ -102,44 +97,6 @@ public class CMakeAnnotatorUtils {
 //      }
 //    }
 //  }
-/** Fill outerVarRefsList, innerVarsList and innerENVvarsList with indexes
- *  of outer and inner Variables inside given text
-   * @param   text   the string to search in.
-*/
-// TODO Should be more elegant way to implement that.
-  private static void parseVarsIntoLists(String text) {
-    outerVarRefsList = new ArrayList<>();
-    innerVarsList = new ArrayList<>();
-    innerENVvarsList = new ArrayList<>();
-    int varLevel = 0, maxVarLevel = Integer.MIN_VALUE;
-    int outerVarBegin = 0, innerVarBegin = 0;
-    Pattern pattern = Pattern.compile("(\\$(ENV)?|^ENV)\\{|}");
-    Matcher matcher = pattern.matcher(text);
-    while (matcher.find()) {
-      if ( matcher.group().equals("${") || matcher.group().equals("$ENV{")
-              || matcher.group().equals("ENV{") ) {
-        if (varLevel < 1) {
-          varLevel = 0;
-          outerVarBegin=matcher.start();
-        }
-        maxVarLevel = ++varLevel;
-        innerVarBegin = matcher.end();
-      } else if ( matcher.group().equals("}") ) {
-        if (varLevel == maxVarLevel) {
-          if (text.substring(innerVarBegin-2,innerVarBegin).equals("${")) {
-            innerVarsList.add(new TextRange(innerVarBegin, matcher.start()));
-          } else {
-            innerENVvarsList.add(new TextRange(innerVarBegin, matcher.start()));
-          }
-          maxVarLevel = Integer.MIN_VALUE;
-        }
-        varLevel--;
-      }
-      if (varLevel == 0) {
-        outerVarRefsList.add(new TextRange(outerVarBegin, matcher.end()));
-      }
-    }
-  }
 
   protected static void annotateCommand(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String commandName = element.getText().toLowerCase();
