@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CMakeStringUtils {
-  private static final String CMAKE_ESCAPE_SEQUENCE="(\\\\[^A-Za-z0-9;]|\\\\t|\\\\r|\\\\n|\\\\)";
+public class CMakeVariablesUtil {
+  private static final String CMAKE_ESCAPE_SEQUENCE="(\\\\[^A-Za-z0-9;]|\\\\t|\\\\r|\\\\n|\\\\;)";
   private static final String CMAKE_VAR_NAME="([A-Za-z0-9/_.+-]|"+CMAKE_ESCAPE_SEQUENCE+")+";
-  private static final String CMAKE_VAR_BEGIN="(\\$\\{)";
+  private static final String CMAKE_VAR_BEGIN="((^\\$|(?<=[^\\\\])\\$)\\{)"; // Escaped \$ excluded
   private static final String CMAKE_VAR_END="}";
   private static final String CMAKE_ENV_VAR_BEGIN="(^ENV\\{)";
-  private static final String CMAKE_ENV_VAR_REF_BEGIN="(\\$ENV\\{)";
+  private static final String CMAKE_ENV_VAR_REF_BEGIN="((^\\$|(?<=[^\\\\])\\$)ENV\\{)"; // Escaped \$ excluded
 
   /**
    * Parse giving text to find outer variables boundaries
@@ -73,7 +73,7 @@ public class CMakeStringUtils {
   /**
    * Parse giving text to find inner ENV variables boundaries
    * @param text
-   * @return list of inner variables boundaries NOT including $ENV{ or ENV{} and }
+   * @return list of inner variables boundaries NOT including $ENV{ or ENV{ and }
    */
   public static List<TextRange> getInnerEnvVars(String text) {
     List<TextRange> result = new ArrayList<>();
