@@ -85,9 +85,18 @@ final class CMakeKeywords {
 
 //CMAKE_Operators
     Collections.addAll(operators,
-"ABSOLUTE","AND","BOOL","CACHE","COMMAND","DEFINED","DOC","EQUAL","EXISTS","EXT","FALSE","GREATER","INTERNAL","LESS","MATCHES","NAME","NAMES","NAME_WE","NOT","OFF","ON","OR","PATH","PATHS","PROGRAM","STREQUAL","STRGREATER","STRING","STRLESS","TRUE",
-// My addition
-"WRITE","REMOVE","REPLACE","APPEND"
+"ABSOLUTE","AND","BOOL","CACHE","COMMAND","DEFINED","DOC","EQUAL","EXISTS","EXT","FALSE","GREATER","INTERNAL","LESS","MATCHES","NAME","NAMES","NAME_WE","NOT","OFF","ON","OR","PATH","PATHS","PROGRAM","STREQUAL","STRGREATER","STRING","STRLESS","TRUE"
+// string command https://cmake.org/cmake/help/latest/command/string.html
+            ,"FIND","REVERSE","REPLACE"
+            ,"REGEX","MATCH","MATCHALL","REPLACE"
+            ,"APPEND","PREPEND","CONCAT","TOLOWER","TOUPPER","LENGTH","SUBSTRING","STRIP","GENEX_STRIP"
+            ,"COMPARE","LESS","GREATER","EQUAL","NOTEQUAL","LESS_EQUAL","GREATER_EQUAL"
+            ,"MD5","SHA1","SHA224","SHA256","SHA384","SHA512","SHA3_224","SHA3_256","SHA3_384","SHA3_512"
+            ,"ASCII","CONFIGURE","RANDOM","TIMESTAMP","MAKE_C_IDENTIFIER","UUID"
+//list command https://cmake.org/cmake/help/latest/command/list.html
+            ,"LENGTH","GET","APPEND","FILTER","FIND","INSERT","REMOVE_AT","REMOVE_ITEM","REMOVE_DUPLICATES","REVERSE","SORT"
+//file command https://cmake.org/cmake/help/latest/command/file.html
+            ,"WRITE","APPEND","READ","STRINGS","GLOB","GLOB_RECURSE","RENAME","REMOVE","REMOVE_RECURSE","MAKE_DIRECTORY","RELATIVE_PATH","TO_CMAKE_PATH","TO_NATIVE_PATH","DOWNLOAD","UPLOAD","TIMESTAMP","COPY","INSTALL","LOCK"
     );
   }
 }
