@@ -2,7 +2,8 @@ package com.cmakeplugin.annotator;
 
 //import com.cmakeplugin.CMakeSyntaxHighlighter;
 
-import com.cmakeplugin.utils.CMakeStringUtils;
+import static com.cmakeplugin.utils.CMakePSITreeSearch.*;
+import com.cmakeplugin.utils.CMakeVariablesUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
@@ -10,17 +11,14 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 //import static CMakeKeywords.*;
 
 public class CMakeAnnotatorUtils {
 
   protected static boolean annotateLegacy(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-    if (element.getText().matches("(.*[^\\\\]\"(.*[^\\\\])?\".*)|(.*\\$\\(.*\\).*)")) {
+    if (element.getText().matches("(.*[^\\\\]\"([^\"]*[^\\\\])?\".*)+|(.*\\$\\(.*\\).*)")) { //fixme
       holder.createInfoAnnotation(element, null)
               .setTextAttributes(DefaultLanguageHighlighterColors.DOC_COMMENT_TAG);
       return true;
@@ -55,26 +53,46 @@ public class CMakeAnnotatorUtils {
     String argtext = element.getText();
     int pos = element.getTextRange().getStartOffset();
 
-    for ( TextRange outerVarRange: CMakeStringUtils.getOuterVarRefs(argtext)) {
+    // Highlight Outer variables.
+    for ( TextRange outerVarRange: CMakeVariablesUtil.getOuterVarRefs(argtext)) {
       holder.createInfoAnnotation( outerVarRange.shiftRight(pos), null)
               .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
 //              .setTextAttributes(CMakeSyntaxHighlighter.VARIABLE);
     }
-    for ( TextRange innerVarRange: CMakeStringUtils.getInnerVars(argtext) ) {
-      String innerVar = argtext.substring(innerVarRange.getStartOffset(),innerVarRange.getEndOffset());
+    // Highlight Inner variables.
+    outerloop:
+    for ( TextRange innerVarRange: CMakeVariablesUtil.getInnerVars(argtext) ) {
+      String innerVarName = argtext.substring(innerVarRange.getStartOffset(),innerVarRange.getEndOffset());
 
-//      markVarInit(innerVar, element, holder);
-
+      // Highlight Inner CMake predefined variables
       for (String varRegexp: CMakeKeywords.variables_All ) {
-        if ( innerVar.matches(varRegexp)) {
+        if ( innerVarName.matches(varRegexp)) {
           holder.createInfoAnnotation(innerVarRange.shiftRight(pos), null)
                   .setTextAttributes(DefaultLanguageHighlighterColors.CONSTANT);
 //                  .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_VARIABLE);
-          break;
+          continue outerloop;
         }
       }
+
+      // Highlight Inner variable definition.
+      List<PsiElement> elementVarDefinitions = findVariableDefinitions(element, innerVarName);
+      if (!(elementVarDefinitions.isEmpty())) {
+        for (PsiElement elementVarDefinition : elementVarDefinitions) {
+          if (element.getContainingFile() == elementVarDefinition.getContainingFile()) {
+            holder.createInfoAnnotation(elementVarDefinition, null)
+                    .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
+            //                  .setTextAttributes(CMakeSyntaxHighlighter.VARIABLE);
+          }
+        }
+      } else {
+// TODO Move it to Inspections? Too many false negative.
+          holder.createWeakWarningAnnotation(innerVarRange.shiftRight(pos),"Possibly not defined Variable: "+ innerVarName)
+                  .setHighlightType(ProblemHighlightType.WEAK_WARNING);
+      }
     }
-    for ( TextRange innerVarRange: CMakeStringUtils.getInnerEnvVars(argtext) ) {
+
+    // Highlight ENV variables
+    for ( TextRange innerVarRange: CMakeVariablesUtil.getInnerEnvVars(argtext) ) {
       for (String varRegexp: CMakeKeywords.variables_ENV ) {
         if (argtext.substring(innerVarRange.getStartOffset(),innerVarRange.getEndOffset())
                 .matches(varRegexp)) {
@@ -86,17 +104,6 @@ public class CMakeAnnotatorUtils {
       }
     }
   }
-
-//  private void markVarInit(String varName, @NotNull PsiElement elementVarHolder, @NotNull AnnotationHolder holder) {
-//    for (String varName : allVarsList) {
-//      if (element.getText().equals(varName)) {
-//        holder.createInfoAnnotation(element, null)
-//                .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
-////                  .setTextAttributes(CMakeSyntaxHighlighter.VARIABLE);
-//        return true;
-//      }
-//    }
-//  }
 
   protected static void annotateCommand(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String commandName = element.getText().toLowerCase();

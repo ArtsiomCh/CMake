@@ -15,6 +15,10 @@ public class CMakeVariablesUtil {
   private static final String CMAKE_ENV_VAR_BEGIN="(^ENV\\{)";
   private static final String CMAKE_ENV_VAR_REF_BEGIN="((^\\$|(?<=[^\\\\])\\$)ENV\\{)"; // Escaped \$ excluded
 
+  public static boolean isPossibleVarDefinition(String text) {
+    return text.matches(CMAKE_VAR_NAME);
+  }
+
   /**
    * Parse giving text to find outer variables boundaries
    * @param text

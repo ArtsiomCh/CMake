@@ -26,13 +26,13 @@ public class CMakeCLionAnnotator implements Annotator {
         } else
           // Annotate Unquoted argument
           if ( !(  annotateLegacy(cmakeLiteral, holder)
-                  || annotateProperty(cmakeLiteral, holder)
                   || annotateVariable(cmakeLiteral, holder)
+                  || annotateProperty(cmakeLiteral, holder)
                   || annotateOperator(cmakeLiteral, holder) )) {
             annotateVarReferences(cmakeLiteral, holder);
             if (!(annotatePathURL(cmakeLiteral, holder))) {
-              holder.createInfoAnnotation(cmakeLiteral, null)
-                      .setTextAttributes(DefaultLanguageHighlighterColors.IDENTIFIER);
+//              holder.createInfoAnnotation(cmakeLiteral, null)
+//                      .setTextAttributes(DefaultLanguageHighlighterColors.IDENTIFIER);
             }
           }
       }

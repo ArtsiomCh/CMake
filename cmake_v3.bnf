@@ -41,20 +41,21 @@
  // Rules
  private meta compound_expr  ::= <<ebegin>> <<ebody>> <<eend>> { pin=1 }
  private meta predicate_expr ::= <<pred>> <<pbody>> //{ pin=1 }
- private meta command_expr   ::= <<c>> arguments
+ private meta command_expr   ::= <<c>> arguments { pin=1 }
 
  // Arguments
  arguments::=  lpar arguments_inner rpar { pin=1 }
  private arguments_inner::= ( argument | arguments )*
    { recoverWhile=argument_recover } private argument_recover::=!(rpar)
 
- private argument       ::=  bracket_argument_container | unquoted_argument_container | quoted_argument_container
+ private argument       ::=  bracket_argument_container | unquoted_argument_container
+                         | brace quoted_argument_container? brace
                          | bracket_comment |line_comment
                          // fixme: Delete it
                          | cmake_property | cmake_operator | path_url | unquoted_legacy
 
- unquoted_argument_container ::= unquoted_argument { methods=[getName setName getNameIdentifier] }
- quoted_argument_container ::= brace quoted_argument ? brace
+ unquoted_argument_container ::= unquoted_argument { methods=[getName setName getNameIdentifier getReferences] }
+ quoted_argument_container ::=  quoted_argument { methods=[getReferences] }
  bracket_argument_container ::= bracket_argument
 
                          // fixme: Delete it
@@ -103,5 +104,5 @@
 
  // Body
  // Allow nested functions
- body                ::=  file_element*
+ private body                ::=  file_element*
 

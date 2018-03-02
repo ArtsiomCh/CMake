@@ -9,6 +9,9 @@ import org.jetbrains.annotations.Nullable;
 public class CMakeRefactoringSupportProvider extends RefactoringSupportProvider {
     @Override
     public boolean isMemberInplaceRenameAvailable(@NotNull PsiElement element, @Nullable PsiElement context) {
-    return element instanceof CMakeUnquotedArgumentContainer;
+
+    return element instanceof CMakeUnquotedArgumentContainer
+//            && element.getReference()!=null
+            ;  //fixme
   }
 }
