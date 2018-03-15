@@ -19,6 +19,7 @@ final class CMakeKeywords {
   static final Set<String> properties_All = new HashSet<>();
   static final Set<String> properties_Deprecated = new HashSet<>();
   static final Set<String> operators = new HashSet<>();
+  static final Set<String> boolValues = new HashSet<>();
 
   static {
 // https://cmake.org/cmake/help/latest/manual/cmake-commands.7.html
@@ -87,7 +88,9 @@ final class CMakeKeywords {
 
 //CMAKE_Operators
     Collections.addAll(operators,
-"ABSOLUTE","AND","BOOL","CACHE","COMMAND","DEFINED","DOC","EQUAL","EXISTS","EXT","FALSE","GREATER","INTERNAL","LESS","MATCHES","NAME","NAMES","NAME_WE","NOT","OFF","ON","OR","PATH","PATHS","PROGRAM","STREQUAL","STRGREATER","STRING","STRLESS","TRUE"
+"ABSOLUTE","BOOL","CACHE","DOC","EXT","INTERNAL","MATCHES","NAME","NAMES","NAME_WE","PATH","PATHS","PROGRAM","STRING"
+// IF expressions tests https://cmake.org/cmake/help/latest/command/if.html
+            ,"EXISTS","COMMAND","DEFINED","EQUAL","LESS","LESS_EQUAL","GREATER","GREATER_EQUAL","STREQUAL","STRLESS","STRLESS_EQUAL","STRGREATER","STRGREATER_EQUAL","VERSION_EQUAL","VERSION_LESS","VERSION_LESS_EQUAL","VERSION_GREATER","VERSION_GREATER_EQUAL","MATCHES","NOT","AND","OR"
 // string command https://cmake.org/cmake/help/latest/command/string.html
             ,"FIND","REVERSE","REPLACE"
             ,"REGEX","MATCH","MATCHALL","REPLACE"
@@ -99,6 +102,14 @@ final class CMakeKeywords {
             ,"LENGTH","GET","APPEND","FILTER","FIND","INSERT","REMOVE_AT","REMOVE_ITEM","REMOVE_DUPLICATES","REVERSE","SORT"
 //file command https://cmake.org/cmake/help/latest/command/file.html
             ,"WRITE","APPEND","READ","STRINGS","GLOB","GLOB_RECURSE","RENAME","REMOVE","REMOVE_RECURSE","MAKE_DIRECTORY","RELATIVE_PATH","TO_CMAKE_PATH","TO_NATIVE_PATH","DOWNLOAD","UPLOAD","TIMESTAMP","COPY","INSTALL","LOCK"
+    );
+
+//Boolean values in CMake https://cmake.org/Wiki/CMake:VariablesListsStrings
+    Collections.addAll(boolValues,
+// false
+            "NO","N","OFF","FALSE","NOTFOUND", varRegexp+"-NOTFOUND",
+//true
+            "TRUE","ON","Y","YE","YES"
     );
   }
 }

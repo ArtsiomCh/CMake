@@ -147,7 +147,16 @@ public class CMakeAnnotatorUtils {
               .setTextAttributes(DefaultLanguageHighlighterColors.METADATA);
 //              .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_OPERATOR);
       return true;
-    } else return false;
+    }
+    for (String boolValue: CMakeKeywords.boolValues){
+      if (operatorName.toUpperCase().matches(boolValue)){
+        holder.createInfoAnnotation(element, null)
+                .setTextAttributes(DefaultLanguageHighlighterColors.NUMBER);
+//                .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_PROPERTY);
+        return true;
+      }
+    }
+    return false;
   }
 
 }
