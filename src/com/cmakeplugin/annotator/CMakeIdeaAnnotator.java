@@ -17,21 +17,21 @@ public class CMakeIdeaAnnotator implements Annotator {
       annotateCommand(element, holder);
     } else if (element instanceof CMakeQuotedArgumentContainer) {
       // Annotate Quoted argument
-//      assert element.getFirstChild() instanceof CMakeBrace && element.getLastChild() instanceof CMakeBrace;
-      PsiElement quotedArgument = element.getFirstChild();//.getNextSibling();
-      if (quotedArgument.getNode().getElementType().getClass().isInstance(CMakeTypes.QUOTED_ARGUMENT))
-        annotateVarReferences(quotedArgument, holder);
+      assert element.getPrevSibling() instanceof CMakeBrace && element.getNextSibling() instanceof CMakeBrace;
+      annotateVarReferences(element, holder);
     } else if (element instanceof CMakeUnquotedArgumentContainer) {
       // Annotate Unquoted argument
-      PsiElement unquotedArgument = element.getFirstChild();
-      if (unquotedArgument!=null && unquotedArgument.getNode().getElementType().getClass().isInstance(CMakeTypes.UNQUOTED_ARGUMENT)) {
-        if ( !(  annotateLegacy(unquotedArgument, holder)
-                || annotateVariable(unquotedArgument, holder)
-                || annotateProperty(unquotedArgument, holder)
-                || annotateOperator(unquotedArgument, holder) )) {
-          annotateVarReferences(unquotedArgument, holder);
-          annotatePathURL(unquotedArgument, holder);
+        if ( !(  annotateLegacy(element, holder)
+                || annotateVariable(element, holder)
+                || annotateProperty(element, holder)
+                || annotateOperator(element, holder) )) {
+          annotateVarReferences(element, holder);
+          annotatePathURL(element, holder);
         }
+    } else if (element instanceof CMakeVariableDeclaration) {
+      // Annotate Variable Declaration
+      if (!annotateVariable(element, holder)){
+        annotateVarDelcaration(element, holder);
       }
     }
   }

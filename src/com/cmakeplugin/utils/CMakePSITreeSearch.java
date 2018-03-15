@@ -2,19 +2,27 @@ package com.cmakeplugin.utils;
 
 import com.cmakeplugin.CMakeFileType;
 import com.cmakeplugin.psi.*;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static com.cmakeplugin.psi.CMakePsiElementFactory.createVariableDeclarationFromText;
+import static com.cmakeplugin.utils.CMakePlatformIndependentProxy.*;
 
 public class CMakePSITreeSearch {
 
@@ -32,6 +40,59 @@ public class CMakePSITreeSearch {
     return result;
   }
 
+  @NotNull
+  private static List<PsiElement> findVarDefsAtDirScope(@NotNull PsiElement varReference, String varName) {
+    Project project = varReference.getProject();
+    List<PsiElement> result = new ArrayList<>();
+    Collection<VirtualFile> virtualFiles =
+            FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, CMakeFileType.INSTANCE,
+                    GlobalSearchScope.allScope(project));
+    for (VirtualFile virtualFile : virtualFiles) {
+      CMakeFile cmakeFile = (CMakeFile) PsiManager.getInstance(project).findFile(virtualFile);
+      if (cmakeFile != null // && varReference.getContainingFile() != cmakeFile) // Exclude current file
+             // && cmakeFile.getContainingDirectory()==varReference.getContainingFile().getContainingDirectory()// Directory Scope
+         ) {
+        for (CMakeUnquotedArgumentContainer varDefinition :
+                findChildrenOfTypeWithText(cmakeFile, varName, CMakeUnquotedArgumentContainer.class)) {
+// && PsiTreeUtil.getParentOfType(varDefinition, CMakeFunmacro.class) == null) { // exclude Function's scopes
+          if (!isVarInsideIFWHILE(PLATFORM.IDEA, varDefinition)) {
+
+            ApplicationManager.getApplication().invokeLater(() -> {
+              WriteCommandAction.runWriteCommandAction(project, () -> {
+                varDefinition.replace(createVariableDeclarationFromText(project, varName));
+              });
+            });
+
+          }
+        }
+        result.addAll( findChildrenOfTypeWithText(cmakeFile, varName, CMakeVariableDeclaration.class) );
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Copy of {@link PsiTreeUtil#findChildrenOfAnyType(PsiElement, Class[])}
+   */
+  @NotNull
+  private static <T extends PsiElement> Collection<T> findChildrenOfTypeWithText(@Nullable final PsiElement element,
+                                                                                 @NotNull final String text,
+                                                                                 @NotNull final Class<? extends T> aClass) {
+    if (element == null) return ContainerUtil.emptyList();
+    PsiElementProcessor.CollectElements<T> processor = new PsiElementProcessor.CollectElements<T>() {
+      @Override
+      public boolean execute(@NotNull T each) {
+        if (each == element) return true;
+        if ( aClass.isInstance(each) && text.equals(each.getText()) ) {
+          return super.execute(each);
+        }
+        return true;
+      }
+    };
+    PsiTreeUtil.processElements(element, processor);
+    return processor.getCollection();
+  }
+
 /*  @NotNull
   private static List<PsiElement> findVarDefsFileScope(@NotNull PsiElement o, String name) {
     List<PsiElement> result = new ArrayList<>();
@@ -46,27 +107,6 @@ public class CMakePSITreeSearch {
     }
    return result;
   }*/
-
-  @NotNull
-  private static List<PsiElement> findVarDefsAtDirScope(@NotNull PsiElement varElement, String varName) {
-    Project project = varElement.getProject();
-    List<PsiElement> result = new ArrayList<>();
-    Collection<VirtualFile> virtualFiles =
-            FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, CMakeFileType.INSTANCE,
-                    GlobalSearchScope.allScope(project)); // fixme: Directory Scope needed
-    for (VirtualFile virtualFile : virtualFiles) {
-      CMakeFile cmakeFile = (CMakeFile) PsiManager.getInstance(project).findFile(virtualFile);
-      if (cmakeFile != null) {// && varElement.getContainingFile() != cmakeFile) { // Exclude current file
-        Collection<PsiElement> unquotedArgs = PsiTreeUtil.findChildrenOfType(cmakeFile, CMakeUnquotedArgumentContainer.class);
-        for (PsiElement unquotedArg : unquotedArgs) {
-          if (varName.equals(unquotedArg.getText())) {// && PsiTreeUtil.getParentOfType(unquotedArg, CMakeFunmacro.class) == null) { // exclude Function's scopes
-            result.add(unquotedArg);
-          }
-        }
-      }
-    }
-    return result;
-  }
 /*
   private static boolean isSameIfScope(PsiElement declarationIfBody, PsiElement referenceIfBody){
     while (referenceIfBody != null) {

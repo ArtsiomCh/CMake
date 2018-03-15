@@ -5,15 +5,11 @@ import com.intellij.lang.HelpID;
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;
-import com.intellij.psi.ElementDescriptionUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.usageView.UsageViewLongNameLocation;
-import com.intellij.usageView.UsageViewNodeTextLocation;
-import com.intellij.usageView.UsageViewTypeLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import static com.cmakeplugin.utils.CMakeVariablesUtil.*;
+import static com.cmakeplugin.utils.CMakeVarStringUtil.*;
 
 public class CMakeFindUsagesProvider implements FindUsagesProvider {
   private static final DefaultWordsScanner WORDS_SCANNER =
@@ -42,7 +38,7 @@ public class CMakeFindUsagesProvider implements FindUsagesProvider {
   @NotNull
   @Override
   public String getType(PsiElement psiElement) {
-    return "test Type";//ElementDescriptionUtil.getElementDescription(psiElement, UsageViewTypeLocation.INSTANCE);
+    return "Variable";//ElementDescriptionUtil.getElementDescription(psiElement, UsageViewTypeLocation.INSTANCE);
   }
 
   @NotNull

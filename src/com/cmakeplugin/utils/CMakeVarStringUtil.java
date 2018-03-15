@@ -1,13 +1,14 @@
 package com.cmakeplugin.utils;
 
 import com.intellij.openapi.util.TextRange;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CMakeVariablesUtil {
+public class CMakeVarStringUtil {
   private static final String CMAKE_ESCAPE_SEQUENCE="(\\\\[^A-Za-z0-9;]|\\\\t|\\\\r|\\\\n|\\\\;)";
   private static final String CMAKE_VAR_NAME="([A-Za-z0-9/_.+-]|"+CMAKE_ESCAPE_SEQUENCE+")+";
   private static final String CMAKE_VAR_BEGIN="((^\\$|(?<=[^\\\\])\\$)\\{)"; // Escaped \$ excluded
@@ -25,6 +26,7 @@ public class CMakeVariablesUtil {
    * @return list of outer variables boundaries including ${ or $ENV{ or ENV{ and }
    */
 // TODO Should be more elegant way to implement that.
+  @NotNull
   public static List<TextRange> getOuterVarRefs(String text) {
     List<TextRange> result = new ArrayList<>();
     int varLevel = 0, maxVarLevel = Integer.MIN_VALUE;
@@ -64,13 +66,14 @@ public class CMakeVariablesUtil {
    * @param text
    * @return list of inner variables boundaries NOT including ${ and }
    */
+  @NotNull
   public static List<TextRange> getInnerVars(String text) {
     List<TextRange> result = new ArrayList<>();
     Pattern pattern = Pattern.compile("(?<="+ CMAKE_VAR_BEGIN +")"+ CMAKE_VAR_NAME +"(?="+CMAKE_VAR_END+")");
     Matcher matcher = pattern.matcher(text);
     while (matcher.find()) {
       result.add(new TextRange(matcher.start(), matcher.end()));
-      }
+    }
     return result;
   }
 
@@ -79,6 +82,7 @@ public class CMakeVariablesUtil {
    * @param text
    * @return list of inner variables boundaries NOT including $ENV{ or ENV{ and }
    */
+  @NotNull
   public static List<TextRange> getInnerEnvVars(String text) {
     List<TextRange> result = new ArrayList<>();
     Pattern pattern = Pattern.compile(

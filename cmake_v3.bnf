@@ -8,11 +8,14 @@
   psiPackage="com.cmakeplugin.psi"
   psiImplPackage="com.cmakeplugin.psi.impl"
   psiImplUtilClass="com.cmakeplugin.psi.impl.CMakePsiImplUtil"
-  implements("unquoted_argument_container")="com.intellij.psi.PsiNameIdentifierOwner"
 
   elementTypeHolderClass="com.cmakeplugin.psi.CMakeTypes"
   elementTypeClass="com.cmakeplugin.psi.CMakeElementType"
   tokenTypeClass="com.cmakeplugin.psi.CMakeTokenType"
+
+//  implements("unquoted_argument_container")="com.intellij.psi.PsiNameIdentifierOwner"
+  implements("variable_declaration")="com.intellij.psi.PsiNameIdentifierOwner"
+  methods(".*_container")=[getReferences]
 
   tokens = [
     unquoted_argument = 'regexp:(_|\p{Alpha})\w*'
@@ -24,7 +27,7 @@
 
  }
 
- file         ::= file_element_outer* <<eof>>
+ file         ::= file_element_outer* <<eof>> { pin=1 }
  private file_element_outer::= file_element
    {recoverWhile=root_recover} private root_recover::=!(identifier|if|function|foreach|while|macro)
    //
@@ -32,6 +35,7 @@
                  (funmacro                    |
                   loop                        |
                   cond                        |
+                  fake_cmd_for_var_delaration |
                   cmd                         |
                   line_comment                |
                   bracket_comment)
@@ -48,19 +52,21 @@
  private arguments_inner::= ( argument | arguments )*
    { recoverWhile=argument_recover } private argument_recover::=!(rpar)
 
- private argument       ::=  bracket_argument_container | unquoted_argument_container
+ private argument       ::=  bracket_argument | bracket_comment |line_comment
+                         | unquoted_argument_container | variable_declaration
                          | brace quoted_argument_container? brace
-                         | bracket_comment |line_comment
                          // fixme: Delete it
                          | cmake_property | cmake_operator | path_url | unquoted_legacy
 
- unquoted_argument_container ::= unquoted_argument { methods=[getName setName getNameIdentifier getReferences] }
- quoted_argument_container ::=  quoted_argument { methods=[getReferences] }
- bracket_argument_container ::= bracket_argument
+ unquoted_argument_container ::= unquoted_argument //{ methods=[getName setName getNameIdentifier] }
+ variable_declaration ::= unquoted_argument { methods=[getName setName getNameIdentifier getPresentation] }
+ quoted_argument_container ::=  quoted_argument
 
+// dirty hack to explicitly create variable_declaration element at CMakePsiElementFactory.createVariableDeclarationFromText()
+fake_cmd_for_var_delaration ::= "FAKE_COMMAND_NAME_FOR_VAR_DECLARATION_CREATION_1234567890" lpar variable_declaration rpar
                          // fixme: Delete it
  variables ::= var_ref_begin ( cmake_variable | variable_container | variables )+ var_ref_end
- variable_container ::= variable  { methods=[getReference] }
+ variable_container ::= variable  //{ methods=[getReference] }
 
 // Single command invocation
  cmd                 ::=  <<command_expr command_name>>
