@@ -51,10 +51,10 @@ public class CMakePsiImplUtil {
         PsiElement argumentsElement = PsiTreeUtil.getParentOfType(o, CMakeArguments.class);
         Document document =  o.getContainingFile().getViewProvider().getDocument();
         return (argumentsElement!=null && argumentsElement.getParent()!=null && document!=null)
-                ? String.format("%s:%4d  %s",
+                ? String.format("%20.20s:%4d  %s",
                                 o.getContainingFile().getName(),
                                 document.getLineNumber(o.getTextOffset()) + 1,
-                                argumentsElement.getParent().getText() )
+                                argumentsElement.getParent().getText().replaceAll(" {2,}"," ") )
                 : o.getText();
       }
 
