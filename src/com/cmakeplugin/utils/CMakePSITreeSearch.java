@@ -28,20 +28,12 @@ public class CMakePSITreeSearch {
 
   /**
    * looking ANY definitions of Variable in Directory scope.
-   * @param o PsiElement to start from
-   * @param name Variable name to looking for
+   * @param varReference PsiElement to start from
+   * @param varName Variable name to looking for
    * @return List of PsiElements with Variable definition or empty List
    */
   @NotNull
-  public static List<PsiElement> findVariableDefinitions(@NotNull PsiElement o, String name) {
-    List<PsiElement> result = //findVarDefsFileScope(o, name);
-//    result.addAll
-            ( findVarDefsAtDirScope(o, name) );
-    return result;
-  }
-
-  @NotNull
-  private static List<PsiElement> findVarDefsAtDirScope(@NotNull PsiElement varReference, String varName) {
+  public static List<PsiElement> findVariableDefinitions(@NotNull PsiElement varReference, String varName) {
     Project project = varReference.getProject();
     List<PsiElement> result = new ArrayList<>();
     Collection<VirtualFile> virtualFiles =
