@@ -1,7 +1,6 @@
 package com.cmakeplugin;
 
 import com.cmakeplugin.psi.CMakeUnquotedArgumentContainer;
-import com.cmakeplugin.psi.CMakeVariableDeclaration;
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;

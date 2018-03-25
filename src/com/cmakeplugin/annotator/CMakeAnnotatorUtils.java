@@ -52,13 +52,6 @@ class CMakeAnnotatorUtils {
     return false;
   }
 
-  static void annotateVarDelcaration(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-    // Highlight variable definition.
-    holder.createInfoAnnotation(element, null)
-            .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
-//                  .setTextAttributes(CMakeSyntaxHighlighter.VARIABLE);
-  }
-
   static void annotateVarReferences(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String argtext = element.getText();
     int pos = element.getTextRange().getStartOffset();
@@ -86,7 +79,17 @@ class CMakeAnnotatorUtils {
         }
       }
 
-      if (!isCmakePredefinedVar && CMakePSITreeSearch.findVariableDefinitions(element, innerVarName).isEmpty()) {
+      // Highlight Inner variable definition.
+      List<PsiElement> elementVarDefinitions = CMakePSITreeSearch.findVariableDefinitions(element, innerVarName);
+      if (!(elementVarDefinitions.isEmpty())) {
+        for (PsiElement elementVarDefinition : elementVarDefinitions) {
+          if (element.getContainingFile() == elementVarDefinition.getContainingFile()) {
+            holder.createInfoAnnotation(elementVarDefinition, null)
+                    .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
+            //                  .setTextAttributes(CMakeSyntaxHighlighter.VARIABLE);
+          }
+        }
+      } else if (!isCmakePredefinedVar) {
 // TODO Move it to Inspections? Also too many false negative.
         holder.createWeakWarningAnnotation(innerVarRange.shiftRight(pos),"Possibly not defined Variable: "+ innerVarName)
                 .setHighlightType(ProblemHighlightType.WEAK_WARNING);

@@ -28,11 +28,6 @@ public class CMakeIdeaAnnotator implements Annotator {
           annotateVarReferences(element, holder);
           annotatePathURL(element, holder);
         }
-    } else if (element instanceof CMakeVariableDeclaration) {
-      // Annotate Variable Declaration
-      if (!annotateVariable(element, holder)){
-        annotateVarDelcaration(element, holder);
-      }
     }
   }
 }

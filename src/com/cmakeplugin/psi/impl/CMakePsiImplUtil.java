@@ -21,28 +21,26 @@ import java.util.List;
 import static com.cmakeplugin.utils.CMakePlatformIndependentProxy.*;
 
 public class CMakePsiImplUtil {
-  // fixme
-  public static final String FAKE_COMMAND_NAME_FOR_VAR_DECLARATION_CREATION="FAKE_COMMAND_NAME_FOR_VAR_DECLARATION_CREATION_1234567890";
 
   @NotNull
-  public static String getName(CMakeVariableDeclaration o) {
+  public static String getName(CMakeUnquotedArgumentContainer o) {
     return ObjectUtils.assertNotNull(o.getUnquotedArgument()).getText();
   }
 
   @NotNull
-  public static CMakeVariableDeclaration setName(CMakeVariableDeclaration o, String newName) {
+  public static CMakeUnquotedArgumentContainer setName(CMakeUnquotedArgumentContainer o, String newName) {
     ObjectUtils.assertNotNull(o.getUnquotedArgument())
             .replace(CMakePsiElementFactory.createUnquotedArgumentFromText(o.getProject(), newName));
     return o;
   }
 
   @NotNull
-  public static PsiElement getNameIdentifier(CMakeVariableDeclaration o) {
+  public static PsiElement getNameIdentifier(CMakeUnquotedArgumentContainer o) {
     return o.getUnquotedArgument();
   }
 
   @Nullable
-  public static ItemPresentation getPresentation(CMakeVariableDeclaration o) {
+  public static ItemPresentation getPresentation(CMakeUnquotedArgumentContainer o) {
     return new ItemPresentation() {
 
       @Override

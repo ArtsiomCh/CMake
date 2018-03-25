@@ -15,28 +15,9 @@ public class CMakePsiElementFactory {
             .createFileFromText("a.cmake", CMakeLanguage.INSTANCE, text, false, false);
   }
 
-  public static PsiElement createVariableFromText(@NotNull Project project, @NotNull String text) {
-    return CMakePsiImplUtil.computeElementsOfClass(createFile(project,"set(${" + text + "})"), CMakeVariableContainer.class)
-            .get(0).getVariable();
-  }
-
   public static PsiElement createUnquotedArgumentFromText(@NotNull Project project, @NotNull String text) {
     return CMakePsiImplUtil.computeElementsOfClass(createFile(project,"set(" + text + ")"), CMakeUnquotedArgumentContainer.class)
             .get(0).getUnquotedArgument();
   }
-
-  public static CMakeVariableDeclaration createVariableDeclarationFromText(@NotNull Project project, @NotNull String text) {
-    return CMakePsiImplUtil.computeElementsOfClass(createFile(project,CMakePsiImplUtil.FAKE_COMMAND_NAME_FOR_VAR_DECLARATION_CREATION
-                                                                        +"(" + text + ")"), CMakeVariableDeclaration.class)
-            .get(0);
-  }
-
-  //  public static PsiElement createJavaCodeFromText(@NotNull Project project, @NotNull String text) {
-//    return SyntaxTraverser.psiTraverser(createFile(project, text)).filter(JFlexJavaCode.class).first();
-//  }
-//
-//  public static PsiElement createJavaTypeFromText(@NotNull Project project, @NotNull String text) {
-//    return SyntaxTraverser.psiTraverser(createFile(project, "%%\n%extends " + text)).filter(JFlexJavaType.class).first();
-//  }
 
 }
