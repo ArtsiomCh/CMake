@@ -40,9 +40,10 @@ class CMakeAnnotatorUtils {
     } else return false;
   }
 
-  static boolean annotateVariable(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+  static boolean annotatePredefinedVariable(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     for (String varRegexp : CMakeKeywords.variables_All) {
-      if (element.getText().matches(varRegexp)) {
+      if (element.getText().matches(varRegexp)
+              && !isVarInsideIFWHILE(PLATFORM.IDEA, element)) {
         holder.createInfoAnnotation(element, null)
                 .setTextAttributes(DefaultLanguageHighlighterColors.CONSTANT);
 //                  .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_VARIABLE);
@@ -51,6 +52,15 @@ class CMakeAnnotatorUtils {
     }
     return false;
   }
+
+  static boolean annotateVarDeclaration(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+    if (CMakePSITreeSearch.existReferenceTo(element)) {
+      holder.createInfoAnnotation(element, null)
+              .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
+      return true;
+    }
+    return false;
+}
 
   static void annotateVarReferences(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String argtext = element.getText();
@@ -82,13 +92,13 @@ class CMakeAnnotatorUtils {
       // Highlight Inner variable definition.
       List<PsiElement> elementVarDefinitions = CMakePSITreeSearch.findVariableDefinitions(element, innerVarName);
       if (!(elementVarDefinitions.isEmpty())) {
-        for (PsiElement elementVarDefinition : elementVarDefinitions) {
-          if (element.getContainingFile() == elementVarDefinition.getContainingFile()) {
-            holder.createInfoAnnotation(elementVarDefinition, null)
-                    .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
-            //                  .setTextAttributes(CMakeSyntaxHighlighter.VARIABLE);
-          }
-        }
+//        for (PsiElement elementVarDefinition : elementVarDefinitions) {
+//          if (element.getContainingFile() == elementVarDefinition.getContainingFile()) {
+//            holder.createInfoAnnotation(elementVarDefinition, null)
+//                    .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
+//            //                  .setTextAttributes(CMakeSyntaxHighlighter.VARIABLE);
+//          }
+//        }
       } else if (!isCmakePredefinedVar) {
 // TODO Move it to Inspections? Also too many false negative.
         holder.createWeakWarningAnnotation(innerVarRange.shiftRight(pos),"Possibly not defined Variable: "+ innerVarName)

@@ -3,9 +3,11 @@ package com.cmakeplugin.utils;
 import com.cmakeplugin.CMakeFileType;
 import com.cmakeplugin.psi.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
@@ -20,11 +22,12 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.cmakeplugin.utils.CMakePlatformIndependentProxy.*;
+import static com.cmakeplugin.utils.CMakeVarStringUtil.isPossibleVarDefinition;
 
 public class CMakePSITreeSearch {
 
   /**
-   * looking ANY definitions of Variable in Directory scope.
+   * looking ANY definitions of Variable in Project scope.
    * @param varReference PsiElement to start from
    * @param varName Variable name to looking for
    * @return List of PsiElements with Variable definition or empty List
@@ -43,14 +46,47 @@ public class CMakePSITreeSearch {
          ) {
         for (CMakeUnquotedArgumentContainer varDefinition :
                 findChildrenOfTypeWithText(cmakeFile, varName, CMakeUnquotedArgumentContainer.class)) {
+          if ( !isVarInsideIFWHILE(PLATFORM.IDEA, varDefinition)
 // && PsiTreeUtil.getParentOfType(varDefinition, CMakeFunmacro.class) == null) { // exclude Function's scopes
-          if (!isVarInsideIFWHILE(PLATFORM.IDEA, varDefinition)) {
+                  ) {
             result.add(varDefinition);
           }
         }
       }
     }
     return result;
+  }
+
+  /**
+   * checking ANY reference of Variable in Project scope.
+   * @param varDef PsiElement with potential Variable declaration
+   * @return True if any reference found, False otherwise
+   */
+  public static boolean existReferenceTo(@NotNull PsiElement varDef) {
+    if (   !isPossibleVarDefinition(varDef.getText())
+        || isVarInsideIFWHILE(PLATFORM.IDEA, varDef)) return false;
+    Project project = varDef.getProject();
+    Collection<VirtualFile> virtualFiles =
+            FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, CMakeFileType.INSTANCE,
+                    GlobalSearchScope.allScope(project));
+    for (VirtualFile virtualFile : virtualFiles) {
+      CMakeFile cmakeFile = (CMakeFile) PsiManager.getInstance(project).findFile(virtualFile);
+      if (cmakeFile != null) {
+        for (CMakeUnquotedArgumentContainer element :
+                PsiTreeUtil.findChildrenOfType(cmakeFile, CMakeUnquotedArgumentContainer.class)) {
+          for (TextRange innerVarRange : getPIInnerVars(PLATFORM.IDEA, element)) {
+            if (element.getText()
+                    .substring(innerVarRange.getStartOffset(), innerVarRange.getEndOffset())
+                    .equals(varDef.getText())  )
+              return true;
+          }
+//          for (PsiReference elementRef : element.getReferences()){
+//            if (elementRef.isReferenceTo(varDef)) return true;
+//          }
+        }
+      }
+    }
+    return false;
   }
 
   /**

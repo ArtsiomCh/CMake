@@ -2,7 +2,6 @@ package com.cmakeplugin.annotator;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +25,7 @@ public class CMakeCLionAnnotator implements Annotator {
         } else
           // Annotate Unquoted argument
           if ( !(  annotateLegacy(cmakeLiteral, holder)
-                  || annotateVariable(cmakeLiteral, holder)
+                  || annotatePredefinedVariable(cmakeLiteral, holder)
                   || annotateProperty(cmakeLiteral, holder)
                   || annotateOperator(cmakeLiteral, holder) )) {
             annotateVarReferences(cmakeLiteral, holder);

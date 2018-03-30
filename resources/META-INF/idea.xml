@@ -8,6 +8,8 @@
     <lang.braceMatcher language="CMake" implementationClass="com.cmakeplugin.CMakeBraceMatcher"/>
     <lang.refactoringSupport language="CMake" implementationClass="com.cmakeplugin.CMakeRefactoringSupportProvider"/>
     <annotator language="CMake" implementationClass="com.cmakeplugin.annotator.CMakeIdeaAnnotator"/>
+    <!--
+     -->
     <lang.findUsagesProvider language="CMake" implementationClass="com.cmakeplugin.CMakeFindUsagesProvider"/>
   </extensions>
 </idea-plugin>

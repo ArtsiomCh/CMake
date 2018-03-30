@@ -32,7 +32,7 @@ public class CMakePlatformIndependentProxy {
     return result;
   }
 
-  static boolean isVarInsideIFWHILE(PLATFORM platform, PsiElement element) {
+  public static boolean isVarInsideIFWHILE(PLATFORM platform, PsiElement element) {
     boolean result = false;
     if (platform == PLATFORM.IDEA) {
       result = (element instanceof CMakeUnquotedArgumentContainer)

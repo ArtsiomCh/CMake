@@ -106,18 +106,27 @@ public class CMakePsiImplUtil {
      * @param element PSI element
      * @param rangeInElement range relatively to the element's start offset
      */
-//    private TextRange myOwnRangeInElement;
 
     MyPsiPolyVariantReferenceBase(T element, TextRange rangeInElement) {
       super(element, rangeInElement);
-//      myOwnRangeInElement = rangeInElement;
     }
 
     @NotNull
     @Override
     public ResolveResult[] multiResolve(boolean b) {
+//        final String name = getValue();
+//        CommonProcessors.FindFirstProcessor<CMakeUnquotedArgumentContainer> processor =
+//                new CommonProcessors.FindFirstProcessor<CMakeUnquotedArgumentContainer>() {
+//                  @Override
+//                  protected boolean accept(CMakeUnquotedArgumentContainer o) {
+//                    return Comparing.equal(o.getName(), name);
+//                  }
+//                };
+//        processUnquotedArgumentVariants(getElement(), processor);
+//        return PsiElementResolveResult.createResults(
+//                processor.getFoundValue());
       return PsiElementResolveResult.createResults(
-              CMakePSITreeSearch.findVariableDefinitions(getElement(), getValue()) ); //myElement, myOwnRangeInElement.substring(myElement.getText())
+              CMakePSITreeSearch.findVariableDefinitions(getElement(), getValue()) );
     }
 
     @NotNull

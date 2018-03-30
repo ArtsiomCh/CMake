@@ -22,9 +22,10 @@ public class CMakeIdeaAnnotator implements Annotator {
     } else if (element instanceof CMakeUnquotedArgumentContainer) {
       // Annotate Unquoted argument
         if ( !(  annotateLegacy(element, holder)
-                || annotateVariable(element, holder)
+                || annotatePredefinedVariable(element, holder)
                 || annotateProperty(element, holder)
-                || annotateOperator(element, holder) )) {
+                || annotateOperator(element, holder)
+                || annotateVarDeclaration(element, holder) )) {
           annotateVarReferences(element, holder);
           annotatePathURL(element, holder);
         }
