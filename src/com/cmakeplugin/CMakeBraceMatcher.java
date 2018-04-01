@@ -13,7 +13,6 @@ public class CMakeBraceMatcher implements PairedBraceMatcher {
 
   private static final BracePair[] PAIRS = new BracePair[]{
           new BracePair(LPAR, RPAR, false),
-          new BracePair(VAR_REF_BEGIN, VAR_REF_END, false),
           new BracePair(IF, ENDIF, false),
           new BracePair(FOREACH, ENDFOREACH, false),
           new BracePair(WHILE, ENDWHILE, false),

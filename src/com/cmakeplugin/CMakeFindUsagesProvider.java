@@ -1,7 +1,6 @@
 package com.cmakeplugin;
 
 import com.cmakeplugin.psi.CMakeTypes;
-import com.cmakeplugin.psi.CMakeUnquotedArgumentContainer;
 import com.intellij.lang.HelpID;
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.lang.cacheBuilder.WordsScanner;
@@ -29,7 +28,6 @@ public class CMakeFindUsagesProvider implements FindUsagesProvider {
   @Override
   public boolean canFindUsagesFor(PsiElement psiElement) {
     return psiElement instanceof PsiNamedElement
-//           && psiElement instanceof CMakeUnquotedArgumentContainer
            && isPossibleVarDefinition(psiElement.getText());
   }
 

@@ -11,9 +11,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-import static com.cmakeplugin.utils.CMakePlatformIndependentProxy.*;
+import com.cmakeplugin.utils.CMakeIFWHILEcheck;
 import com.cmakeplugin.utils.CMakeVarStringUtil;
 
 //import static CMakeKeywords.*;
@@ -43,9 +41,9 @@ class CMakeAnnotatorUtils {
   static boolean annotatePredefinedVariable(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     for (String varRegexp : CMakeKeywords.variables_All) {
       if (element.getText().matches(varRegexp)
-              && !isVarInsideIFWHILE(PLATFORM.IDEA, element)) {
+              && !CMakeIFWHILEcheck.isVarInsideIFWHILE(element)) {
         holder.createInfoAnnotation(element, null)
-                .setTextAttributes(DefaultLanguageHighlighterColors.CONSTANT);
+                .setTextAttributes(DefaultLanguageHighlighterColors.STATIC_METHOD);
 //                  .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_VARIABLE);
         return true;
       }
@@ -56,7 +54,7 @@ class CMakeAnnotatorUtils {
   static boolean annotateVarDeclaration(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (CMakePSITreeSearch.existReferenceTo(element)) {
       holder.createInfoAnnotation(element, null)
-              .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
+              .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_METHOD);
       return true;
     }
     return false;
@@ -67,7 +65,7 @@ class CMakeAnnotatorUtils {
     int pos = element.getTextRange().getStartOffset();
 
     // Highlight Outer variables.
-    for ( TextRange outerVarRange: getPIOuterVarRefs(PLATFORM.IDEA, element)) {
+    for ( TextRange outerVarRange: CMakeIFWHILEcheck.getOuterVarRefs(element)) {
       holder.createInfoAnnotation( outerVarRange.shiftRight(pos), null)
               .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
 //              .setTextAttributes(CMakeSyntaxHighlighter.VARIABLE);
@@ -75,7 +73,7 @@ class CMakeAnnotatorUtils {
 
     // Highlight Inner variables.
     boolean isCmakePredefinedVar = false;
-    for ( TextRange innerVarRange: getPIInnerVars(PLATFORM.IDEA, element) ) {
+    for ( TextRange innerVarRange: CMakeIFWHILEcheck.getInnerVars(element) ) {
       String innerVarName = argtext.substring(innerVarRange.getStartOffset(),innerVarRange.getEndOffset());
 
       // Highlight Inner CMake predefined variables
@@ -89,18 +87,9 @@ class CMakeAnnotatorUtils {
         }
       }
 
-      // Highlight Inner variable definition.
-      List<PsiElement> elementVarDefinitions = CMakePSITreeSearch.findVariableDefinitions(element, innerVarName);
-      if (!(elementVarDefinitions.isEmpty())) {
-//        for (PsiElement elementVarDefinition : elementVarDefinitions) {
-//          if (element.getContainingFile() == elementVarDefinition.getContainingFile()) {
-//            holder.createInfoAnnotation(elementVarDefinition, null)
-//                    .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
-//            //                  .setTextAttributes(CMakeSyntaxHighlighter.VARIABLE);
-//          }
-//        }
-      } else if (!isCmakePredefinedVar) {
 // TODO Move it to Inspections? Also too many false negative.
+      // Highlight not defined Inner variable.
+      if (!isCmakePredefinedVar && CMakePSITreeSearch.findVariableDefinitions(element, innerVarName).isEmpty()) {
         holder.createWeakWarningAnnotation(innerVarRange.shiftRight(pos),"Possibly not defined Variable: "+ innerVarName)
                 .setHighlightType(ProblemHighlightType.WEAK_WARNING);
       }
@@ -128,7 +117,7 @@ class CMakeAnnotatorUtils {
             || CMakeKeywords.commands_Test.contains(commandName)
             ) {
       holder.createInfoAnnotation(element, null)
-            .setTextAttributes(DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+            .setTextAttributes(DefaultLanguageHighlighterColors.METADATA);
 //              .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_COMMAND);
     } else if (CMakeKeywords.commands_Deprecated.contains(commandName)){
       holder.createWarningAnnotation(element,"Deprecated command")

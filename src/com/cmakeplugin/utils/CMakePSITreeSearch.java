@@ -7,7 +7,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
@@ -21,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.cmakeplugin.utils.CMakePlatformIndependentProxy.*;
+import static com.cmakeplugin.utils.CMakeIFWHILEcheck.*;
 import static com.cmakeplugin.utils.CMakeVarStringUtil.isPossibleVarDefinition;
 
 public class CMakePSITreeSearch {
@@ -44,9 +43,9 @@ public class CMakePSITreeSearch {
       if (cmakeFile != null // && varReference.getContainingFile() != cmakeFile) // Exclude current file
              // && cmakeFile.getContainingDirectory()==varReference.getContainingFile().getContainingDirectory()// Directory Scope
          ) {
-        for (CMakeUnquotedArgumentContainer varDefinition :
-                findChildrenOfTypeWithText(cmakeFile, varName, CMakeUnquotedArgumentContainer.class)) {
-          if ( !isVarInsideIFWHILE(PLATFORM.IDEA, varDefinition)
+        for (CMakeUnquotedArgumentMaybeVariableContainer varDefinition :
+                findChildrenOfTypeWithText(cmakeFile, varName, CMakeUnquotedArgumentMaybeVariableContainer.class)) {
+          if ( !isVarInsideIFWHILE(varDefinition)
 // && PsiTreeUtil.getParentOfType(varDefinition, CMakeFunmacro.class) == null) { // exclude Function's scopes
                   ) {
             result.add(varDefinition);
@@ -64,7 +63,7 @@ public class CMakePSITreeSearch {
    */
   public static boolean existReferenceTo(@NotNull PsiElement varDef) {
     if (   !isPossibleVarDefinition(varDef.getText())
-        || isVarInsideIFWHILE(PLATFORM.IDEA, varDef)) return false;
+        || isVarInsideIFWHILE(varDef)) return false;
     Project project = varDef.getProject();
     Collection<VirtualFile> virtualFiles =
             FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, CMakeFileType.INSTANCE,
@@ -72,9 +71,11 @@ public class CMakePSITreeSearch {
     for (VirtualFile virtualFile : virtualFiles) {
       CMakeFile cmakeFile = (CMakeFile) PsiManager.getInstance(project).findFile(virtualFile);
       if (cmakeFile != null) {
-        for (CMakeUnquotedArgumentContainer element :
-                PsiTreeUtil.findChildrenOfType(cmakeFile, CMakeUnquotedArgumentContainer.class)) {
-          for (TextRange innerVarRange : getPIInnerVars(PLATFORM.IDEA, element)) {
+        for (PsiElement element :
+                PsiTreeUtil.findChildrenOfAnyType(cmakeFile,
+                                                  CMakeUnquotedArgumentContainer.class,
+                                                  CMakeQuotedArgumentContainer.class)) {
+          for (TextRange innerVarRange : getInnerVars(element)) {
             if (element.getText()
                     .substring(innerVarRange.getStartOffset(), innerVarRange.getEndOffset())
                     .equals(varDef.getText())  )

@@ -19,16 +19,23 @@ public class CMakeIdeaAnnotator implements Annotator {
       // Annotate Quoted argument
       assert element.getPrevSibling() instanceof CMakeBrace && element.getNextSibling() instanceof CMakeBrace;
       annotateVarReferences(element, holder);
-    } else if (element instanceof CMakeUnquotedArgumentContainer) {
-      // Annotate Unquoted argument
-        if ( !(  annotateLegacy(element, holder)
-                || annotatePredefinedVariable(element, holder)
+    } else if (element instanceof CMakeUnquotedArgumentMaybeVariableContainer) {
+      // Annotate Unquoted argument with possible Var declaration
+        if ( !(    annotatePredefinedVariable(element, holder)
                 || annotateProperty(element, holder)
                 || annotateOperator(element, holder)
                 || annotateVarDeclaration(element, holder) )) {
-          annotateVarReferences(element, holder);
           annotatePathURL(element, holder);
         }
+    } else if (element instanceof CMakeUnquotedArgumentContainer) {
+      // Annotate Unquoted argument
+      if ( !(    annotateLegacy(element, holder)
+              || annotatePredefinedVariable(element, holder)
+              || annotateProperty(element, holder)
+              || annotateOperator(element, holder))) {
+        annotateVarReferences(element, holder);
+        annotatePathURL(element, holder);
+      }
     }
   }
 }

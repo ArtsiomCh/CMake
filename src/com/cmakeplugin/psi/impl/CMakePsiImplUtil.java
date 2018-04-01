@@ -18,29 +18,29 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.List;
 
-import static com.cmakeplugin.utils.CMakePlatformIndependentProxy.*;
+import static com.cmakeplugin.utils.CMakeIFWHILEcheck.*;
 
 public class CMakePsiImplUtil {
 
   @NotNull
-  public static String getName(CMakeUnquotedArgumentContainer o) {
-    return ObjectUtils.assertNotNull(o.getUnquotedArgument()).getText();
+  public static String getName(CMakeUnquotedArgumentMaybeVariableContainer o) {
+    return ObjectUtils.assertNotNull(o.getUnquotedArgumentMaybeVarDef()).getText();
   }
 
   @NotNull
-  public static CMakeUnquotedArgumentContainer setName(CMakeUnquotedArgumentContainer o, String newName) {
-    ObjectUtils.assertNotNull(o.getUnquotedArgument())
+  public static CMakeUnquotedArgumentMaybeVariableContainer setName(CMakeUnquotedArgumentMaybeVariableContainer o, String newName) {
+    ObjectUtils.assertNotNull(o.getUnquotedArgumentMaybeVarDef())
             .replace(CMakePsiElementFactory.createUnquotedArgumentFromText(o.getProject(), newName));
     return o;
   }
 
   @NotNull
-  public static PsiElement getNameIdentifier(CMakeUnquotedArgumentContainer o) {
-    return o.getUnquotedArgument();
+  public static PsiElement getNameIdentifier(CMakeUnquotedArgumentMaybeVariableContainer o) {
+    return o.getUnquotedArgumentMaybeVarDef();
   }
 
   @Nullable
-  public static ItemPresentation getPresentation(CMakeUnquotedArgumentContainer o) {
+  public static ItemPresentation getPresentation(CMakeUnquotedArgumentMaybeVariableContainer o) {
     return new ItemPresentation() {
 
       @Override
@@ -150,7 +150,7 @@ public class CMakePsiImplUtil {
   @NotNull
   public static PsiReference[] getReferences(PsiElement o) {
 // fixme
-    List<TextRange> innerVars = getPIInnerVars(PLATFORM.IDEA, o);
+    List<TextRange> innerVars = getInnerVars(o);
     PsiReference[] result = new PsiReference[innerVars.size()];
     for (int i=0; i<innerVars.size(); i++) {
       TextRange innerVar = innerVars.get(i);

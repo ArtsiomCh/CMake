@@ -16,8 +16,8 @@ public class CMakePsiElementFactory {
   }
 
   public static PsiElement createUnquotedArgumentFromText(@NotNull Project project, @NotNull String text) {
-    return CMakePsiImplUtil.computeElementsOfClass(createFile(project,"set(" + text + ")"), CMakeUnquotedArgumentContainer.class)
-            .get(0).getUnquotedArgument();
+    return CMakePsiImplUtil.computeElementsOfClass(createFile(project,"set(" + text + ")"), CMakeUnquotedArgumentMaybeVariableContainer.class)
+            .get(0).getUnquotedArgumentMaybeVarDef();
   }
 
 }

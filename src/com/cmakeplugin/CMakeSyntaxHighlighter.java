@@ -87,16 +87,16 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
     keys1.put(com.intellij.psi.TokenType.WHITE_SPACE, SEPARATOR);
     keys1.put(CMakeTypes.CMAKE_COMMAND, CMAKE_COMMAND);
     keys1.put(CMakeTypes.BRACKET_ARGUMENT, BRACKET_ARGUMENT);
-    keys1.put(CMakeTypes.UNQUOTED_LEGACY, UNQUOTED_LEGACY);
-
-    keys1.put(CMakeTypes.CMAKE_VARIABLE, CMAKE_VARIABLE);
-    keys1.put(CMakeTypes.VARIABLE, VARIABLE);
-    keys1.put(CMakeTypes.VAR_REF_BEGIN, VAR_REF);
-    keys1.put(CMakeTypes.VAR_REF_END, VAR_REF);
-
-    keys1.put(CMakeTypes.CMAKE_PROPERTY, CMAKE_PROPERTY);
-    keys1.put(CMakeTypes.CMAKE_OPERATOR, CMAKE_OPERATOR);
-    keys1.put(CMakeTypes.PATH_URL, CMAKE_PATH_URL);
+//    keys1.put(CMakeTypes.UNQUOTED_LEGACY, UNQUOTED_LEGACY);
+//
+//    keys1.put(CMakeTypes.CMAKE_VARIABLE, CMAKE_VARIABLE);
+//    keys1.put(CMakeTypes.VARIABLE, VARIABLE);
+//    keys1.put(CMakeTypes.VAR_REF_BEGIN, VAR_REF);
+//    keys1.put(CMakeTypes.VAR_REF_END, VAR_REF);
+//
+//    keys1.put(CMakeTypes.CMAKE_PROPERTY, CMAKE_PROPERTY);
+//    keys1.put(CMakeTypes.CMAKE_OPERATOR, CMAKE_OPERATOR);
+//    keys1.put(CMakeTypes.PATH_URL, CMAKE_PATH_URL);
 
     // IF keywords highlight
     keys1.put(CMakeTypes.IF, KEYWORD);

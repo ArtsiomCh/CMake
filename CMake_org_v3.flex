@@ -7,6 +7,7 @@ import java.util.LinkedList;
 %%
 
 %{
+  boolean isConditionExpression = false;
   // Stolen from Mathematica support plugin. This adds support for nested states.
   private final LinkedList<Integer> states = new LinkedList();
 
@@ -29,7 +30,7 @@ import java.util.LinkedList;
 %ignorecase
 
 // Place CMake keywords in this file
-%include CMake_keywords.txt
+// %include CMake_keywords.txt
 
 ESCAPE_SEQUENCE=  {ESCAPE_IDENTITY} | {ESCAPE_ENCODED} | {ESCAPE_SEMICOLON}
 ESCAPE_IDENTITY= \\[^A-Za-z0-9;]
@@ -65,97 +66,58 @@ UNQUOTED_LEGACY=(((({UNQUOTED_LEGACY_ELEMENT}+ | ("$("{UNQUOTED_LEGACY_ELEMENT}*
                  ) {UNQUOTED_LEGACY_ELEMENT}*
                 )+
 
-//UNQUOTED_PATH_URL=(({UNQUOTED_ARGUMENT}[$]*)?\/({UNQUOTED_ARGUMENT})?)+
-
 IDENTIFIER=[A-Za-z_][A-Za-z0-9_]*
 
-//VAR_REF_BEGIN= \$ ( \{ | ENV\{ )
-//VARIABLE_NAME=([A-Za-z0-9/_.+-]|{ESCAPE_SEQUENCE})+
-//VAR_REF_END="}"
+UNQUOTED_ARGUMENT_MAYBE_VAR_DEF=([A-Za-z0-9/_.+-]|{ESCAPE_SEQUENCE})+
 
 %state IN_ARGLIST
 %state IN_QUOTED_ARG
-//%state IN_VAR_REF
+//%state IN_COND_EXPRESSION
 
 %%
 
 <YYINITIAL> {
-  {ARG_SEPARATOR}          { return com.intellij.psi.TokenType.WHITE_SPACE; }
+  {WHITE_SPACE}          { return com.intellij.psi.TokenType.WHITE_SPACE; }
 
-  "("                      { yypushstate(IN_ARGLIST);return LPAR; }
+  "("                      { yypushstate(IN_ARGLIST); return LPAR; }
 
   "ENDFUNCTION"            { return ENDFUNCTION; }
   "FUNCTION"               { return FUNCTION; }
-  "ELSEIF"                 { return ELSEIF; }
-  "ELSE"                   { return ELSE; }
-  "ENDIF"                  { return ENDIF; }
-  "if"                     { return IF; }
   "ENDMACRO"               { return ENDMACRO; }
   "MACRO"                  { return MACRO; }
   "ENDFOREACH"             { return ENDFOREACH; }
   "FOREACH"                { return FOREACH; }
-  "ENDWHILE"               { return ENDWHILE; }
-  "WHILE"                  { return WHILE; }
+  "ELSEIF"                 { isConditionExpression = true; return ELSEIF; }
+  "ELSE"                   { isConditionExpression = true; return ELSE; }
+  "ENDIF"                  { isConditionExpression = true; return ENDIF; }
+  "if"                     { isConditionExpression = true; return IF; }
+  "ENDWHILE"               { isConditionExpression = true; return ENDWHILE; }
+  "WHILE"                  { isConditionExpression = true; return WHILE; }
   {BRACKET_COMMENT}        { return BRACKET_COMMENT; }
   {LINE_COMMENT}/{EOL}     { return LINE_COMMENT; }
-//  {CMAKE_Commands}         { return CMAKE_COMMAND; }
   {IDENTIFIER}             { return IDENTIFIER; }
 }
 
 <IN_ARGLIST> {
   {ARG_SEPARATOR}          { yybegin(IN_ARGLIST); return com.intellij.psi.TokenType.WHITE_SPACE; }
 
-  "("                      { yypushstate(IN_ARGLIST);return LPAR; }
-  ")"                      { yypopstate();return RPAR; }
+  "("                      { yypushstate(IN_ARGLIST); return LPAR; }
+  ")"                      { yypopstate(); if (yystate()==YYINITIAL) isConditionExpression = false; return RPAR; }
 
   \"                       { yybegin(IN_QUOTED_ARG); return BRACE; }
-//  ( {VAR_REF_BEGIN} | ENV\{ )
-//        / (({VARIABLE_NAME}|{VAR_REF_BEGIN})+({VARIABLE_NAME}|{VAR_REF_END})+)
-//                           { yypushstate(IN_VAR_REF); return VAR_REF_BEGIN; }
-//
-//  {CMAKE_Variables}        { return CMAKE_VARIABLE; }
 
   {BRACKET_COMMENT}        { return BRACKET_COMMENT; }
   {LINE_COMMENT}/{EOL}     { return LINE_COMMENT; }
 
   {BRACKET_ARGUMENT}       { return BRACKET_ARGUMENT; }
 
-//  {CMAKE_Property}         { return CMAKE_PROPERTY;}
-//  {CMAKE_Operator}         { return CMAKE_OPERATOR;}
-//
-//  {UNQUOTED_PATH_URL} / {VAR_REF_BEGIN}?                     { return PATH_URL; }
-//  {UNQUOTED_PATH_URL}[$]+ / [()#\";\s]|{VAR_REF_BEGIN}       { return PATH_URL; }
-
-//  {UNQUOTED_PATH_URL} / {VAR_REF_BEGIN}?                     { return PATH_URL; }
-//  {UNQUOTED_PATH_URL}[$]+ / [()#\";\s]|{VAR_REF_BEGIN}       { return PATH_URL; }
-
-  {UNQUOTED_ARGUMENT} | {UNQUOTED_LEGACY}
-//  / {VAR_REF_BEGIN}?                     {  return UNQUOTED_ARGUMENT;}
-//  {UNQUOTED_ARGUMENT}?[$]+ / [()#\";\s]|{VAR_REF_BEGIN}
-        {  return UNQUOTED_ARGUMENT;}
-
-// TODO fix some bugs with corner cases with [$] in PATH_URL and $<CMAKE_Var or Commands>
-//  ({UNQUOTED_ARGUMENT} | {UNQUOTED_PATH_URL})?[$]+           { }
-
-//  {UNQUOTED_LEGACY}        { return UNQUOTED_LEGACY; }
+  {UNQUOTED_ARGUMENT_MAYBE_VAR_DEF}       { if (!isConditionExpression) return UNQUOTED_ARGUMENT_MAYBE_VAR_DEF; else return UNQUOTED_ARGUMENT;}
+  {UNQUOTED_ARGUMENT} | {UNQUOTED_LEGACY}  {  return UNQUOTED_ARGUMENT;}
 }
 
 <IN_QUOTED_ARG> {
   \"                       { yybegin(IN_ARGLIST); return BRACE; }
-//  {VAR_REF_BEGIN}          { yypushstate(IN_VAR_REF); return VAR_REF_BEGIN; }
-  {QUOTED_ARGUMENT}
-//  | {QUOTED_ARGUMENT}?[$]+
-//        / (\" | {VAR_REF_BEGIN})
-              { return QUOTED_ARGUMENT; }
-//  {QUOTED_ARGUMENT}?[$]+              { }
+  {QUOTED_ARGUMENT}    { return QUOTED_ARGUMENT; }
 }
-
-//<IN_VAR_REF> {
-//  {VAR_REF_BEGIN}          { yypushstate(IN_VAR_REF); return VAR_REF_BEGIN; }
-//  {VAR_REF_END}            { yypopstate(); return VAR_REF_END; }
-//
-//  {CMAKE_Variables}        { return CMAKE_VARIABLE; }
-//  {VARIABLE_NAME}          { return VARIABLE; }
-//}
 
 [^] { return com.intellij.psi.TokenType.BAD_CHARACTER; }

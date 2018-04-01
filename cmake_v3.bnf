@@ -13,15 +13,14 @@
   elementTypeClass="com.cmakeplugin.psi.CMakeElementType"
   tokenTypeClass="com.cmakeplugin.psi.CMakeTokenType"
 
-  implements("unquoted_argument_container")="com.intellij.psi.PsiNameIdentifierOwner"
-  methods(".*_container")=[getReferences]
+  implements("unquoted_argument_maybe_variable_container")="com.intellij.psi.PsiNameIdentifierOwner"
+//  methods(".*_container")=[getReferences]
 
   tokens = [
-    unquoted_argument = 'regexp:(_|\p{Alpha})\w*'
-    variable = 'regexp:(_|\p{Alpha})\w*'
-
- lpar ='('
- rpar =')'
+//    unquoted_argument = 'regexp:(_|\p{Alpha})\w*'
+    unquoted_argument_maybe_var_def = 'regexp:(_|\p{Alpha})\w*'
+    lpar ='('
+    rpar =')'
    ]
 
  }
@@ -52,17 +51,13 @@
    { recoverWhile=argument_recover } private argument_recover::=!(rpar)
 
  private argument       ::=  bracket_argument | bracket_comment |line_comment
+                         | unquoted_argument_maybe_variable_container
                          | unquoted_argument_container
                          | brace quoted_argument_container? brace
-                         // fixme: Delete it
-                         | cmake_property | cmake_operator | path_url | unquoted_legacy
 
- unquoted_argument_container ::= unquoted_argument { methods=[getName setName getNameIdentifier getPresentation] }
- quoted_argument_container ::=  quoted_argument
-
-                         // fixme: Delete it
- variables ::= var_ref_begin ( cmake_variable | variable_container | variables )+ var_ref_end
- variable_container ::= variable  //{ methods=[getReference] }
+ unquoted_argument_maybe_variable_container ::= unquoted_argument_maybe_var_def { methods=[getName setName getNameIdentifier getPresentation] }
+ unquoted_argument_container ::= unquoted_argument { methods=[getReferences] }
+ quoted_argument_container ::=  quoted_argument { methods=[getReferences] }
 
 // Single command invocation
  cmd                 ::=  <<command_expr command_name>>
