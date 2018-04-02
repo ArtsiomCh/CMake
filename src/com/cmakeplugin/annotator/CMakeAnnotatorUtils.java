@@ -43,7 +43,8 @@ class CMakeAnnotatorUtils {
       if (element.getText().matches(varRegexp)
               && !CMakeIFWHILEcheck.isVarInsideIFWHILE(element)) {
         holder.createInfoAnnotation(element, null)
-                .setTextAttributes(DefaultLanguageHighlighterColors.STATIC_METHOD);
+                .setTextAttributes(DefaultLanguageHighlighterColors.CONSTANT);
+//                .setTextAttributes(DefaultLanguageHighlighterColors.STATIC_METHOD);
 //                  .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_VARIABLE);
         return true;
       }
@@ -54,7 +55,8 @@ class CMakeAnnotatorUtils {
   static boolean annotateVarDeclaration(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (CMakePSITreeSearch.existReferenceTo(element)) {
       holder.createInfoAnnotation(element, null)
-              .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_METHOD);
+              .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
+//              .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_METHOD);
       return true;
     }
     return false;
@@ -117,7 +119,8 @@ class CMakeAnnotatorUtils {
             || CMakeKeywords.commands_Test.contains(commandName)
             ) {
       holder.createInfoAnnotation(element, null)
-            .setTextAttributes(DefaultLanguageHighlighterColors.METADATA);
+              .setTextAttributes(DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+//            .setTextAttributes(DefaultLanguageHighlighterColors.METADATA);
 //              .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_COMMAND);
     } else if (CMakeKeywords.commands_Deprecated.contains(commandName)){
       holder.createWarningAnnotation(element,"Deprecated command")

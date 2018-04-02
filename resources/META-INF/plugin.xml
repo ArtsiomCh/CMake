@@ -1,17 +1,17 @@
 <idea-plugin>
   <id>artsiomch.cmake</id>
   <name>CMake simple highlighter</name>
-  <version>0.2.0</version>
+  <version>0.2.0b</version>
   <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
 
   <description><![CDATA[
-     This is the plugin for CMake syntax highlight support.<br>
-     It provides basic syntax highlight for <b>IntelliJ IDEA CE</b> and <b>Android Studio</b>.<br>
+     Plugin for CMake syntax highlight/navigation support.<br>
+     It provides basic syntax highlight and variables navigation for <b>IntelliJ IDEA</b> and <b>Android Studio</b>.<br>
      Extend existed highlighting in <b>CLion</b>.
 ]]></description>
 
   <change-notes><![CDATA[
-      0.2.0 -  <br>
+      0.2.0b - beta: Variable declarations/references navigation (IDEA only: Ctrl+B, Alt+F7, Ctrl+Click, etc.) and highlighting (IDEA and partially CLion) <br>
       0.1.0 - CLion support added. <br>
       0.0.3 - BraceMatcher added. <br>
       0.0.2 - Fix bug of not evaluating escaped escape symbol `\\` inside quoted argument. <br>
