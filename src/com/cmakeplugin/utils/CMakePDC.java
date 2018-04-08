@@ -7,13 +7,14 @@ import com.jetbrains.cidr.cpp.cmake.CMakeListsFileType;
 import com.jetbrains.cidr.cpp.cmake.psi.*;
 import com.cmakeplugin.psi.*;
 import com.cmakeplugin.CMakeFileType;
+import com.intellij.util.PlatformUtils;
 
 /**
  * Provide Platform Dependent Code (IDEA/CLion) encapsulation into API
  */
 public class CMakePDC {
-  public static boolean isIDEA = false;
-  public static boolean isCLION = false;
+  public static boolean isIDEA = PlatformUtils.isIntelliJ();
+  public static boolean isCLION = PlatformUtils.isCLion();
 
   static boolean isUnquotedArgument(PsiElement element) {
     if (isIDEA) return (element instanceof CMakeUnquotedArgumentContainer);

@@ -11,9 +11,9 @@ import static com.cmakeplugin.annotator.CMakeAnnotatorUtils.*;
 import static com.cmakeplugin.utils.CMakePDC.isCLION;
 
 public class CMakeCLionAnnotator implements Annotator {
-  static {
-    isCLION = true;
-  }
+//  static {
+//    isCLION = true;
+//  }
 
   @Override
   public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {

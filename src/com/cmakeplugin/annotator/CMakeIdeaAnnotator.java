@@ -11,9 +11,9 @@ import static com.cmakeplugin.annotator.CMakeAnnotatorUtils.*;
 import static com.cmakeplugin.utils.CMakePDC.isIDEA;
 
 public class CMakeIdeaAnnotator implements Annotator {
-  static {
-    isIDEA = true;
-  }
+//  static {
+//    isIDEA = true;
+//  }
 
   @Override
   public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {

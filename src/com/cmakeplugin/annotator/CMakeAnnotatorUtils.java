@@ -1,12 +1,11 @@
 package com.cmakeplugin.annotator;
 
-//import com.cmakeplugin.CMakeSyntaxHighlighter;
+import com.cmakeplugin.CMakeSyntaxHighlighter;
 
 import com.cmakeplugin.utils.CMakePSITreeSearch;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -21,19 +20,15 @@ class CMakeAnnotatorUtils {
   static boolean annotateLegacy(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (element.getText().matches("(.*[^\\\\]\"([^\"]*[^\\\\])?\".*)+|(.*\\$\\(.*\\).*)")) { //fixme
       holder.createInfoAnnotation(element, null)
-              .setTextAttributes(DefaultLanguageHighlighterColors.DOC_COMMENT_TAG);
+              .setTextAttributes(CMakeSyntaxHighlighter.UNQUOTED_LEGACY);
       return true;
     } else return false;
   }
 
   static boolean annotatePathURL(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (element.getText().contains("/")) {
-//      TextRange range = new TextRange(element.getTextRange().getStartOffset(),
-//              element.getTextRange().getStartOffset() + element.getTextRange().getLength());
-//      holder.createInfoAnnotation(range, null)
       holder.createInfoAnnotation(element, null)
-              .setTextAttributes(DefaultLanguageHighlighterColors.DOC_COMMENT_TAG_VALUE);
-//              .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_PATH_URL);
+              .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_PATH_URL);
       return true;
     } else return false;
   }
@@ -43,9 +38,7 @@ class CMakeAnnotatorUtils {
       if (element.getText().matches(varRegexp)
               && !CMakeIFWHILEcheck.isVarInsideIFWHILE(element)) {
         holder.createInfoAnnotation(element, null)
-                .setTextAttributes(DefaultLanguageHighlighterColors.CONSTANT);
-//                .setTextAttributes(DefaultLanguageHighlighterColors.STATIC_METHOD);
-//                  .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_VARIABLE);
+                .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_VAR_DEF);
         return true;
       }
     }
@@ -55,8 +48,7 @@ class CMakeAnnotatorUtils {
   static boolean annotateVarDeclaration(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (CMakePSITreeSearch.existReferenceTo(element)) {
       holder.createInfoAnnotation(element, null)
-              .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
-//              .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_METHOD);
+              .setTextAttributes(CMakeSyntaxHighlighter.VAR_DEF);
       return true;
     }
     return false;
@@ -69,8 +61,7 @@ class CMakeAnnotatorUtils {
     // Highlight Outer variables.
     for ( TextRange outerVarRange: CMakeIFWHILEcheck.getOuterVarRefs(element)) {
       holder.createInfoAnnotation( outerVarRange.shiftRight(pos), null)
-              .setTextAttributes(DefaultLanguageHighlighterColors.INSTANCE_FIELD);
-//              .setTextAttributes(CMakeSyntaxHighlighter.VARIABLE);
+              .setTextAttributes(CMakeSyntaxHighlighter.VAR_REF);
     }
 
     // Highlight Inner variables.
@@ -82,8 +73,7 @@ class CMakeAnnotatorUtils {
       for (String varRegexp: CMakeKeywords.variables_All ) {
         if ( innerVarName.matches(varRegexp)) {
           holder.createInfoAnnotation(innerVarRange.shiftRight(pos), null)
-                  .setTextAttributes(DefaultLanguageHighlighterColors.CONSTANT);
-//                  .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_VARIABLE);
+                  .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_VAR_REF);
           isCmakePredefinedVar = true;
           break;
         }
@@ -98,14 +88,13 @@ class CMakeAnnotatorUtils {
     }
 
     // Highlight ENV variables
-    //fixme implement ref/resolve for ENV
+    //fixme: Move out and implement ref/resolve for ENV
     for ( TextRange innerVarRange: CMakeVarStringUtil.getInnerEnvVars(argtext) ) {
       for (String varRegexp: CMakeKeywords.variables_ENV ) {
         if (argtext.substring(innerVarRange.getStartOffset(),innerVarRange.getEndOffset())
                 .matches(varRegexp)) {
           holder.createInfoAnnotation(innerVarRange.shiftRight(pos), null)
-                  .setTextAttributes(DefaultLanguageHighlighterColors.CONSTANT);
-//                  .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_VARIABLE);
+                  .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_VAR_REF);
           break;
         }
       }
@@ -119,9 +108,7 @@ class CMakeAnnotatorUtils {
             || CMakeKeywords.commands_Test.contains(commandName)
             ) {
       holder.createInfoAnnotation(element, null)
-              .setTextAttributes(DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
-//            .setTextAttributes(DefaultLanguageHighlighterColors.METADATA);
-//              .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_COMMAND);
+              .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_COMMAND);
     } else if (CMakeKeywords.commands_Deprecated.contains(commandName)){
       holder.createWarningAnnotation(element,"Deprecated command")
             .setHighlightType(ProblemHighlightType.LIKE_DEPRECATED);
@@ -133,8 +120,7 @@ class CMakeAnnotatorUtils {
     for (String varRegexp: CMakeKeywords.properties_All){
       if (propertyName.matches(varRegexp)){
         holder.createInfoAnnotation(element, null)
-                .setTextAttributes(DefaultLanguageHighlighterColors.NUMBER);
-//                .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_PROPERTY);
+                .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_PROPERTY);
         return true;
       }
     }
@@ -152,15 +138,13 @@ class CMakeAnnotatorUtils {
     String operatorName = element.getText();
     if (CMakeKeywords.operators.contains(operatorName) ) {
       holder.createInfoAnnotation(element, null)
-              .setTextAttributes(DefaultLanguageHighlighterColors.METADATA);
-//              .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_OPERATOR);
+              .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_OPERATOR);
       return true;
     }
     for (String boolValue: CMakeKeywords.boolValues){
       if (operatorName.toUpperCase().matches(boolValue)){
         holder.createInfoAnnotation(element, null)
-                .setTextAttributes(DefaultLanguageHighlighterColors.NUMBER);
-//                .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_PROPERTY);
+                .setTextAttributes(CMakeSyntaxHighlighter.CMAKE_PROPERTY);
         return true;
       }
     }
