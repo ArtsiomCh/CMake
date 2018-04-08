@@ -2,6 +2,7 @@ package com.cmakeplugin.psi;
 
 import com.cmakeplugin.CMakeLanguage;
 import com.cmakeplugin.psi.impl.CMakePsiImplUtil;
+import com.cmakeplugin.utils.CMakeIFWHILEcheck;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -15,9 +16,14 @@ public class CMakePsiElementFactory {
             .createFileFromText("a.cmake", CMakeLanguage.INSTANCE, text, false, false);
   }
 
-  public static PsiElement createUnquotedArgumentFromText(@NotNull Project project, @NotNull String text) {
-    return CMakePsiImplUtil.computeElementsOfClass(createFile(project,"set(" + text + ")"), CMakeUnquotedArgumentMaybeVariableContainer.class)
-            .get(0).getUnquotedArgumentMaybeVarDef();
+  public static PsiElement createArgumentFromText(@NotNull PsiElement element,
+                                                  @NotNull String text,
+                                                  @NotNull final Class<? extends PsiElement> aClass) {
+    String fileText = CMakeIFWHILEcheck.isVarInsideIFWHILE(element)
+            ? "if(" + text + ") endif()"
+            : "set(" + text + ")";
+    return CMakePsiImplUtil.computeElementsOfClass( createFile( element.getProject(), fileText), aClass)
+            .get(0).getFirstChild();
   }
 
 }

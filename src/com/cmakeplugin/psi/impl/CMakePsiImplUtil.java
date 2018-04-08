@@ -30,7 +30,7 @@ public class CMakePsiImplUtil {
   @NotNull
   public static CMakeUnquotedArgumentMaybeVariableContainer setName(CMakeUnquotedArgumentMaybeVariableContainer o, String newName) {
     ObjectUtils.assertNotNull(o.getUnquotedArgumentMaybeVarDef())
-            .replace(CMakePsiElementFactory.createUnquotedArgumentFromText(o.getProject(), newName));
+            .replace(CMakePsiElementFactory.createArgumentFromText(o, newName, CMakeUnquotedArgumentMaybeVariableContainer.class));
     return o;
   }
 
@@ -140,10 +140,18 @@ public class CMakePsiImplUtil {
       return EMPTY_ARRAY;
     }
 
-//      @Override
-//      public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-//        return getElement().getVariable().replace(CMakePsiElementFactory.createVariableFromText(getElement().getProject(), newElementName));
-//      }
+      @Override
+      public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+        if (getElement() instanceof CMakeUnquotedArgumentContainer) {
+          return getElement().getFirstChild().replace( CMakePsiElementFactory.createArgumentFromText(getElement(),
+                    getRangeInElement().replace( getElement().getText(), newElementName),
+                    CMakeUnquotedArgumentContainer.class));
+        } else if (getElement() instanceof CMakeQuotedArgumentContainer) {
+          return getElement().getFirstChild().replace( CMakePsiElementFactory.createArgumentFromText(getElement(),
+                    "\"" + getRangeInElement().replace( getElement().getText(), newElementName) + "\"",
+                    CMakeQuotedArgumentContainer.class));
+        } else throw new IncorrectOperationException("Unknown type of Argument to replace: " + getElement().getClass());
+      }
 
   }
 
