@@ -19,7 +19,7 @@ Variable declaration and usage panels (IDEA/Android studio only: Ctrl+B, Alt+F7,
 
 Navigation between variable's declarations/references in CLion is not implemented. Might be implemented in future releases.
 
-ENV variables navigation/renaming is not implemented yet. Therefore ENV variables highlighting works.
+ENV variables navigation/renaming is not implemented yet. Nevertheless ENV variables highlighting works.
 
 Variable's rename refactoring (Shift+F6) works fine for variables with single declaration. For multi declared (re-declared, amended) variables rename refactoring works only from variable declaration side (i.e. caret should be on variable declaration, not reference) and will change all visible references and only current declaration. use with caution, it looks for me like a bug (feature?) of IDEA.
 
@@ -41,7 +41,7 @@ If you wish to use compiled version of pluging, please take `CMake.jar` from the
 Plugin is open-source software and is licenced under GPL v3 licence.
 
 ## **Versions**
-
+**v.0.2.0**
 * Variable declarations/references navigation (IDEA/Android studio only: Ctrl+B, Alt+F7, Ctrl+Click, etc.), renaming (IDEA/Android studio only: Shift+F6) and highlighting (IDEA/Android studio and partially CLion)
 
 **v.0.1.0**
@@ -65,5 +65,5 @@ Plugin is open-source software and is licenced under GPL v3 licence.
 * In project properties set the `plugin.xml` location (`resources/META-INF/plugin.xml`)
 * Hover the `cmake_v3.bnf` and generate parser code
 * In project properties mark gen as source folder
-* Generate lexer class from `CMake_org_v3.flex` file. (Due to not optimal architecture needs to be compiled with `-Xmx1512m` option. Will be fixed in the future.)
+* Generate lexer class from `CMake_org_v3.flex` file. 
 * Build project and you are set to go
