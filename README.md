@@ -12,10 +12,18 @@ Plugin is inspired and based on [CMaker](https://github.com/dubrousky/CMaker) by
 
 CMake Syntax from [cmake.org](https://cmake.org/cmake/help/latest/manual/cmake-language.7.html) is mostly implemented.
 
-For <b>IntelliJ IDEA CE</b> and <b>Android Studio</b>: Commands, Variables, Property and Operator was taken from [vim CMake support pluging](https://raw.githubusercontent.com/nickhutchinson/vim-cmake-syntax/master/syntax/cmake.vim)<br>
-For <b>CLion</b>: Commands, Variables, Property and Operator was taken from official [cmake.org](https://cmake.org/cmake/help/latest/index.html) manuals.
+Till version 0.1.0 <b>IntelliJ IDEA CE</b> and <b>Android Studio</b>: Commands, Variables, Property and Operator was taken from [vim CMake support pluging](https://raw.githubusercontent.com/nickhutchinson/vim-cmake-syntax/master/syntax/cmake.vim)<br>
+For <b>CLion</b> and from version 0.2.0 for <b>IntelliJ IDEA CE</b> and <b>Android Studio</b>: Commands, Variables, Property and Operator was taken from official [cmake.org](https://cmake.org/cmake/help/latest/index.html) manuals.
 
-There are few known syntax highlights bugs, mostly around `$` symbol, because it's used to recognise Variable references in arguments. But those bugs could be reproduced mostly on synthetic tests while real `CMakeLists.txt` files shown correctly.  
+Variable declaration and usage panels (IDEA/Android studio only: Ctrl+B, Alt+F7, Ctrl+Click, etc.) show all visible mentions of the variable name in ALL Project's cmake files. Scope principles (function, directory, etc.) not yet implemented. Use it for guidance only not for determining variable visibility. Variable reference's specific case inside IF and WHILE conditions implemented.
+
+Navigation between variable's declarations/references in CLion is not implemented. Might be implemented in future releases.
+
+ENV variables navigation/renaming is not implemented yet. Therefore ENV variables highlighting works.
+
+Variable's rename refactoring (Shift+F6) works fine for variables with single declaration. For multi declared (re-declared, amended) variables rename refactoring works only from variable declaration side (i.e. caret should be on variable declaration, not reference) and will change all visible references and only current declaration. use with caution, it looks for me like a bug (feature?) of IDEA.
+
+Till version 0.1.0 <b>IntelliJ IDEA CE</b> and <b>Android Studio</b> there are few known syntax highlights bugs, mostly around `$` symbol, because it's used to recognise Variable references in arguments. But those bugs could be reproduced mostly on synthetic tests while real `CMakeLists.txt` files shown correctly.
 
 <img src="Screenshot2017-10-10.png">
 
@@ -33,6 +41,9 @@ If you wish to use compiled version of pluging, please take `CMake.jar` from the
 Plugin is open-source software and is licenced under GPL v3 licence.
 
 ## **Versions**
+
+* Variable declarations/references navigation (IDEA/Android studio only: Ctrl+B, Alt+F7, Ctrl+Click, etc.), renaming (IDEA/Android studio only: Shift+F6) and highlighting (IDEA/Android studio and partially CLion)
+
 **v.0.1.0**
 * CLion support added.
 

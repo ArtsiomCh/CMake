@@ -8,12 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import com.jetbrains.cidr.cpp.cmake.psi.*;
 
 import static com.cmakeplugin.annotator.CMakeAnnotatorUtils.*;
-import static com.cmakeplugin.utils.CMakePDC.isCLION;
 
 public class CMakeCLionAnnotator implements Annotator {
-//  static {
-//    isCLION = true;
-//  }
 
   @Override
   public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {

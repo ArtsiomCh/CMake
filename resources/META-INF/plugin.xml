@@ -1,17 +1,23 @@
 <idea-plugin>
   <id>artsiomch.cmake</id>
   <name>CMake simple highlighter</name>
-  <version>0.2.0b</version>
+  <version>0.2.0</version>
   <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
 
   <description><![CDATA[
      Plugin for CMake syntax highlight/navigation support.<br>
-     It provides basic syntax highlight and variables navigation for <b>IntelliJ IDEA</b> and <b>Android Studio</b>.<br>
-     Extend existed highlighting in <b>CLion</b>.
+     - It provides syntax highlight and variables navigation/renaming (*see Notes) for <b>IntelliJ IDEA</b> and <b>Android Studio</b>.<br>
+     - Extend existed highlighting in <b>CLion</b>. <br><br>
+     <b>Vote!</b> for new functionality (write it in Note) and support the developer <a href="http://paypal.me/AChapialiou">Paypal.me/AChapialiou</a> :<br>
+     - variable's scope of visibility for navigation/renaming. <br>
+     - variables navigation/renaming in CLion. <br>
+     - ENV variables navigation/renaming. <br>
+     - function's declaration and references navigation/renaming. <br>
+     - Other ... (just write in Note your needs!) <br>
 ]]></description>
 
   <change-notes><![CDATA[
-      0.2.0b - beta: Variable declarations/references navigation (IDEA only: Ctrl+B, Alt+F7, Ctrl+Click, etc.) and highlighting (IDEA and partially CLion) <br>
+      0.2.0 - Variable's declarations/references navigation, renaming (*see Notes) and additional highlighting<br>
       0.1.0 - CLion support added. <br>
       0.0.3 - BraceMatcher added. <br>
       0.0.2 - Fix bug of not evaluating escaped escape symbol `\\` inside quoted argument. <br>

@@ -87,8 +87,8 @@ class CMakeAnnotatorUtils {
       }
     }
 
-    // Highlight ENV variables
-    //fixme: Move out and implement ref/resolve for ENV
+    // Highlight Inner CMake predefined ENV variables
+    //fixme: implement ref/resolve for ENV
     for ( TextRange innerVarRange: CMakeVarStringUtil.getInnerEnvVars(argtext) ) {
       for (String varRegexp: CMakeKeywords.variables_ENV ) {
         if (argtext.substring(innerVarRange.getStartOffset(),innerVarRange.getEndOffset())
