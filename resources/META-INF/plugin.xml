@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>artsiomch.cmake</id>
   <name>CMake simple highlighter</name>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
   <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
 
   <description><![CDATA[
@@ -17,7 +17,8 @@
 ]]></description>
 
   <change-notes><![CDATA[
-      0.2.0 - Variable's declarations/references navigation, renaming (*see Notes) and additional highlighting<br>
+      0.2.1 - Fixed Android Studio compatibility issue. <br>
+      0.2.0 - Variable's declarations/references navigation, renaming (*see Notes) and additional highlighting. <br>
       0.1.0 - CLion support added. <br>
       0.0.3 - BraceMatcher added. <br>
       0.0.2 - Fix bug of not evaluating escaped escape symbol `\\` inside quoted argument. <br>
@@ -26,7 +27,7 @@
   </change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="145.0"/>
+  <idea-version since-build="173.0"/>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->

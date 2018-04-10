@@ -79,14 +79,12 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
           DefaultLanguageHighlighterColors.NUMBER  );
 
   private static TextAttributesKey createTextAttributesKey (String externalName, int newFontType, TextAttributesKey baseTextAttributesKey) {
-    TextAttributes textAttributes = new TextAttributes();
-    textAttributes.copyFrom(baseTextAttributesKey.getDefaultAttributes());
-    TextAttributesKey result = TextAttributesKey.createTextAttributesKey( externalName, textAttributes);
-    int fontType = result.getDefaultAttributes().getFontType();
-    newFontType = fontType + newFontType;
-    fontType = (newFontType < 0 || newFontType > 3) ? fontType : newFontType;
-    result.getDefaultAttributes().setFontType(fontType);
-    return  result;
+    TextAttributes textAttributes = baseTextAttributesKey.getDefaultAttributes().clone();
+    int fontType = textAttributes.getFontType() + newFontType;
+    if (fontType >= 0 && fontType <= 3) {
+      textAttributes.setFontType(fontType);
+    }
+    return  TextAttributesKey.createTextAttributesKey( externalName, textAttributes);
   }
 
 //  private static TextAttributesKey createBoldTextAttributesKey (String externalName, TextAttributesKey baseTextAttributesKey) {
@@ -99,7 +97,7 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
     keys1 = new THashMap<IElementType, TextAttributesKey>();
     keys2 = new THashMap<IElementType, TextAttributesKey>();
     // TODO: Populate maps here
-    if (CMakePDC.isIDEA) {
+    if (!CMakePDC.isCLION) {
       keys1.put(CMakeTypes.LINE_COMMENT, COMMENT);
       keys1.put(CMakeTypes.BRACKET_COMMENT, COMMENT);
       keys1.put(CMakeTypes.QUOTED_ARGUMENT, STRING);

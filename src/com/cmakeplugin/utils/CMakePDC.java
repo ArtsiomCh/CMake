@@ -1,5 +1,7 @@
 package com.cmakeplugin.utils;
 
+import com.cmakeplugin.CMakeLexerAdapter;
+import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -13,69 +15,61 @@ import com.intellij.util.PlatformUtils;
  * Provide Platform Dependent Code (IDEA/CLion) encapsulation into API
  */
 public class CMakePDC {
-  public static boolean isIDEA = PlatformUtils.isIntelliJ();
   public static boolean isCLION = PlatformUtils.isCLion();
+//  public static boolean isIDEA = !isCLION;//PlatformUtils.isIntelliJ();
 
   static boolean isUnquotedArgument(PsiElement element) {
-    if (isIDEA) return (element instanceof CMakeUnquotedArgumentContainer);
-    if (isCLION) return (element instanceof CMakeLiteral);
-    return false;
+    return (isCLION)
+            ? (element instanceof CMakeLiteral)
+            : (element instanceof CMakeUnquotedArgumentContainer);
   }
 
   static boolean hasIfWhileParent(PsiElement element) {
-    if (isIDEA) {
+    if (isCLION) {
+      PsiElement commandArguments = PsiTreeUtil.getParentOfType(element, CMakeCommandArguments.class);
+      assert (commandArguments != null && commandArguments.getPrevSibling() != null);
+      PsiElement prevSibling = commandArguments.getPrevSibling();
+      return     prevSibling instanceof CMakeIfCommandCall
+              || prevSibling instanceof CMakeElseIfCommandCall
+              || prevSibling instanceof CMakeElseCommandCall
+              || prevSibling instanceof CMakeEndIfCommandCall
+              || prevSibling instanceof CMakeWhileCommandCall
+              || prevSibling instanceof CMakeEndWhileCommandCall;
+    } else {
       return PsiTreeUtil.getParentOfType(element
               ,CMakeIfExpr.class, CMakeElseifExpr.class, CMakeElseExpr.class, CMakeEndifExpr.class
               ,CMakeWhilebegin.class, CMakeWhileend.class)!=null;
-    } else if (isCLION) {
-      PsiElement commandArguments = PsiTreeUtil.getParentOfType(element, CMakeCommandArguments.class);
-      if (commandArguments != null && commandArguments.getPrevSibling() != null) {
-        PsiElement prevSibling = commandArguments.getPrevSibling();
-        return     prevSibling instanceof CMakeIfCommandCall
-                || prevSibling instanceof CMakeElseIfCommandCall
-                || prevSibling instanceof CMakeElseCommandCall
-                || prevSibling instanceof CMakeEndIfCommandCall
-                || prevSibling instanceof CMakeWhileCommandCall
-                || prevSibling instanceof CMakeEndWhileCommandCall;
-
-      }
     }
-    return false;
   }
 
   static FileType getCmakeFileType() {
-    if (isIDEA) {
-      return CMakeFileType.INSTANCE;
-    } else if (isCLION) {
-      return CMakeListsFileType.INSTANCE;
-    }
-    return null;
+    return (isCLION)
+            ? CMakeListsFileType.INSTANCE
+            : CMakeFileType.INSTANCE;
   }
 
   static Class<? extends PsiElement> getPossibleVarDefClass(){
-    if (isIDEA) {
-      return CMakeUnquotedArgumentMaybeVariableContainer.class;
-    } else if (isCLION) {
-      return CMakeLiteral.class;
-    }
-    return null;
+    return (isCLION)
+            ? CMakeLiteral.class
+            : CMakeUnquotedArgumentMaybeVariableContainer.class;
   }
 
   static Class<? extends PsiElement> getUnquotedArgumentClass(){
-    if (isIDEA) {
-      return CMakeUnquotedArgumentContainer.class;
-    } else if (isCLION) {
-      return CMakeLiteral.class;
-    }
-    return null;
+    return (isCLION)
+            ? CMakeLiteral.class
+            : CMakeUnquotedArgumentContainer.class;
   }
 
   static Class<? extends PsiElement> getQuotedArgumentClass(){
-    if (isIDEA) {
-      return CMakeQuotedArgumentContainer.class;
-    } else if (isCLION) {
-      return CMakeLiteral.class;
-    }
-    return null;
+    return (isCLION)
+            ? CMakeLiteral.class
+            : CMakeQuotedArgumentContainer.class;
   }
+
+//  public static Lexer getHighlightingLexer() {
+//    return (isCLION)
+//            ? new CMakeLexer()
+//            : new CMakeLexerAdapter();
+//  }
+
 }
