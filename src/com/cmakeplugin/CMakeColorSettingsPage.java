@@ -57,7 +57,7 @@ public class CMakeColorSettingsPage implements ColorSettingsPage {
             "if(<p>TRUE</p>)\n" +
             "\tunknown_command(\n" +
             "\t\tunquoted_argument=<vr>${outer_${inner_variable}_variable}</vr><u>/followed/by/path</u>\n" +
-            "\t\t<cvd>${CMAKE_CXX_FLAGS}</cvd> BadChar=\\d\\g\\j)\n" +
+            "\t\t<cvd>CMAKE_CXX_FLAGS</cvd> BadChar=\\d\\g\\j)\n" +
             "endif()\n" +
             "<c>set</c>(<vd>variable_definition</vd> arg1;arg2;arg3\n" +
             "\t<p>PUBLIC</p> with_known_CMake_Property\n" +

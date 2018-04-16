@@ -1,15 +1,12 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
-    <fileTypeFactory implementation="com.cmakeplugin.CMakeFileTypeFactory"/>
+    <!--
     <lang.parserDefinition language="CMake" implementationClass="com.cmakeplugin.CMakeParserDefinition"/>
-    <lang.syntaxHighlighterFactory key="CMake" implementationClass="com.cmakeplugin.CMakeSyntaxHighlighterFactory"/>
-    <colorSettingsPage implementation="com.cmakeplugin.CMakeColorSettingsPage"/>
+    <lang.syntaxHighlighterFactory language="CMake" implementationClass="com.cmakeplugin.CMakeSyntaxHighlighterFactory"/>
     <lang.braceMatcher language="CMake" implementationClass="com.cmakeplugin.CMakeBraceMatcher"/>
     <lang.refactoringSupport language="CMake" implementationClass="com.cmakeplugin.CMakeRefactoringSupportProvider"/>
-    <annotator language="CMake" implementationClass="com.cmakeplugin.annotator.CMakeIdeaAnnotator"/>
-    <!--
-     -->
     <lang.findUsagesProvider language="CMake" implementationClass="com.cmakeplugin.CMakeFindUsagesProvider"/>
+     -->
   </extensions>
 </idea-plugin>

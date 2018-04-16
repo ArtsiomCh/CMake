@@ -15,8 +15,17 @@ import com.intellij.util.PlatformUtils;
  * Provide Platform Dependent Code (IDEA/CLion) encapsulation into API
  */
 public class CMakePDC {
-  public static boolean isCLION = PlatformUtils.isCLion();
+  public static final boolean isCLION = isClass("com.jetbrains.cidr.cpp.cmake.CMakeLanguage");//PlatformUtils.isCLion();
 //  public static boolean isIDEA = !isCLION;//PlatformUtils.isIntelliJ();
+
+  private static boolean isClass(String className) {
+    try  {
+      Class.forName(className);
+      return true;
+    }  catch (ClassNotFoundException e) {
+      return false;
+    }
+  }
 
   static boolean isUnquotedArgument(PsiElement element) {
     return (isCLION)

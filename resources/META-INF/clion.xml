@@ -1,8 +1,7 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here
-    -->
-    <colorSettingsPage implementation="com.cmakeplugin.CMakeColorSettingsPage"/>
     <annotator language="CMake" implementationClass="com.cmakeplugin.annotator.CMakeCLionAnnotator"/>
+    -->
   </extensions>
 </idea-plugin>

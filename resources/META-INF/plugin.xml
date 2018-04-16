@@ -1,24 +1,28 @@
 <idea-plugin>
   <id>artsiomch.cmake</id>
   <name>CMake simple highlighter</name>
-  <version>0.2.1</version>
+  <version>0.2.2</version>
   <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
 
   <description><![CDATA[
      Plugin for CMake syntax highlight/navigation support.<br>
-     - It provides syntax highlight and variables navigation/renaming (*see Notes) for <b>IntelliJ IDEA</b> and <b>Android Studio</b>.<br>
-     - Extend existed highlighting in <b>CLion</b>. <br><br>
+     - It provides syntax highlight and variables navigation/renaming (*see Notes) for <b>IntelliJ IDEA</b> and <b>Android Studio</b>(till 3.2).<br>
+     - Extend existed highlighting in <b>CLion</b> and <b>Android Studio</b>(from 3.2). <br><br>
      <b>Vote!</b> for new functionality (write it in Note) and support the developer <a href="http://paypal.me/AChapialiou">Paypal.me/AChapialiou</a> :<br>
      - variable's scope of visibility for navigation/renaming. <br>
-     - variables navigation/renaming in CLion. <br>
+     - variables navigation/renaming in CLion and Android Studio(from 3.2). <br>
      - ENV variables navigation/renaming. <br>
      - function's declaration and references navigation/renaming. <br>
      - Other ... (just write in Note your needs!) <br>
 ]]></description>
 
   <change-notes><![CDATA[
+      0.2.2 - Fixed compatibility for upcoming Android Studio 3.2 (with restricted functionality as for CLion). As a side effect the Plugin become open for all IntelliJ Platform's IDEs.<br>
       0.2.1 - Fixed Android Studio compatibility issue. <br>
-      0.2.0 - Variable's declarations/references navigation, renaming (*see Notes) and additional highlighting. <br>
+      0.2.0 - New lexer-parser-annotator stack used: <br>
+          &emsp; * Navigation and renaming for variable's declarations/references(*see Notes: only for IntelliJ IDEA and Android Studio( till 3.2) yet).<br>
+          &emsp; * Additional highlighting: variable's declarations and properties/operators. <br>
+          &emsp; * Colors setting also available in CLion. <br>
       0.1.0 - CLion support added. <br>
       0.0.3 - BraceMatcher added. <br>
       0.0.2 - Fix bug of not evaluating escaped escape symbol `\\` inside quoted argument. <br>
@@ -32,9 +36,43 @@
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
   <!-- uncomment to enable plugin in all products
-  -->
+  <depends optional="true" config-file="clion.xml">com.intellij.modules.cidr.lang</depends>
   <depends optional="true" config-file="idea.xml">com.intellij.modules.java</depends>
-  <depends optional="true" config-file="clion.xml">com.intellij.modules.clion</depends>
+  -->
+  <depends>com.intellij.modules.lang</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!--
+    <lang.parserDefinition language="CMake"
+                           factoryArgument="parserDefinition"
+                           factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+    <lang.syntaxHighlighterFactory language="CMake"
+                                   factoryArgument="syntaxHighlighterFactory"
+                                   factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+    <lang.braceMatcher language="CMake"
+                       factoryArgument="braceMatcher"
+                       factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+     -->
+    <fileTypeFactory implementation="com.cmakeplugin.CMakeFileTypeFactory"/>
+    <colorSettingsPage implementation="com.cmakeplugin.CMakeColorSettingsPage"/>
+
+    <annotator language="CMake"
+               factoryArgument="Annotator"
+               factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+    <lang.refactoringSupport language="CMake"
+                             factoryArgument="refactoringSupport"
+                             factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+    <lang.findUsagesProvider language="CMake"
+                             factoryArgument="findUsagesProvider"
+                             factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+  </extensions>
+
+  <application-components>
+    <!-- Add your application components here -->
+    <component>
+      <implementation-class>com.cmakeplugin.CMakeComponent</implementation-class>
+    </component>
+  </application-components>
 
   <actions>
     <!-- Add your actions here -->
