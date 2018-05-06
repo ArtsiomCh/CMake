@@ -38,6 +38,9 @@ public class CMakePDC {
       PsiElement commandArguments = PsiTreeUtil.getParentOfType(element, CMakeCommandArguments.class);
       assert (commandArguments != null && commandArguments.getPrevSibling() != null);
       PsiElement prevSibling = commandArguments.getPrevSibling();
+      if (prevSibling instanceof PsiWhiteSpace && prevSibling.getPrevSibling() != null) { // workaround for "if (...)"
+        prevSibling = prevSibling.getPrevSibling();
+      }
       return     prevSibling instanceof CMakeIfCommandCall
               || prevSibling instanceof CMakeElseIfCommandCall
               || prevSibling instanceof CMakeElseCommandCall
