@@ -5,21 +5,22 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-import com.jetbrains.cidr.cpp.cmake.psi.*;
+//import com.jetbrains.cidr.cpp.cmake.psi.*;
 
 import static com.cmakeplugin.annotator.CMakeAnnotatorUtils.*;
+import static com.cmakeplugin.utils.CMakeProxyToJB.*;
 
 public class CMakeCLionAnnotator implements Annotator {
 
   @Override
   public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {
-    if (element instanceof CMakeCommandName) {
+    if (getCMakeCommandNameClass().isInstance( element)) {
       annotateCommand(element, holder);
-    } else if (element instanceof CMakeArgument) {
-      if (((CMakeArgument) element).getBracketArgStart()==null) {
-        PsiElement cmakeLiteral = ((CMakeArgument) element).getCMakeLiteral();
+    } else if (getCMakeArgumentClass().isInstance( element)) {
+      if ( !hasBracketArg(element) ) {
+        PsiElement cmakeLiteral = getCMakeLiteral( element);
         assert cmakeLiteral!=null;
-        if (element.getFirstChild().getNode().getElementType() == CMakeTokenTypes.QUOTE) {
+        if ( hasQuotedArg( element)) {
           // Annotate Quoted argument
           annotateVarReferences(cmakeLiteral, holder);
         } else
