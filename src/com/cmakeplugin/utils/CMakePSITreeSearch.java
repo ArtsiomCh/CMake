@@ -9,6 +9,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
+import com.intellij.psi.util.PsiElementFilter;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -39,20 +40,25 @@ public class CMakePSITreeSearch {
                     GlobalSearchScope.allScope(project));
     for (VirtualFile virtualFile : virtualFiles) {
       PsiFile cmakeFile = PsiManager.getInstance(project).findFile(virtualFile);
-      if (cmakeFile != null // && varReference.getContainingFile() != cmakeFile) // Exclude current file
-             // && cmakeFile.getContainingDirectory()==varReference.getContainingFile().getContainingDirectory()// Directory Scope
-         ) {
-        for (PsiElement varDefinition :
-                findChildrenOfTypeWithText(cmakeFile, varName, CMakePDC.getPossibleVarDefClass())) {
-          if ( !isVarInsideIFWHILE(varDefinition)
-// && PsiTreeUtil.getParentOfType(varDefinition, CMakeFunmacro.class) == null) { // exclude Function's scopes
-                  ) {
-            result.add(varDefinition);
-          }
-        }
-      }
+      result.addAll( findChildren( cmakeFile, element ->
+              CMakePDC.getPossibleVarDefClass().isInstance(element)
+                      && varName.equals(element.getText())
+                      && !isVarInsideIFWHILE(element)));
     }
     return result;
+  }
+
+  /**
+   * Copy of {@link PsiTreeUtil#findChildrenOfAnyType(PsiElement, Class[])}
+   */
+  @NotNull
+  private static <T extends PsiElement> Collection<T> findChildren(@Nullable final PsiElement element,
+                                                                   @NotNull final PsiElementFilter filter) {
+    if (element == null) return ContainerUtil.emptyList();
+    PsiElementProcessor.CollectFilteredElements<T> processor =
+            new PsiElementProcessor.CollectFilteredElements<T>(filter);
+    PsiTreeUtil.processElements(element, processor);
+    return processor.getCollection();
   }
 
   /**
@@ -69,47 +75,58 @@ public class CMakePSITreeSearch {
                     GlobalSearchScope.allScope(project));
     for (VirtualFile virtualFile : virtualFiles) {
       PsiFile cmakeFile = PsiManager.getInstance(project).findFile(virtualFile);
-      if (cmakeFile != null) {
-        for (PsiElement element :
-                PsiTreeUtil.findChildrenOfAnyType(cmakeFile,
-                                                  CMakePDC.getUnquotedArgumentClass(),
-                                                  CMakePDC.getQuotedArgumentClass())) {
-          for (TextRange innerVarRange : getInnerVars(element)) {
-            if (element.getText()
-                    .substring(innerVarRange.getStartOffset(), innerVarRange.getEndOffset())
-                    .equals(varDef.getText())  )
-              return true;
-          }
-//          for (PsiReference elementRef : element.getReferences()){
-//            if (elementRef.isReferenceTo(varDef)) return true;
-//          }
-        }
-      }
+      if (hasChild( cmakeFile, element -> {
+                      if (CMakePDC.getUnquotedArgumentClass().isInstance(element)
+                              || CMakePDC.getQuotedArgumentClass().isInstance(element)) {
+                        for (TextRange innerVarRange : getInnerVars(element)) {
+                          if (element.getText()
+                                  .substring(innerVarRange.getStartOffset(), innerVarRange.getEndOffset())
+                                  .equals(varDef.getText()))
+                            return true;
+                        }
+                      }
+                      return false;
+                    })
+         ) return true;
     }
     return false;
   }
 
   /**
-   * Copy of {@link PsiTreeUtil#findChildrenOfAnyType(PsiElement, Class[])}
+   * Copy of {@link PsiTreeUtil#findChildOfType(PsiElement,  Class, boolean, Class)}
    */
-  @NotNull
-  private static <T extends PsiElement> Collection<T> findChildrenOfTypeWithText(@Nullable final PsiElement element,
-                                                                                 @NotNull final String text,
-                                                                                 @NotNull final Class<? extends T> aClass) {
-    if (element == null) return ContainerUtil.emptyList();
-    PsiElementProcessor.CollectElements<T> processor = new PsiElementProcessor.CollectElements<T>() {
-      @Override
-      public boolean execute(@NotNull T each) {
-        if (each == element) return true;
-        if ( aClass.isInstance(each) && text.equals(each.getText()) ) {
-          return super.execute(each);
-        }
-        return true;
-      }
-    };
+  private static <T extends PsiElement> boolean hasChild(@Nullable final PsiElement element,
+                                                         @NotNull final PsiElementFilter filter) {
+    if (element == null) return false;
+
+    PsiElementProcessor.FindFilteredElement<T> processor =
+            new PsiElementProcessor.FindFilteredElement<T>(filter);
     PsiTreeUtil.processElements(element, processor);
-    return processor.getCollection();
+    return processor.isFound();
   }
+
+
+//  /**
+//   * Copy of {@link PsiTreeUtil#findChildrenOfAnyType(PsiElement, Class[])}
+//   */
+//  @NotNull
+//  private static <T extends PsiElement> Collection<T> findChildrenOfTypeWithText(@Nullable final PsiElement element,
+//                                                                                 @NotNull final String text,
+//                                                                                 @NotNull final Class<? extends T> aClass) {
+//    if (element == null) return ContainerUtil.emptyList();
+//    PsiElementProcessor.CollectElements<T> processor = new PsiElementProcessor.CollectElements<T>() {
+//      @Override
+//      public boolean execute(@NotNull T each) {
+//        if (each == element) return true;
+//        if ( aClass.isInstance(each) && text.equals(each.getText()) ) {
+//          return super.execute(each);
+//        }
+//        return true;
+//      }
+//    };
+//    PsiTreeUtil.processElements(element, processor);
+//    return processor.getCollection();
+//  }
 
 /*  @NotNull
   private static List<PsiElement> findVarDefsFileScope(@NotNull PsiElement o, String name) {
