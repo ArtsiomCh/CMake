@@ -15,7 +15,7 @@ CMake Syntax from [cmake.org](https://cmake.org/cmake/help/latest/manual/cmake-l
 Till version 0.1.0 <b>IntelliJ IDEA CE</b> and <b>Android Studio</b>: Commands, Variables, Property and Operator was taken from [vim CMake support pluging](https://raw.githubusercontent.com/nickhutchinson/vim-cmake-syntax/master/syntax/cmake.vim)<br>
 For <b>CLion</b> and from version 0.2.0 for <b>IntelliJ IDEA CE</b> and <b>Android Studio</b>: Commands, Variables, Property and Operator was taken from official [cmake.org](https://cmake.org/cmake/help/latest/index.html) manuals.
 
-Variable declaration and usage panels (IDEA/Android studio only: Ctrl+B, Alt+F7, Ctrl+Click, etc.) show all visible mentions of the variable name in ALL Project's cmake files. Scope principles (function, directory, etc.) not yet implemented. Use it for guidance only not for determining variable visibility. Variable reference's specific case inside IF and WHILE conditions implemented.
+Variable declaration and usage panels (only IDEA and Android studio(till 3.2): Ctrl+B, Alt+F7, Ctrl+Click, etc.) show all visible mentions of the variable name in ALL Project's cmake files. Scope principles (function, directory, etc.) not yet implemented. Use it for guidance only not for determining variable visibility. Variable reference's specific case inside IF and WHILE conditions implemented.
 
 Navigation between variable's declarations/references in CLion is not implemented. Might be implemented in future releases.
 
@@ -41,6 +41,15 @@ If you wish to use compiled version of pluging, please take `CMake.jar` from the
 Plugin is open-source software and is licenced under GPL v3 licence.
 
 ## **Versions**
+**v.0.2.4**
+* Finally :) tested fix of CLion 2018.2 EAP compatibility issue. <br>
+
+**v.0.2.3**
+* Fixed (but not tested) upcoming CLion 2018.2 EAP compatibility issue: <a href="https://youtrack.jetbrains.com/issue/CPP-12728">CPP-12728</a>.  <br>
+
+**v.0.2.2**
+* Fixed compatibility for upcoming Android Studio 3.2 (with restricted functionality as for CLion). As a side effect the Plugin become open for all IntelliJ Platform's IDEs.<br>
+
 **v.0.2.1**
 * Fixed Android Studio compatibility issue.
 
@@ -69,4 +78,5 @@ Plugin is open-source software and is licenced under GPL v3 licence.
 * Hover the `cmake_v3.bnf` and generate parser code
 * In project properties mark gen as source folder
 * Generate lexer class from `CMake_org_v3.flex` file.
+* Link `clion.jar` (two of them actually: from CLion 181 and below, from Clion 182 and above) to project as provided module or just create a stub at `CMakeProxyToJB.java` 
 * Build project and you are set to go

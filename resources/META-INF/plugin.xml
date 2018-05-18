@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>artsiomch.cmake</id>
   <name>CMake simple highlighter</name>
-  <version>0.2.3</version>
+  <version>0.2.4</version>
   <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
 
   <description><![CDATA[
@@ -17,6 +17,7 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      0.2.4 - Finally :) tested fix for CLion 2018.2 EAP compatibility issue. <br>
       0.2.3 - Fixed (but not tested) upcoming CLion 2018.2 EAP compatibility issue: <a href="https://youtrack.jetbrains.com/issue/CPP-12728">CPP-12728</a>.  <br>
       0.2.2 - Fixed compatibility for upcoming Android Studio 3.2 (with restricted functionality as for CLion). As a side effect the Plugin become open for all IntelliJ Platform's IDEs.<br>
       0.2.1 - Fixed Android Studio compatibility issue. <br>
