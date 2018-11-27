@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '0.3.12'
+    id 'idea'
+}
+
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets.main.java.srcDirs = ['src/main/java','gen']
+idea { 
+    module {
+//        sourceDirs += file('gen')
+        generatedSourceDirs += file('gen')
+    }
+}
+
+dependencies {
+    compileOnly fileTree('MyJars')
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+intellij {
+//    localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/183.4284.36/'
+    version '183.4284.36'
+}
+patchPluginXml {
+    changeNotes """
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>"""
+}
