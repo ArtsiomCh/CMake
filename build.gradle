@@ -29,8 +29,8 @@ dependencies {
 }
 
 intellij {
-//    localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
-    localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-0/182.5314842/'
+    localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
+//    localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-0/182.5314842/'
     downloadSources false
 //    alternativeIdePath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
 //    version '183.4284.36'

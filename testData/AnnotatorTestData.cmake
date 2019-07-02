@@ -123,8 +123,8 @@ function(fun2)
 endfunction(fun2)
 
 # Evaluate expression
-# Suggestion from the Wiki: http://cmake.org/Wiki/CMake/Language_Syntax
-# Unfortunately, no built-in stuff for this: http://public.kitware.com/Bug/view.php?id=4034
+# Suggestion from the Wiki: <info descr="Open in browser (Ctrl+Click, Ctrl+B)">http://cmake.org/Wiki/CMake/Language_Syntax</info>
+# Unfortunately, no built-in stuff for this: <info descr="Open in browser (Ctrl+Click, Ctrl+B)">http://public.kitware.com/Bug/view.php?id=4034</info>
 macro(eval <info descr="CMAKE.VAR_DEF">expr</info>)
   temp_name(<info descr="CMAKE.VAR_DEF">_fname</info>)
   <info descr="CMAKE.COMMAND">set</info>(<info descr="CMAKE.VAR_DEF">_fname</info> <info descr="CMAKE.VAR_REF">${_fname}</info>+1<info descr="CMAKE.VAR_REF">${expr}</info>)
