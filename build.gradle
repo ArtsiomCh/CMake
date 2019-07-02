@@ -4,8 +4,7 @@ plugins {
     id 'idea'
 }
 
-version '1.0-SNAPSHOT'
-
+//version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
@@ -22,15 +21,76 @@ idea {
 
 dependencies {
     compileOnly fileTree('MyJars')
+    compile fileTree('lib')
+    compile group: 'org.javassist', name: 'javassist', version: '3.22.0-GA'
+//    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
     testCompile group: 'junit', name: 'junit', version: '4.12'
+
 }
 
 intellij {
-//    localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/183.4284.36/'
-    version '183.4284.36'
+//    localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
+    localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-0/182.5314842/'
+    downloadSources false
+//    alternativeIdePath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
+//    version '183.4284.36'
+//    plugins 'PsiViewer:191.4212'
+//    plugins 'PsiViewer:192-SNAPSHOT'
+    updateSinceUntilBuild false
 }
+/*
 patchPluginXml {
     changeNotes """
       Add change notes here.<br>
       <em>most HTML tags may be used</em>"""
+}
+*/
+
+jar {
+    manifest{
+        attributes "Agent-Class": "com.cmakeplugin.agent.CMakeInstrumentationAgent",
+            "Can-Retransform-Classes": "true",
+            "Can-Redefine-Classes": "true"
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+task runCLion_191(type: org.jetbrains.intellij.tasks.RunIdeTask){
+    ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/191.7141.37/'
+}
+
+task runCLion_183(type: org.jetbrains.intellij.tasks.RunIdeTask){
+    ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-1/183.5429.37/'
+}
+
+task Copy192(type: Copy) {
+    dependsOn(prepareSandbox)
+    from "${intellij.sandboxDirectory}/plugins192"
+    into "${intellij.sandboxDirectory}/plugins"
+}
+
+task runCLion_192(type: org.jetbrains.intellij.tasks.RunIdeTask){
+    ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/192.5281.33/'
+    dependsOn(Copy192)
+} 
+
+task Copy_182(type: Copy) {
+    dependsOn(prepareSandbox)
+    from "${intellij.sandboxDirectory}/plugins182"
+    into "${intellij.sandboxDirectory}/plugins"
+}
+
+task runAndroidStudio_33_182(type: org.jetbrains.intellij.tasks.RunIdeTask){
+    ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-0/182.5314842/'
+    dependsOn(Copy_182)
+}
+
+task runAndroidStudio_34_183(type: org.jetbrains.intellij.tasks.RunIdeTask){
+    ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-1/183.5522156/'
+}
+
+task runAndroidStudio_35_191(type: org.jetbrains.intellij.tasks.RunIdeTask){
+    ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-2/191.5675373/'
 }

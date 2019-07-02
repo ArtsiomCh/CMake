@@ -19,6 +19,7 @@ import javax.swing.*;
 import java.util.List;
 
 import static com.cmakeplugin.utils.CMakeIFWHILEcheck.*;
+import static com.cmakeplugin.utils.CMakePDC.*;
 
 public class CMakePsiImplUtil {
 
@@ -40,13 +41,13 @@ public class CMakePsiImplUtil {
   }
 
   @Nullable
-  public static ItemPresentation getPresentation(CMakeUnquotedArgumentMaybeVariableContainer o) {
+  public static ItemPresentation getPresentation(PsiElement o) {
     return new ItemPresentation() {
 
       @Override
       @Nullable
       public String getPresentableText() {
-        PsiElement argumentsElement = PsiTreeUtil.getParentOfType(o, CMakeArguments.class);
+        PsiElement argumentsElement = PsiTreeUtil.getParentOfType(o, getArgumentsClass());
         Document document =  o.getContainingFile().getViewProvider().getDocument();
         return (argumentsElement!=null && argumentsElement.getParent()!=null && document!=null)
                 ? String.format("%20.20s:%4d  %s",
@@ -159,6 +160,7 @@ public class CMakePsiImplUtil {
   public static PsiReference[] getReferences(PsiElement o) {
 // fixme
     List<TextRange> innerVars = getInnerVars(o);
+    if (innerVars.isEmpty()) return PsiReference.EMPTY_ARRAY;
     PsiReference[] result = new PsiReference[innerVars.size()];
     for (int i=0; i<innerVars.size(); i++) {
       TextRange innerVar = innerVars.get(i);

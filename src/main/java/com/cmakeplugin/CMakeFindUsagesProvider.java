@@ -13,12 +13,14 @@ import org.jetbrains.annotations.Nullable;
 import static com.cmakeplugin.utils.CMakeVarStringUtil.*;
 
 public class CMakeFindUsagesProvider implements FindUsagesProvider {
+/*
   private static final DefaultWordsScanner WORDS_SCANNER =
           new DefaultWordsScanner(new CMakeLexerAdapter(),
                   TokenSet.create(CMakeTypes.UNQUOTED_ARGUMENT, CMakeTypes.QUOTED_ARGUMENT),
 //                  TokenSet.create(CMakeTypes.COMMAND_NAME),
                   TokenSet.create(CMakeTypes.LINE_COMMENT, CMakeTypes.BRACKET_COMMENT),
                   TokenSet.EMPTY);
+*/
   @Nullable
   @Override
   public WordsScanner getWordsScanner() {

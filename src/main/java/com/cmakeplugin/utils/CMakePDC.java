@@ -47,7 +47,7 @@ public class CMakePDC {
             : CMakeFileType.INSTANCE;
   }
 
-  static Class<? extends PsiElement> getPossibleVarDefClass(){
+  public static Class<? extends PsiElement> getPossibleVarDefClass(){
     return (isCLION)
             ? getCMakeLiteralClass()
             : CMakeUnquotedArgumentMaybeVariableContainer.class;
@@ -63,6 +63,12 @@ public class CMakePDC {
     return (isCLION)
             ? getCMakeLiteralClass()
             : CMakeQuotedArgumentContainer.class;
+  }
+
+  public static Class<? extends PsiElement> getArgumentsClass(){
+    return (isCLION)
+            ? getCMakeArgumentsClass()
+            : CMakeArguments.class;
   }
 
 //  public static Lexer getHighlightingLexer() {

@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>artsiomch.cmake</id>
   <name>CMake simple highlighter</name>
-  <version>0.2.4 dev</version>
+  <version>191.dev1</version>
   <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
 
   <description><![CDATA[
@@ -17,6 +17,7 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      192 - Navigation for variable's declarations/references at CLion and AS (2018.2 till 2019.1) <br>
       0.2.4 - Finally :) tested fix for CLion 2018.2 EAP compatibility issue. <br>
       0.2.3 - Fixed (but not tested) upcoming CLion 2018.2 EAP compatibility issue: <a href="https://youtrack.jetbrains.com/issue/CPP-12728">CPP-12728</a>.  <br>
       0.2.2 - Fixed compatibility for upcoming Android Studio 3.2 (with restricted functionality as for CLion). As a side effect the Plugin become open for all IntelliJ Platform's IDEs.<br>
@@ -33,13 +34,16 @@
   </change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="173.0"/>
+  <idea-version since-build="182.0" until-build="192.0"/>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
   <!-- uncomment to enable plugin in all products
   <depends optional="true" config-file="clion.xml">com.intellij.modules.cidr.lang</depends>
   <depends optional="true" config-file="idea.xml">com.intellij.modules.java</depends>
+  <depends>com.intellij.modules.clion</depends>
+  <depends>com.intellij.modules.androidstudio</depends>
+  <depends>com.intellij.modules.cmake</depends>
   -->
   <depends>com.intellij.modules.lang</depends>
 
@@ -57,6 +61,8 @@
      -->
     <fileTypeFactory implementation="com.cmakeplugin.CMakeFileTypeFactory"/>
     <colorSettingsPage implementation="com.cmakeplugin.CMakeColorSettingsPage"/>
+
+    <psi.referenceContributor implementation="com.cmakeplugin.CMakeReferenceContributor" />
 
     <annotator language="CMake"
                factoryArgument="Annotator"
