@@ -13,22 +13,16 @@ public class CMakeInstrumentationAgent {
       "com.intellij.codeInsight.navigation.actions.GotoDeclarationAction";
   static final String CLASS_TO_TRANSFORM_FINDUSAGES =
       "com.jetbrains.cmake.search.CMakeFindUsagesProvider";
+  static final String CLASS_TO_TRANSFORM_HIGHLIGHT_MULTIRESOLVE =
+      "com.intellij.codeInsight.TargetElementUtil";
 
   //  private static Logger LOGGER = LoggerFactory.getLogger(CMakeInstrumentationAgent.class);
 
   public static void agentmain(String agentArgs, Instrumentation inst) {
-    System.out.println("[Agent] In agentmain method");
+//    System.out.println("[Agent] In agentmain method");
 
     String srcInsertAfter =
         "{ "
-            /*
-                            + "System.out.println(\"" + m.getName() + " called at \" + $0);"
-                            + "System.out.println(\"original result: \" + first);"
-                            + "System.out.println(\"new result: \" + result);"
-            */
-            /*+ "Class klass = com.jetbrains.cmake.psi.CMakeLiteralImplMixin.class;"
-            + "String location = klass.getResource('/' + klass.getName().replace('.', '/') + \".class\").toString();"
-            + "System.out.println(\"CMakeLiteralImplMixin found at: \" + location);"*/
             + "$_ = ($r) com.cmakeplugin.agent.CMakeInstrumentationUtils.concatArrays( "
             + "  ($r)$_ ,"
             + "  com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry.getReferencesFromProviders(this));"
@@ -95,31 +89,47 @@ public class CMakeInstrumentationAgent {
             "getType",
             srcInsertAfter),
         inst);
+
+    srcInsertAfter =
+        "{ "
+            + "if ($_ instanceof CMakeLiteral)"
+            + "  $_ = CMakeInstrumentationUtils.getNullIfVarRefMultiResolve($_);"
+            + "}";
+    transformClass(
+        new MyClassFileTransformer(
+            getLoadedClass(CLASS_TO_TRANSFORM_HIGHLIGHT_MULTIRESOLVE, inst),
+            new String[] {
+                "com.jetbrains.cmake.psi", "com.cmakeplugin.agent.CMakeInstrumentationUtils"
+            },
+            "getNamedElement",
+            srcInsertAfter),
+        inst);
   }
 
   private static void transformClass(MyClassFileTransformer cft, Instrumentation inst) {
-
     inst.addTransformer(cft, true);
     try {
       inst.retransformClasses(cft.getTargetClass());
     } catch (Exception ex) {
-      throw new RuntimeException(
-          "[Agent] Transformation failed for class: [" + cft.getTargetClass().getName() + "]", ex);
+//      throw new RuntimeException(
+//          "[Agent] Transformation failed for class: [" + cft.getTargetClass().getName() + "]", ex);
     }
   }
 
   private static Class<?> getLoadedClass(String className, Instrumentation inst) {
     for (Class<?> clazz : inst.getAllLoadedClasses()) {
       if (clazz.getName().equals(className)) {
+/*
         System.out.println(
             "[Agent] class found: "
                 + clazz.getName()
                 + " with ClassLoader: "
                 + clazz.getClassLoader());
+*/
         return clazz;
       }
     }
-    System.out.println("[Agent] Failed to find class [" + className + "]");
+    // System.out.println("[Agent] Failed to find class [" + className + "]");
     return null;
   }
 }

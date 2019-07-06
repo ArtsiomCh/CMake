@@ -1,23 +1,23 @@
 <idea-plugin>
   <id>artsiomch.cmake</id>
   <name>CMake simple highlighter</name>
-  <version>191.dev1</version>
+  <version>191.1</version>
   <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
 
   <description><![CDATA[
      Plugin for CMake syntax highlight/navigation support.<br>
-     - It provides syntax highlight and variables navigation/renaming (*see Notes) for <b>IntelliJ IDEA</b> and <b>Android Studio</b>(till 3.2).<br>
-     - Extend existed highlighting in <b>CLion</b> and <b>Android Studio</b>(from 3.2). <br><br>
+     - It provides(extends) syntax highlight and variables navigation/renaming(*see Notes) for <b>IntelliJ IDEA</b>, <b>Android Studio</b> and <b>CLion</b>. <br><br>
      <b>Vote!</b> for new functionality (write it in Note) and support the developer <a href="http://paypal.me/AChapialiou">Paypal.me/AChapialiou</a> :<br>
      - variable's scope of visibility for navigation/renaming. <br>
-     - variables navigation/renaming in CLion and Android Studio(from 3.2). <br>
+     - <s>variables navigation/renaming* in CLion and Android Studio(from 3.2).</s> - Done. <br>
      - ENV variables navigation/renaming. <br>
      - function's declaration and references navigation/renaming. <br>
      - Other ... (just write in Note your needs!) <br>
 ]]></description>
 
   <change-notes><![CDATA[
-      192 - Navigation for variable's declarations/references at CLion and AS (2018.2 till 2019.1) <br>
+      191.1 - Navigation for variable's declarations/references at CLion (2018.2 - 2019.1) and AS (3.3 and above). <br>
+          &emsp; * Bug fixes, some Mem usage optimisations. <br>
       0.2.4 - Finally :) tested fix for CLion 2018.2 EAP compatibility issue. <br>
       0.2.3 - Fixed (but not tested) upcoming CLion 2018.2 EAP compatibility issue: <a href="https://youtrack.jetbrains.com/issue/CPP-12728">CPP-12728</a>.  <br>
       0.2.2 - Fixed compatibility for upcoming Android Studio 3.2 (with restricted functionality as for CLion). As a side effect the Plugin become open for all IntelliJ Platform's IDEs.<br>
@@ -63,7 +63,7 @@
     <colorSettingsPage implementation="com.cmakeplugin.CMakeColorSettingsPage"/>
 
     <psi.referenceContributor implementation="com.cmakeplugin.CMakeReferenceContributor" />
-    <lang.findUsagesProvider implementationClass="com.cmakeplugin.CMakeFindUsagesProvider"  />
+    <lang.findUsagesProvider language="CMake" implementationClass="com.cmakeplugin.CMakeFindUsagesProvider"  />
 
     <annotator language="CMake"
                factoryArgument="Annotator"
