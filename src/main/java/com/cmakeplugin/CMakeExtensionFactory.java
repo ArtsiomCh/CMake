@@ -36,8 +36,8 @@ public class CMakeExtensionFactory implements ExtensionFactory {
         return CMakePDC.isCLION
             ? new RefactoringSupportProvider() {}
             : new CMakeRefactoringSupportProvider();
-      case "findUsagesProvider":
-        return /*CMakePDC.isCLION ? new EmptyFindUsagesProvider() :*/ new CMakeFindUsagesProvider();
+//      case "findUsagesProvider":
+//        return /*CMakePDC.isCLION ? new EmptyFindUsagesProvider() :*/ new CMakeFindUsagesProvider();
 /*
       case "referenceContributor":
         return CMakePDC.isCLION

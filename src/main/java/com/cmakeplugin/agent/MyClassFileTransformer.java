@@ -24,9 +24,15 @@ class MyClassFileTransformer implements ClassFileTransformer {
   private Class targetClass;
   private String methodName;
   private String srcInsertAfter;
+  private String[] imports;
 
   public MyClassFileTransformer(Class targetClass, String methodName, String srcInsertAfter) {
+    this(targetClass, new String[0], methodName, srcInsertAfter);
+  }
+
+  public MyClassFileTransformer(Class targetClass, String[] imports, String methodName, String srcInsertAfter) {
     this.targetClass = targetClass;
+    this.imports = imports;
     this.methodName = methodName;
     this.srcInsertAfter = srcInsertAfter;
   }
@@ -51,20 +57,18 @@ class MyClassFileTransformer implements ClassFileTransformer {
       try {
         ClassPool cp = ClassPool.getDefault();
         cp.insertClassPath(new ClassClassPath(targetClass));
+        for (String importStr : imports) {
+          cp.importPackage(importStr);
+        }
         CtClass cc = cp.get(targetClass.getName());
-        /*
-                String src = "public PsiReference[] getReferences() { "
-                    + "return com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry.getReferencesFromProviders(this);"
-                    + "}";
-                CtMethod m = CtNewMethod.make(src, cc);
-                cc.addMethod(m);
-        */
-        CtMethod m =
+        CtMethod m = cc.getDeclaredMethod(methodName);
+/*
             Arrays.stream(cc.getMethods())
                 .filter(it -> it.getName().equals(methodName))
                 .findFirst()
                 .orElseThrow(
                     () -> new NotFoundException(methodName + " method not found in " + className));
+*/
         //        m.insertBefore("System.out.println(\"" + m.getName() + " called at \" + $0);");
         m.insertAfter(srcInsertAfter);
 

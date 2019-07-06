@@ -77,15 +77,16 @@ public class CMakePSITreeSearch {
   /**
    * checking ANY reference of Variable in Project scope.
    *
-   * @param varDef PsiElement with potential Variable declaration
+   * @param potentialVarDef PsiElement with potential Variable declaration
    * @return True if any reference found, False otherwise
    */
-  public static boolean existReferenceTo(@NotNull PsiElement varDef) {
+  public static boolean existReferenceTo(@NotNull PsiElement potentialVarDef) {
     Predicate<PsiFile> containsVarRefElement =
-        cmakeFile -> hasChildMatched(cmakeFile, element -> hasVarRef(element, varDef.getText()));
-    return isPossibleVarDefinition(varDef.getText())
-        && !isVarInsideIFWHILE(varDef)
-        && getAllCMakeFiles(varDef).stream().anyMatch(containsVarRefElement);
+        cmakeFile ->
+            hasChildMatched(cmakeFile, element -> hasVarRef(element, potentialVarDef.getText()));
+    return isPossibleVarDefinition(potentialVarDef.getText())
+        && !isVarInsideIFWHILE(potentialVarDef)
+        && getAllCMakeFiles(potentialVarDef).stream().anyMatch(containsVarRefElement);
   }
 
   private static boolean hasVarRef(

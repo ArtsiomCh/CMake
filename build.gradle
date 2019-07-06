@@ -29,7 +29,8 @@ dependencies {
 }
 
 intellij {
-    localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
+//    localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
+    localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-1/182.5262.2'
 //    localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-0/182.5314842/'
     downloadSources false
 //    alternativeIdePath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
@@ -93,4 +94,8 @@ task runAndroidStudio_34_183(type: org.jetbrains.intellij.tasks.RunIdeTask){
 
 task runAndroidStudio_35_191(type: org.jetbrains.intellij.tasks.RunIdeTask){
     ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-2/191.5675373/'
+}
+
+task runIdea_182(type: org.jetbrains.intellij.tasks.RunIdeTask){
+    ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-1/182.5262.2/'
 }

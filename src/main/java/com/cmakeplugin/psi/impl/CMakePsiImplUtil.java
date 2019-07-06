@@ -35,9 +35,9 @@ public class CMakePsiImplUtil {
     return o;
   }
 
-  @NotNull
+  @Nullable
   public static PsiElement getNameIdentifier(CMakeUnquotedArgumentMaybeVariableContainer o) {
-    return o.getUnquotedArgumentMaybeVarDef();
+    return (CMakePSITreeSearch.existReferenceTo(o)) ? o.getUnquotedArgumentMaybeVarDef() : null;
   }
 
   @Nullable
