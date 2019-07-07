@@ -2,6 +2,7 @@ package com.cmakeplugin.utils;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -12,11 +13,11 @@ import com.intellij.psi.util.PsiElementFilter;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,7 +27,7 @@ import static com.cmakeplugin.utils.CMakeVarStringUtil.isPossibleVarDefinition;
 public class CMakePSITreeSearch {
 
   /**
-   * looking ANY definitions of Variable in Project scope.
+   * looking ANY definitions of Variable in Project scope including current file.
    *
    * @param varReference PsiElement to start from
    * @param varName Variable name to looking for
@@ -35,37 +36,21 @@ public class CMakePSITreeSearch {
   @NotNull
   public static List<PsiElement> findVariableDefinitions(
       @NotNull PsiElement varReference, String varName) {
-    PsiElementFilter filterVarDef =
-        possibleVarDefElement ->
-            CMakePDC.getPossibleVarDefClass().isInstance(possibleVarDefElement)
-                && varName.equals(possibleVarDefElement.getText())
-                && !isVarInsideIFWHILE(possibleVarDefElement);
-    return getAllCMakeFiles(varReference).stream()
-        .flatMap(cmakeFile -> findChildrenMatched(cmakeFile, filterVarDef).stream())
-        .collect(Collectors.toList());
-  }
-
-  @NotNull
-  private static List<PsiFile> getAllCMakeFiles(@NotNull PsiElement element) {
-    Project project = element.getProject();
-    PsiFile currentFile = element.getContainingFile();
-    List<PsiFile> result =
-        FileBasedIndex.getInstance()
-            .getContainingFiles(
-                FileTypeIndex.NAME,
-                CMakePDC.getCmakeFileType(),
-                GlobalSearchScope.allScope(project))
-            .stream()
-            .map(virtualFile -> PsiManager.getInstance(project).findFile(virtualFile))
-            .filter(file -> file != currentFile)
-            .collect(Collectors.toList());
-    result.add(0, currentFile);
+    List<PsiElement> result = new ArrayList<>();
+    final PsiElementFilter filter =
+        element ->
+            CMakePDC.getPossibleVarDefClass().isInstance(element)
+                && element.textMatches(varName)
+                && !isVarInsideIFWHILE(element);
+    for (PsiFile cmakeFile : getCmakeFiles(varReference)) {
+      result.addAll(findChildren(cmakeFile, filter));
+    }
     return result;
   }
 
   /** Copy of {@link PsiTreeUtil#findChildrenOfAnyType(PsiElement, Class[])} */
   @NotNull
-  private static <T extends PsiElement> Collection<T> findChildrenMatched(
+  private static <T extends PsiElement> Collection<T> findChildren(
       @Nullable final PsiElement element, @NotNull final PsiElementFilter filter) {
     if (element == null) return ContainerUtil.emptyList();
     PsiElementProcessor.CollectFilteredElements<T> processor =
@@ -74,38 +59,51 @@ public class CMakePSITreeSearch {
     return processor.getCollection();
   }
 
-  /**
-   * checking ANY reference of Variable in Project scope.
-   *
-   * @param potentialVarDef PsiElement with potential Variable declaration
-   * @return True if any reference found, False otherwise
-   */
-  public static boolean existReferenceTo(@NotNull PsiElement potentialVarDef) {
-    Predicate<PsiFile> containsVarRefElement =
-        cmakeFile ->
-            hasChildMatched(cmakeFile, element -> hasVarRef(element, potentialVarDef.getText()));
-    return isPossibleVarDefinition(potentialVarDef.getText())
-        && !isVarInsideIFWHILE(potentialVarDef)
-        && getAllCMakeFiles(potentialVarDef).stream().anyMatch(containsVarRefElement);
+  @NotNull
+  private static Collection<PsiFile> getCmakeFiles(@NotNull PsiElement element) {
+    Project project = element.getProject();
+    Collection<VirtualFile> virtualFiles =
+        FileBasedIndex.getInstance()
+            .getContainingFiles(
+                FileTypeIndex.NAME,
+                CMakePDC.getCmakeFileType(),
+                GlobalSearchScope.allScope(project));
+    virtualFiles.add(element.getContainingFile().getVirtualFile());
+    final PsiManager psiManager = PsiManager.getInstance(project);
+    return virtualFiles.stream().map(psiManager::findFile).collect(Collectors.toSet());
   }
 
-  private static boolean hasVarRef(
-      @NotNull PsiElement potentialVarRefHolderElement, @NotNull String varDefText) {
-    final String elementText = potentialVarRefHolderElement.getText();
-    Predicate<TextRange> containsRefToVarDef =
-        innerVarRange ->
-            elementText
-                .substring(innerVarRange.getStartOffset(), innerVarRange.getEndOffset())
-                .equals(varDefText);
-    return PsiTreeUtil.instanceOf(
-            potentialVarRefHolderElement,
-            CMakePDC.getUnquotedArgumentClass(),
-            CMakePDC.getQuotedArgumentClass())
-        && getInnerVars(potentialVarRefHolderElement).stream().anyMatch(containsRefToVarDef);
+  /**
+   * checking ANY reference of Variable in Project scope including current file.
+   *
+   * @param varDef PsiElement with potential Variable declaration
+   * @return True if any reference found, False otherwise
+   */
+  public static boolean existReferenceTo(@NotNull PsiElement varDef) {
+    final String varDefText = varDef.getText();
+    if (!isPossibleVarDefinition(varDefText) || isVarInsideIFWHILE(varDef)) return false;
+    final PsiElementFilter filter = element -> hasVarRefToVarDef(element, varDefText);
+    for (PsiFile cmakeFile : getCmakeFiles(varDef)) {
+      if (hasChild(cmakeFile, filter)) return true;
+    }
+    return false;
+  }
+
+  private static boolean hasVarRefToVarDef(PsiElement element, String varDefText) {
+    if (CMakePDC.getUnquotedArgumentClass().isInstance(element)
+        || CMakePDC.getQuotedArgumentClass().isInstance(element)) {
+      for (TextRange innerVarRange : getInnerVars(element)) {
+        if (element
+            .getText()
+            .substring(innerVarRange.getStartOffset(), innerVarRange.getEndOffset())
+            .equals(varDefText)) return true;
+      }
+    }
+    return false;
   }
 
   /** Copy of {@link PsiTreeUtil#findChildOfType(PsiElement, Class, boolean, Class)} */
-  private static <T extends PsiElement> boolean hasChildMatched(
+  private static <T extends PsiElement> boolean hasChild(
       @Nullable final PsiElement element, @NotNull final PsiElementFilter filter) {
     if (element == null) return false;
 
