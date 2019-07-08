@@ -16,8 +16,8 @@
 ]]></description>
 
   <change-notes><![CDATA[
-      191.1 - Navigation for variable's declarations/references at CLion (2018.2 - 2019.1) and AS (3.3 and above). <br>
-          &emsp; * Bug fixes, some Mem usage optimisations. <br>
+      191.1 - Navigation for variable's declarations/references at CLion (2018.2 - 2019.1) and AS (3.3 - 3.6). <br>
+          &emsp; * Bug fixes, some CPU and Mem usage optimisations. <br>
       0.2.4 - Finally :) tested fix for CLion 2018.2 EAP compatibility issue. <br>
       0.2.3 - Fixed (but not tested) upcoming CLion 2018.2 EAP compatibility issue: <a href="https://youtrack.jetbrains.com/issue/CPP-12728">CPP-12728</a>.  <br>
       0.2.2 - Fixed compatibility for upcoming Android Studio 3.2 (with restricted functionality as for CLion). As a side effect the Plugin become open for all IntelliJ Platform's IDEs.<br>
