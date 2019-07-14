@@ -1,11 +1,11 @@
 package com.cmakeplugin.utils;
 
+import com.cmakeplugin.CMakeLexerAdapter;
+import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
-//import com.jetbrains.cidr.cpp.cmake.CMakeListsFileType;
-//import com.jetbrains.cidr.cpp.cmake.psi.*;
 import com.cmakeplugin.psi.*;
 import com.cmakeplugin.CMakeFileType;
 
@@ -71,10 +71,10 @@ public class CMakePDC {
             : CMakeArguments.class;
   }
 
-//  public static Lexer getHighlightingLexer() {
-//    return (isCLION)
-//            ? new CMakeLexer()
-//            : new CMakeLexerAdapter();
-//  }
+  public static Lexer getCMakeLexer() {
+    return (isCLION)
+            ? getJBCMakeLexer()
+            : new CMakeLexerAdapter();
+  }
 
 }

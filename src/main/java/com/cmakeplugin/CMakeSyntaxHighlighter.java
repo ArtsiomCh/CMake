@@ -26,7 +26,7 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
   @NotNull
   @Override
   public Lexer getHighlightingLexer() {
-    return new CMakeLexerAdapter();
+    return CMakePDC.getCMakeLexer();
   }
 
   // Highlighting styles

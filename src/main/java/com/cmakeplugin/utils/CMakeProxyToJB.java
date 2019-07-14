@@ -1,5 +1,6 @@
 package com.cmakeplugin.utils;
 
+import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.PsiElement;
 
@@ -114,4 +115,7 @@ public class CMakeProxyToJB {
     throw new java.lang.RuntimeException("Unknown CMake classes");
   }
 
+  static Lexer getJBCMakeLexer(){
+    return new com.jetbrains.cmake.psi.CMakeLexer();
+  }
 }
