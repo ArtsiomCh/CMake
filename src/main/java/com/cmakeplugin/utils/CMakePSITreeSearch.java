@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.cmakeplugin.utils.CMakeIFWHILEcheck.*;
-import static com.cmakeplugin.utils.CMakeVarStringUtil.isPossibleVarDefinition;
 
 public class CMakePSITreeSearch {
 
@@ -37,13 +36,10 @@ public class CMakePSITreeSearch {
   public static List<PsiElement> findVariableDefinitions(
       @NotNull PsiElement varReference, String varName) {
     List<PsiElement> result = new ArrayList<>();
-    final PsiElementFilter filter =
-        element ->
-            CMakePDC.getPossibleVarDefClass().isInstance(element)
-                && element.textMatches(varName)
-                && !isVarInsideIFWHILE(element);
+    final PsiElementFilter isVarDefFilter =
+        element -> couldBeVarDef(element) && element.textMatches(varName);
     for (PsiFile cmakeFile : getCmakeFiles(varReference)) {
-      result.addAll(findChildren(cmakeFile, filter));
+      result.addAll(findChildren(cmakeFile, isVarDefFilter));
     }
     return result;
   }
@@ -80,8 +76,8 @@ public class CMakePSITreeSearch {
    * @return True if any reference found, False otherwise
    */
   public static boolean existReferenceTo(@NotNull PsiElement varDef) {
+    if (!couldBeVarDef(varDef)) return false;
     final String varDefText = varDef.getText();
-    if (!isPossibleVarDefinition(varDefText) || isVarInsideIFWHILE(varDef)) return false;
     final PsiElementFilter filter = element -> hasVarRefToVarDef(element, varDefText);
     for (PsiFile cmakeFile : getCmakeFiles(varDef)) {
       if (hasChild(cmakeFile, filter)) return true;
@@ -111,6 +107,22 @@ public class CMakePSITreeSearch {
         new PsiElementProcessor.FindFilteredElement<T>(filter);
     PsiTreeUtil.processElements(element, processor);
     return processor.isFound();
+  }
+
+  /**
+   * checking ANY definition of Variable in Project scope including current file.
+   *
+   * @param varRef PsiElement with Variable reference
+   * @param varName name of Variable
+   * @return True if any definition found, False otherwise
+   */
+  public static boolean existDefinitionOf(@NotNull PsiElement varRef, String varName) {
+    final PsiElementFilter isVarDefFilter =
+        element -> couldBeVarDef(element) && element.textMatches(varName);
+    for (PsiFile cmakeFile : getCmakeFiles(varRef)) {
+      if (hasChild(cmakeFile, isVarDefFilter)) return true;
+    }
+    return false;
   }
 
   //  /**

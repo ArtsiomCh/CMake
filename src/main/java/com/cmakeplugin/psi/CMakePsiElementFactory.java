@@ -19,7 +19,7 @@ public class CMakePsiElementFactory {
   public static PsiElement createArgumentFromText(@NotNull PsiElement element,
                                                   @NotNull String text,
                                                   @NotNull final Class<? extends PsiElement> aClass) {
-    String fileText = CMakeIFWHILEcheck.isVarInsideIFWHILE(element)
+    String fileText = CMakeIFWHILEcheck.isVarRefInsideIFWHILE(element)
             ? "if(" + text + ") endif()"
             : "set(" + text + ")";
     return CMakePsiImplUtil.computeElementsOfClass( createFile( element.getProject(), fileText), aClass)

@@ -18,10 +18,16 @@ import static com.cmakeplugin.utils.CMakeProxyToJB.*;
 public class CMakePDC {
   public static final boolean isCLION = hasOldCmake || hasNewCmake;
 
-  static boolean isUnquotedArgument(PsiElement element) {
+  static boolean isClassOfVarRefInsideIfWhile(PsiElement element) {
     return (isCLION)
             ? getCMakeLiteralClass().isInstance(element) && !hasQuotedArg(element.getParent())
             : (element instanceof CMakeUnquotedArgumentContainer);
+  }
+
+  static boolean isClassOfVarDef(PsiElement element) {
+    return (isCLION)
+        ? getCMakeLiteralClass().isInstance(element) && !hasQuotedArg(element.getParent())
+        : (element instanceof CMakeUnquotedArgumentMaybeVariableContainer);
   }
 
   static boolean hasIfWhileParent(PsiElement element) {

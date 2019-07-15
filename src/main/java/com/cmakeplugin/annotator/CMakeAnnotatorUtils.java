@@ -38,7 +38,7 @@ class CMakeAnnotatorUtils {
   static boolean annotatePredefinedVariable(
       @NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     for (String varRegexp : CMakeKeywords.variables_All) {
-      if (element.getText().matches(varRegexp) && !CMakeIFWHILEcheck.isVarInsideIFWHILE(element)) {
+      if (CMakeIFWHILEcheck.couldBeVarDef(element) && element.getText().matches(varRegexp)) {
         return createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_VAR_DEF);
       }
     }
@@ -83,8 +83,7 @@ class CMakeAnnotatorUtils {
 
       // TODO Move it to Inspections? Also too many false negative.
       // Highlight not defined Inner variable.
-      if (!isCmakePredefinedVar
-          && CMakePSITreeSearch.findVariableDefinitions(element, innerVarName).isEmpty()) {
+      if (!isCmakePredefinedVar && !CMakePSITreeSearch.existDefinitionOf(element, innerVarName)) {
         createWeakWarningAnnotation(
             innerVarRange.shiftRight(elementStartInFile),
             holder,
