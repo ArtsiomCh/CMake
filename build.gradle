@@ -1,8 +1,27 @@
+// Get latest SNAPSHOT for gradle-intellij-plugin: https://github.com/JetBrains/gradle-intellij-plugin#snapshot-version
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        maven {
+            url 'https://dl.bintray.com/jetbrains/intellij-plugin-service'
+        }
+
+    }
+    dependencies {
+        classpath "org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.5.0-SNAPSHOT"
+    }
+}
+
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.3.12'
+//    id 'org.jetbrains.intellij' version '0.4.9'
     id 'idea'
 }
+
+apply plugin: 'org.jetbrains.intellij'
 
 //version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
@@ -74,6 +93,7 @@ task Copy192(type: Copy) {
 
 task runCLion_192(type: org.jetbrains.intellij.tasks.RunIdeTask){
     ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/192.5281.33/'
+    jbrVersion '11_0_2b159'
     dependsOn(Copy192)
 } 
 
