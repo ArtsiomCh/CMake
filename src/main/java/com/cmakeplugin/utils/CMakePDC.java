@@ -1,6 +1,7 @@
 package com.cmakeplugin.utils;
 
 import com.cmakeplugin.CMakeLexerAdapter;
+import com.intellij.lexer.EmptyLexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.PsiElement;
@@ -73,7 +74,7 @@ public class CMakePDC {
 
   public static Lexer getCMakeLexer() {
     return (isCLION)
-            ? getJBCMakeLexer()
+            ? new EmptyLexer()//getJBCMakeLexer()
             : new CMakeLexerAdapter();
   }
 

@@ -115,7 +115,11 @@ public class CMakeProxyToJB {
     throw new java.lang.RuntimeException("Unknown CMake classes");
   }
 
+  //todo
+/*
   static Lexer getJBCMakeLexer(){
-    return new com.jetbrains.cmake.psi.CMakeLexer();
+    if (hasNewCmake) return new com.jetbrains.cmake.psi.CMakeLexer();
+    throw new java.lang.RuntimeException("Unknown CMake classes");
   }
+*/
 }
