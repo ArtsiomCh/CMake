@@ -1,7 +1,7 @@
 package com.cmakeplugin.agent;
 
 import static com.cmakeplugin.agent.CMakeInstrumentationAgent.*;
-import static com.cmakeplugin.utils.CMakePDC.getPossibleVarDefClass;
+import com.cmakeplugin.utils.CMakePDC;
 
 import com.cmakeplugin.psi.impl.CMakePsiImplUtil;
 import com.cmakeplugin.utils.CMakeIFWHILEcheck;
@@ -91,7 +91,7 @@ public class CMakeInstrumentationUtils {
 
   @Nullable
   public static ItemPresentation getPresentation(PsiElement o, ItemPresentation prevResult) {
-    return getPossibleVarDefClass().isInstance(o) && prevResult == null
+    return CMakePDC.isClassOfVarDef(o) && prevResult == null
         ? CMakePsiImplUtil.getPresentation(o)
         : prevResult;
   }

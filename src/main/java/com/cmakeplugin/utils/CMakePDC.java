@@ -24,7 +24,7 @@ public class CMakePDC {
             : (element instanceof CMakeUnquotedArgumentContainer);
   }
 
-  static boolean isClassOfVarDef(PsiElement element) {
+  public static boolean isClassOfVarDef(PsiElement element) {
     return (isCLION)
         ? getCMakeLiteralClass().isInstance(element) && !hasQuotedArg(element.getParent())
         : (element instanceof CMakeUnquotedArgumentMaybeVariableContainer);
@@ -54,22 +54,10 @@ public class CMakePDC {
             : CMakeFileType.INSTANCE;
   }
 
-  public static Class<? extends PsiElement> getPossibleVarDefClass(){
+  static boolean classCanHoldVarRef(PsiElement element) {
     return (isCLION)
-            ? getCMakeLiteralClass()
-            : CMakeUnquotedArgumentMaybeVariableContainer.class;
-  }
-
-  static Class<? extends PsiElement> getUnquotedArgumentClass(){
-    return (isCLION)
-            ? getCMakeLiteralClass()
-            : CMakeUnquotedArgumentContainer.class;
-  }
-
-  static Class<? extends PsiElement> getQuotedArgumentClass(){
-    return (isCLION)
-            ? getCMakeLiteralClass()
-            : CMakeQuotedArgumentContainer.class;
+        ? getCMakeLiteralClass().isInstance(element)
+        : element instanceof CMakeUnquotedArgumentContainer || element instanceof CMakeQuotedArgumentContainer ;
   }
 
   public static Class<? extends PsiElement> getArgumentsClass(){

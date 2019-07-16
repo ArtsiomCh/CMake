@@ -86,8 +86,7 @@ public class CMakePSITreeSearch {
   }
 
   private static boolean hasVarRefToVarDef(PsiElement element, String varDefText) {
-    if (CMakePDC.getUnquotedArgumentClass().isInstance(element)
-        || CMakePDC.getQuotedArgumentClass().isInstance(element)) {
+    if (CMakePDC.classCanHoldVarRef(element)) {
       for (TextRange innerVarRange : getInnerVars(element)) {
         if (element
             .getText()
