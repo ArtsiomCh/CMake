@@ -1,3 +1,5 @@
+import org.jetbrains.intellij.tasks.RunIdeTask
+
 // Get latest SNAPSHOT for gradle-intellij-plugin: https://github.com/JetBrains/gradle-intellij-plugin#snapshot-version
 buildscript {
     repositories {
@@ -77,11 +79,13 @@ jar {
     }
 }
 
-task runCLion_191(type: org.jetbrains.intellij.tasks.RunIdeTask){
+task runCLion_191(type: RunIdeTask){
+    dependsOn(prepareSandbox)
     ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/191.7141.37/'
 }
 
-task runCLion_183(type: org.jetbrains.intellij.tasks.RunIdeTask){
+task runCLion_183(type: RunIdeTask){
+    dependsOn(prepareSandbox)
     ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-1/183.5429.37/'
 }
 
@@ -91,7 +95,7 @@ task Copy192(type: Copy) {
     into "${intellij.sandboxDirectory}/plugins"
 }
 
-task runCLion_192(type: org.jetbrains.intellij.tasks.RunIdeTask){
+task runCLion_192(type: RunIdeTask){
     ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/192.5281.33/'
     jbrVersion '11_0_2b159'
     dependsOn(Copy192)
@@ -103,19 +107,22 @@ task Copy_182(type: Copy) {
     into "${intellij.sandboxDirectory}/plugins"
 }
 
-task runAndroidStudio_33_182(type: org.jetbrains.intellij.tasks.RunIdeTask){
+task runAndroidStudio_33_182(type: RunIdeTask){
     ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-0/182.5314842/'
     dependsOn(Copy_182)
 }
 
-task runAndroidStudio_34_183(type: org.jetbrains.intellij.tasks.RunIdeTask){
+task runAndroidStudio_34_183(type: RunIdeTask){
+    dependsOn(prepareSandbox)
     ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-1/183.5522156/'
 }
 
-task runAndroidStudio_35_191(type: org.jetbrains.intellij.tasks.RunIdeTask){
+task runAndroidStudio_35_191(type: RunIdeTask){
+    dependsOn(prepareSandbox)
     ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-2/191.5675373/'
 }
 
-task runIdea_182(type: org.jetbrains.intellij.tasks.RunIdeTask){
+task runIdea_182(type: RunIdeTask){
+    dependsOn(prepareSandbox)
     ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-1/182.5262.2/'
 }
