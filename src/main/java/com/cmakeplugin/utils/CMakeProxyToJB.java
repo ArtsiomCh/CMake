@@ -89,12 +89,6 @@ public class CMakeProxyToJB {
     throw new java.lang.RuntimeException("Unknown CMake classes");
   }
 
-  public static Class<? extends PsiElement> getCMakeArgumentsClass() {
-//    if (hasOldCmake) return com.jetbrains.cidr.cpp.cmake.psi.CMakeCommandArguments.class;
-    if (hasNewCmake) return com.jetbrains.cmake.psi.CMakeCommandArguments.class;
-    throw new java.lang.RuntimeException("Unknown CMake classes");
-  }
-
   public static boolean hasBracketArg(PsiElement cmakeArgument) {
 //    if (hasOldCmake) return (((com.jetbrains.cidr.cpp.cmake.psi.CMakeArgument) cmakeArgument).getBracketArgStart()!=null);
     if (hasNewCmake) return (((com.jetbrains.cmake.psi.CMakeArgument) cmakeArgument).getBracketArgStart()!=null);

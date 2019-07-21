@@ -20,7 +20,7 @@ public class CMakeVarStringUtil {
       "((^\\$|(?<=[^\\\\])\\$)ENV\\{)"; // Escaped \$ excluded
 
   @Contract(pure = true)
-  public static boolean isPossibleVarDefinition(@NotNull String text) {
+  static boolean couldBeVarName(@NotNull String text) {
     return text.matches(VAR_NAME);
   }
 
@@ -35,7 +35,7 @@ public class CMakeVarStringUtil {
    * @return list of outer variables boundaries including ${ or $ENV{ or ENV{ and }
    */
   @NotNull
-  public static List<TextRange> getOuterVarRefs(String text) {
+  static List<TextRange> getOuterVarRefs(String text) {
     Matcher matcher = patternOuterVarRefs.matcher(text);
     if (!matcher.find()) return EMPTY_RANGES_LIST;
 
@@ -89,7 +89,7 @@ public class CMakeVarStringUtil {
    * @return list of inner variables boundaries NOT including ${ and }
    */
   @NotNull
-  public static List<TextRange> getInnerVars(String text) {
+  static List<TextRange> getInnerVars(String text) {
     return getMatchedRanges(patternInnerVars.matcher(text));
   }
 

@@ -6,6 +6,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiPolyVariantReference;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
@@ -85,6 +87,14 @@ public class CMakePSITreeSearch {
     return false;
   }
 
+  private static boolean hasVarRefToVarDef(PsiElement element, @NotNull PsiElement varDef) {
+    if (CMakePDC.classCanHoldVarRef(element))
+      for (PsiReference reference : element.getReferences()) {
+        if (reference.isReferenceTo(varDef)) return true;
+      }
+    return false;
+  }
+
   private static boolean hasVarRefToVarDef(PsiElement element, String varDefText) {
     if (CMakePDC.classCanHoldVarRef(element)) {
       for (TextRange innerVarRange : getInnerVars(element)) {
@@ -122,6 +132,14 @@ public class CMakePSITreeSearch {
       if (hasChild(cmakeFile, isVarDefFilter)) return true;
     }
     return false;
+  }
+
+  public static boolean existDefinitionOf(@NotNull PsiElement varRef, int offset) {
+    final PsiReference referenceAt = varRef.findReferenceAt(offset);
+    if (referenceAt == null) return false;
+    return referenceAt.resolve() != null
+        || (referenceAt instanceof PsiPolyVariantReference
+            && ((PsiPolyVariantReference) referenceAt).multiResolve(false).length > 0);
   }
 
   //  /**

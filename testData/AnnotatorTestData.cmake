@@ -3,6 +3,9 @@
 <info descr="CMAKE.COMMAND">add_executable</info>(hello world.c)
 <info descr="CMAKE.COMMAND">set</info>(((())))
 
+<info descr="CMAKE.COMMAND">set</info> ( <info descr="CMAKE.VAR_DEF">varif</info> varifVal 55)
+if (<info descr="CMAKE.VAR_REF">varif</info> varifVal notVar)
+endif()
 if(<info descr="CMAKE.BOOLEAN">FALSE</info> <info descr="CMAKE.OPERATOR">AND</info> (<info descr="CMAKE.BOOLEAN">FALSE</info> <info descr="CMAKE.OPERATOR">OR</info> <info descr="CMAKE.BOOLEAN">TRUE</info>)) # evaluates to FALSE
     <info descr="CMAKE.COMMAND">set</info>(((())))
     <info descr="CMAKE.COMMAND">set</info>(first(<info descr="CMAKE.BOOLEAN">ON</info>) <info descr="CMAKE.BOOLEAN">OFF</info>)

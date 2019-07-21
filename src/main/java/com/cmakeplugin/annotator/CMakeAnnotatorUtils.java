@@ -83,7 +83,10 @@ class CMakeAnnotatorUtils {
 
       // TODO Move it to Inspections? Also too many false negative.
       // Highlight not defined Inner variable.
-      if (!isCmakePredefinedVar && !CMakePSITreeSearch.existDefinitionOf(element, innerVarName)) {
+      if (!isCmakePredefinedVar
+          && !CMakePSITreeSearch.existDefinitionOf(element, innerVarName)
+          // exclude unquoted arg inside If/While
+          && !element.textMatches(innerVarName)) {
         createWeakWarningAnnotation(
             innerVarRange.shiftRight(elementStartInFile),
             holder,
