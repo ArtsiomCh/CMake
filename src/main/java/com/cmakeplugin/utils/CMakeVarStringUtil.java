@@ -2,6 +2,8 @@ package com.cmakeplugin.utils;
 
 import com.intellij.openapi.util.TextRange;
 import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,9 +21,16 @@ public class CMakeVarStringUtil {
   private static final String ENV_VAR_REF_BEGIN =
       "((^\\$|(?<=[^\\\\])\\$)ENV\\{)"; // Escaped \$ excluded
 
+  private static Map<String, Boolean> cacheCouldBeVarName = new ConcurrentHashMap<>();
+  private static Map<String, List<TextRange>> cacheOuterVarRefs = new ConcurrentHashMap<>();
+  private static Map<String, List<TextRange>> cacheInnerVars = new ConcurrentHashMap<>();
+
+  private static final Pattern patternCouldBeVarName = Pattern.compile(VAR_NAME);
+
   @Contract(pure = true)
   static boolean couldBeVarName(@NotNull String text) {
-    return text.matches(VAR_NAME);
+    return cacheCouldBeVarName.computeIfAbsent(
+        text, key -> patternCouldBeVarName.matcher(key).matches());
   }
 
   private static final List<TextRange> EMPTY_RANGES_LIST = Collections.emptyList();
@@ -36,6 +45,11 @@ public class CMakeVarStringUtil {
    */
   @NotNull
   static List<TextRange> getOuterVarRefs(String text) {
+    return cacheOuterVarRefs.computeIfAbsent(text, CMakeVarStringUtil::doGetOuterVarRefs);
+  }
+
+  @NotNull
+  private static List<TextRange> doGetOuterVarRefs(String text) {
     Matcher matcher = patternOuterVarRefs.matcher(text);
     if (!matcher.find()) return EMPTY_RANGES_LIST;
 
@@ -90,7 +104,8 @@ public class CMakeVarStringUtil {
    */
   @NotNull
   static List<TextRange> getInnerVars(String text) {
-    return getMatchedRanges(patternInnerVars.matcher(text));
+    return cacheInnerVars.computeIfAbsent(
+        text, key -> getMatchedRanges(patternInnerVars.matcher(key)));
   }
 
   private static final Pattern patternInnerEnvVars =
