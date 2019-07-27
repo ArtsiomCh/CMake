@@ -81,7 +81,7 @@ jar {
 
 task runCLion_191(type: RunIdeTask){
     dependsOn(prepareSandbox)
-    ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/191.7141.37/'
+    ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-2/191.7479.33/'
 }
 
 task runCLion_183(type: RunIdeTask){
@@ -96,7 +96,7 @@ task Copy192(type: Copy) {
 }
 
 task runCLion_192(type: RunIdeTask){
-    ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/192.5281.33/'
+    ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/192.5728.70/'
     jbrVersion '11_0_2b159'
     dependsOn(Copy192)
 } 

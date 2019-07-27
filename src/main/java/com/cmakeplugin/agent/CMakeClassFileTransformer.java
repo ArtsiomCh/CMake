@@ -3,6 +3,7 @@ package com.cmakeplugin.agent;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
+import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 import javassist.CannotCompileException;
 import javassist.ClassClassPath;
@@ -11,24 +12,26 @@ import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 
-class MyClassFileTransformer implements ClassFileTransformer {
+class CMakeClassFileTransformer implements ClassFileTransformer {
 
-  //  private static Logger LOGGER = LoggerFactory.getLogger(MyClassFileTransformer.class);
+//  private static final Logger LOGGER = LoggerFactory.getLogger(CMakeClassFileTransformer.class);
+  private static CMakeAgentLogger LOGGER;
 
   private Class targetClass;
   private String methodName;
   private String srcInsertAfter;
   private String[] imports;
 
-  MyClassFileTransformer(Class targetClass, String methodName, String srcInsertAfter) {
-    this(targetClass, new String[0], methodName, srcInsertAfter);
+  CMakeClassFileTransformer(Class targetClass, String methodName, String srcInsertAfter, Instrumentation inst) {
+    this(targetClass, new String[0], methodName, srcInsertAfter, inst);
   }
 
-  MyClassFileTransformer(Class targetClass, String[] imports, String methodName, String srcInsertAfter) {
+  CMakeClassFileTransformer(Class targetClass, String[] imports, String methodName, String srcInsertAfter, Instrumentation inst) {
     this.targetClass = targetClass;
     this.imports = imports;
     this.methodName = methodName;
     this.srcInsertAfter = srcInsertAfter;
+    LOGGER = new CMakeAgentLogger(CMakeClassFileTransformer.class, inst);
   }
 
   Class getTargetClass() {
@@ -46,7 +49,6 @@ class MyClassFileTransformer implements ClassFileTransformer {
     byte[] byteCode = null;
 
     if (classBeingRedefined.equals(targetClass)) {
-//     System.out.println("[Agent] Transforming class: " + className);
       try {
         ClassPool cp = ClassPool.getDefault();
         cp.insertClassPath(new ClassClassPath(targetClass));
@@ -60,13 +62,9 @@ class MyClassFileTransformer implements ClassFileTransformer {
 
         byteCode = cc.toBytecode();
         cc.detach();
-//        System.out.println("[Agent] Successfully patched class: " + className);
+        LOGGER.info("Successfully transformed class: " + className);
       } catch (NotFoundException | CannotCompileException | IOException e) {
-/*
-        System.out.println("---------------------------------------------------------------------");
-        System.out.println("[Agent] EXCEPTION: " + e);
-        System.out.println("---------------------------------------------------------------------");
-*/
+        LOGGER.warn("EXCEPTION transforming class: " + className + e);
       }
     }
     return byteCode;

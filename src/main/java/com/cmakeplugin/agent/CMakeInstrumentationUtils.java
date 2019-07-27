@@ -1,6 +1,7 @@
 package com.cmakeplugin.agent;
 
 import static com.cmakeplugin.agent.CMakeInstrumentationAgent.*;
+
 import com.cmakeplugin.utils.CMakePDC;
 
 import com.cmakeplugin.psi.impl.CMakePsiImplUtil;
@@ -23,8 +24,12 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Arrays;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CMakeInstrumentationUtils {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(CMakeInstrumentationUtils.class);
 
   public static void patchJBclasses() {
     String pluginsPath = PathManager.getPluginsPath();
@@ -32,8 +37,10 @@ public class CMakeInstrumentationUtils {
 
     if (!new File(checkedFilePath).isFile()) {
       checkedFilePath = pluginsPath + "/CMake/lib/CMake.jar";
-      if (!new File(checkedFilePath).isFile()) return;
-      //        throw new RuntimeException("Agent can't be found at: " + pluginsPath);
+      if (!new File(checkedFilePath).isFile()) {
+        LOGGER.warn("Agent can't be found at: {}", checkedFilePath);
+        return;
+      }
     }
     final String agentFilePath = checkedFilePath;
     final String applicationName = "com.intellij.idea.Main";
@@ -46,33 +53,40 @@ public class CMakeInstrumentationUtils {
           String platfromPrefix = jvm.getSystemProperties().getProperty("idea.platform.prefix");
           if (platfromPrefix.equals("CLion") || platfromPrefix.equals("AndroidStudio")) {
 
-            // initialize classes for patching to be visible by agent
-            Class.forName(CLASS_TO_TRANSFORM_REFERENCES);
-            Class.forName(CLASS_TO_TRANSFORM_RESOLVE);
-            Class.forName(CLASS_TO_TRANSFORM_SHOWUSAGES);
-            Class.forName(CLASS_TO_TRANSFORM_FINDUSAGES);
-            Class.forName(CLASS_TO_TRANSFORM_HIGHLIGHT_MULTIRESOLVE);
+            LOGGER.info("Attaching to target JVM: {} ({} : {})", platfromPrefix, jvmd.displayName(), jvm.id());
+            try {
+              // initialize classes for patching to be visible by agent
+              Class.forName(CLASS_TO_TRANSFORM_REFERENCES);
+              Class.forName(CLASS_TO_TRANSFORM_RESOLVE);
+              Class.forName(CLASS_TO_TRANSFORM_SHOWUSAGES);
+              Class.forName(CLASS_TO_TRANSFORM_FINDUSAGES);
+              Class.forName(CLASS_TO_TRANSFORM_HIGHLIGHT_MULTIRESOLVE);
 
-            ClassLoader cl = Class.forName(CLASS_TO_TRANSFORM_PRESENTATION).getClassLoader();
-            // make com.cmakeplugin classes visible inside patched IDEA classes
-            Method method = cl.getClass().getDeclaredMethod("addURL", URL.class);
-            method.setAccessible(true);
-            method.invoke(cl, new File(agentFilePath).toURI().toURL());
+              ClassLoader cl = Class.forName(CLASS_TO_TRANSFORM_PRESENTATION).getClassLoader();
+              // make com.cmakeplugin classes visible inside patched IDEA classes
+              Method method = cl.getClass().getDeclaredMethod("addURL", URL.class);
+              method.setAccessible(true);
+              method.invoke(cl, new File(agentFilePath).toURI().toURL());
+            } catch (IllegalAccessException
+                | InvocationTargetException
+                | ClassNotFoundException
+                | NoSuchMethodException e) {
+              LOGGER.warn("Exception performing reflection operation over class: ", e);
+            }
 
-            jvm.loadAgent(agentFilePath);
-            // System.out.println("Attached to target JVM and loaded Java agent successfully");
+            try {
+              LOGGER.info("Loading Java agent: {}", agentFilePath);
+              jvm.loadAgent(agentFilePath);
+              LOGGER.info("Loaded Java agent successfully: {}", agentFilePath);
+            } catch (AgentLoadException | AgentInitializationException e) {
+              LOGGER.warn("Exception loading Java agent: ", e);
+            }
+
+            LOGGER.info("Attached to target JVM successfully: {} ({} : {})", platfromPrefix, jvmd.displayName(), jvm.id());
           }
           jvm.detach();
-        } catch (AgentLoadException
-            | IllegalAccessException
-            | InvocationTargetException
-            | AgentInitializationException
-            | ClassNotFoundException
-            | NoSuchMethodException
-            | IOException
-            | AttachNotSupportedException e) {
-          // throw new RuntimeException(e);
-          // System.out.println("Exception: " + e);
+        } catch (AttachNotSupportedException | IOException e) {
+          LOGGER.warn("Exception attaching to target JVM: ", e);
         }
       }
     }
