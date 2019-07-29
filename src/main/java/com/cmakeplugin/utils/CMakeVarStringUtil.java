@@ -24,6 +24,7 @@ public class CMakeVarStringUtil {
   private static Map<String, Boolean> cacheCouldBeVarName = new ConcurrentHashMap<>();
   private static Map<String, List<TextRange>> cacheOuterVarRefs = new ConcurrentHashMap<>();
   private static Map<String, List<TextRange>> cacheInnerVars = new ConcurrentHashMap<>();
+  private static Map<String, List<TextRange>> cacheInnerEnvVars = new ConcurrentHashMap<>();
 
   private static final Pattern patternCouldBeVarName = Pattern.compile(VAR_NAME);
 
@@ -127,7 +128,8 @@ public class CMakeVarStringUtil {
    */
   @NotNull
   public static List<TextRange> getInnerEnvVars(String text) {
-    return getMatchedRanges(patternInnerEnvVars.matcher(text));
+    return cacheInnerEnvVars.computeIfAbsent(
+        text, key -> getMatchedRanges(patternInnerEnvVars.matcher(key)));
   }
 
   private static List<TextRange> getMatchedRanges(@NotNull Matcher matcher) {
