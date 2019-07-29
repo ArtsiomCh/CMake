@@ -32,6 +32,7 @@ public class CMakeInstrumentationUtils {
   private static final Logger LOGGER = LoggerFactory.getLogger(CMakeInstrumentationUtils.class);
 
   public static void patchJBclasses() {
+    LOGGER.info("Start patching bundled com.jetbrains.cmake.* classes");
     String pluginsPath = PathManager.getPluginsPath();
     String checkedFilePath = pluginsPath + "/CMake.jar";
 
@@ -48,12 +49,10 @@ public class CMakeInstrumentationUtils {
     for (VirtualMachineDescriptor jvmd : VirtualMachine.list()) {
       if (jvmd.displayName().contains(applicationName)) {
         try {
+          LOGGER.info("Attaching to target JVM: {}:{}", jvmd.displayName(), jvmd.id());
           VirtualMachine jvm = VirtualMachine.attach(jvmd);
-
           String platfromPrefix = jvm.getSystemProperties().getProperty("idea.platform.prefix");
           if (platfromPrefix.equals("CLion") || platfromPrefix.equals("AndroidStudio")) {
-
-            LOGGER.info("Attaching to target JVM: {} ({} : {})", platfromPrefix, jvmd.displayName(), jvm.id());
             try {
               // initialize classes for patching to be visible by agent
               Class.forName(CLASS_TO_TRANSFORM_REFERENCES);
@@ -71,7 +70,7 @@ public class CMakeInstrumentationUtils {
                 | InvocationTargetException
                 | ClassNotFoundException
                 | NoSuchMethodException e) {
-              LOGGER.warn("Exception performing reflection operation over class: ", e);
+              LOGGER.warn("Exception performing reflective operation over class: ", e);
             }
 
             try {
@@ -82,11 +81,11 @@ public class CMakeInstrumentationUtils {
               LOGGER.warn("Exception loading Java agent: ", e);
             }
 
-            LOGGER.info("Attached to target JVM successfully: {} ({} : {})", platfromPrefix, jvmd.displayName(), jvm.id());
+            LOGGER.info("Attached to target JVM successfully: {} ({}:{})", platfromPrefix, jvmd.displayName(), jvmd.id());
           }
           jvm.detach();
         } catch (AttachNotSupportedException | IOException e) {
-          LOGGER.warn("Exception attaching to target JVM: ", e);
+          LOGGER.warn("Exception attaching to target JVM: {}:{}", jvmd.displayName(), jvmd.id(), e);
         }
       }
     }
