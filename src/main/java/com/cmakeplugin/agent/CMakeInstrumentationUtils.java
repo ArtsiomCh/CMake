@@ -12,17 +12,13 @@ import com.cmakeplugin.utils.wrappers.WrappedCmakeLiteral;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiElement;
-import com.sun.tools.attach.AgentInitializationException;
-import com.sun.tools.attach.AgentLoadException;
-import com.sun.tools.attach.AttachNotSupportedException;
-import com.sun.tools.attach.VirtualMachine;
-import com.sun.tools.attach.VirtualMachineDescriptor;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import org.avaje.agentloader.AgentLoader;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +29,9 @@ public class CMakeInstrumentationUtils {
 
   public static void patchJBclasses() {
     LOGGER.info("Start patching bundled com.jetbrains.cmake.* classes");
+
     String pluginsPath = PathManager.getPluginsPath();
     String checkedFilePath = pluginsPath + "/CMake.jar";
-
     if (!new File(checkedFilePath).isFile()) {
       checkedFilePath = pluginsPath + "/CMake/lib/CMake.jar";
       if (!new File(checkedFilePath).isFile()) {
@@ -44,51 +40,34 @@ public class CMakeInstrumentationUtils {
       }
     }
     final String agentFilePath = checkedFilePath;
-    final String applicationName = "com.intellij.idea.Main";
 
-    for (VirtualMachineDescriptor jvmd : VirtualMachine.list()) {
-      if (jvmd.displayName().contains(applicationName)) {
-        try {
-          LOGGER.info("Attaching to target JVM: {}:{}", jvmd.displayName(), jvmd.id());
-          VirtualMachine jvm = VirtualMachine.attach(jvmd);
-          String platfromPrefix = jvm.getSystemProperties().getProperty("idea.platform.prefix");
-          if (platfromPrefix.equals("CLion") || platfromPrefix.equals("AndroidStudio")) {
-            try {
-              // initialize classes for patching to be visible by agent
-              Class.forName(CLASS_TO_TRANSFORM_REFERENCES);
-              Class.forName(CLASS_TO_TRANSFORM_RESOLVE);
-              Class.forName(CLASS_TO_TRANSFORM_SHOWUSAGES);
-              Class.forName(CLASS_TO_TRANSFORM_FINDUSAGES);
-              Class.forName(CLASS_TO_TRANSFORM_HIGHLIGHT_MULTIRESOLVE);
+    try {
+      // initialize classes for patching to be visible by agent
+      Class.forName(CLASS_TO_TRANSFORM_REFERENCES);
+      Class.forName(CLASS_TO_TRANSFORM_RESOLVE);
+      Class.forName(CLASS_TO_TRANSFORM_SHOWUSAGES);
+      Class.forName(CLASS_TO_TRANSFORM_FINDUSAGES);
+      Class.forName(CLASS_TO_TRANSFORM_HIGHLIGHT_MULTIRESOLVE);
 
-              ClassLoader cl = Class.forName(CLASS_TO_TRANSFORM_PRESENTATION).getClassLoader();
-              // make com.cmakeplugin classes visible inside patched IDEA classes
-              Method method = cl.getClass().getDeclaredMethod("addURL", URL.class);
-              method.setAccessible(true);
-              method.invoke(cl, new File(agentFilePath).toURI().toURL());
-            } catch (IllegalAccessException
-                | InvocationTargetException
-                | ClassNotFoundException
-                | NoSuchMethodException e) {
-              LOGGER.warn("Exception performing reflective operation over class: ", e);
-            }
-
-            try {
-              LOGGER.info("Loading Java agent: {}", agentFilePath);
-              jvm.loadAgent(agentFilePath);
-              LOGGER.info("Loaded Java agent successfully: {}", agentFilePath);
-            } catch (AgentLoadException | AgentInitializationException e) {
-              LOGGER.warn("Exception loading Java agent: ", e);
-            }
-
-            LOGGER.info("Attached to target JVM successfully: {} ({}:{})", platfromPrefix, jvmd.displayName(), jvmd.id());
-          }
-          jvm.detach();
-        } catch (AttachNotSupportedException | IOException e) {
-          LOGGER.warn("Exception attaching to target JVM: {}:{}", jvmd.displayName(), jvmd.id(), e);
-        }
-      }
+      ClassLoader cl = Class.forName(CLASS_TO_TRANSFORM_PRESENTATION).getClassLoader();
+      // make com.cmakeplugin classes visible inside patched IDEA classes
+      Method method = cl.getClass().getDeclaredMethod("addURL", URL.class);
+      method.setAccessible(true);
+      method.invoke(cl, new File(agentFilePath).toURI().toURL());
+    } catch (IllegalAccessException
+        | InvocationTargetException
+        | ClassNotFoundException
+        | NoSuchMethodException
+        | MalformedURLException e) {
+      LOGGER.warn("Exception performing reflective operation over class: ", e);
+      return;
     }
+
+    LOGGER.info("Loading Java agent: {}", agentFilePath);
+    if (AgentLoader.loadAgent(agentFilePath))
+      LOGGER.info("Loaded Java agent successfully: {}", agentFilePath);
+    else
+      LOGGER.warn("Exception loading Java agent: {}", agentFilePath);
   }
 
   public static <T> T[] concatArrays(T[] first, T[] second) {

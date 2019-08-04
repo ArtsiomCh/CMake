@@ -8,5 +8,4 @@
  */
 
 rootProject.name = 'CMake'
-include 'agent'
 
