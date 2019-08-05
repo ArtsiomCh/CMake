@@ -30,16 +30,11 @@ public class CMakeInstrumentationUtils {
   public static void patchJBclasses() {
     LOGGER.info("Start patching bundled com.jetbrains.cmake.* classes");
 
-    String pluginsPath = PathManager.getPluginsPath();
-    String checkedFilePath = pluginsPath + "/CMake.jar";
-    if (!new File(checkedFilePath).isFile()) {
-      checkedFilePath = pluginsPath + "/CMake/lib/CMake.jar";
-      if (!new File(checkedFilePath).isFile()) {
-        LOGGER.warn("Agent can't be found at: {}", checkedFilePath);
-        return;
-      }
+    String agentFilePath = PathManager.getJarPathForClass(CMakeInstrumentationUtils.class);
+    if (agentFilePath == null || !new File(agentFilePath).isFile()) {
+      LOGGER.warn("Agent not found at: {}", agentFilePath);
+      return;
     }
-    final String agentFilePath = checkedFilePath;
 
     try {
       // initialize classes for patching to be visible by agent
