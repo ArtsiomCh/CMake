@@ -8,5 +8,5 @@
  */
 
 rootProject.name = 'CMake'
-include 'simple-highlighter'
+include 'simple-highlighter', 'plus'
 

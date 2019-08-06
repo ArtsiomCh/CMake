@@ -32,21 +32,6 @@ public class CMakeExtensionFactory implements ExtensionFactory {
     switch (factoryArgument) {
       case "Annotator":
         return CMakePDC.isCLION ? new CMakeCLionAnnotator() : new CMakeIdeaAnnotator();
-      case "refactoringSupport":
-        return CMakePDC.isCLION
-            ? new RefactoringSupportProvider() {}
-            : new CMakeRefactoringSupportProvider();
-//      case "findUsagesProvider":
-//        return /*CMakePDC.isCLION ? new EmptyFindUsagesProvider() :*/ new CMakeFindUsagesProvider();
-/*
-      case "referenceContributor":
-        return CMakePDC.isCLION
-            ? new CMakeReferenceContributor()
-            : new PsiReferenceContributor() {
-              @Override
-              public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {}
-            };
-*/
       default:
         throw new java.lang.RuntimeException(
             "Unknown factoryArgument for CMakeExtensionFactory: " + factoryArgument);

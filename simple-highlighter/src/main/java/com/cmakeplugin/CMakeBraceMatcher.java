@@ -1,13 +1,24 @@
 package com.cmakeplugin;
 
+import static com.cmakeplugin.psi.CMakeTypes.ENDFOREACH;
+import static com.cmakeplugin.psi.CMakeTypes.ENDFUNCTION;
+import static com.cmakeplugin.psi.CMakeTypes.ENDIF;
+import static com.cmakeplugin.psi.CMakeTypes.ENDMACRO;
+import static com.cmakeplugin.psi.CMakeTypes.ENDWHILE;
+import static com.cmakeplugin.psi.CMakeTypes.FOREACH;
+import static com.cmakeplugin.psi.CMakeTypes.FUNCTION;
+import static com.cmakeplugin.psi.CMakeTypes.IF;
+import static com.cmakeplugin.psi.CMakeTypes.LPAR;
+import static com.cmakeplugin.psi.CMakeTypes.MACRO;
+import static com.cmakeplugin.psi.CMakeTypes.RPAR;
+import static com.cmakeplugin.psi.CMakeTypes.WHILE;
+
 import com.intellij.lang.BracePair;
 import com.intellij.lang.PairedBraceMatcher;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static com.cmakeplugin.psi.CMakeTypes.*;
 
 public class CMakeBraceMatcher implements PairedBraceMatcher {
 

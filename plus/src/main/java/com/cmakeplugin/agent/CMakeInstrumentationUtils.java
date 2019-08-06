@@ -2,10 +2,9 @@ package com.cmakeplugin.agent;
 
 import static com.cmakeplugin.agent.CMakeInstrumentationAgent.*;
 
-import com.cmakeplugin.utils.CMakePDC;
-
 import com.cmakeplugin.psi.impl.CMakePsiImplUtil;
 import com.cmakeplugin.utils.CMakeIFWHILEcheck;
+import com.cmakeplugin.utils.CMakePDC;
 import com.cmakeplugin.utils.CMakePSITreeSearch;
 import com.cmakeplugin.utils.wrappers.WrappedCmakeCommand;
 import com.cmakeplugin.utils.wrappers.WrappedCmakeLiteral;

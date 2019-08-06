@@ -1,0 +1,68 @@
+<idea-plugin>
+  <id>artsiomch.cmake.plus</id>
+  <name>CMake Plus</name>
+  <version>GRADLE.BUILD</version>
+  <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
+
+  <description><![CDATA[
+     Plugin for CMake navigation support.<br>
+     - It provides variables navigation/renaming(*see Notes) for <b>IntelliJ IDEA</b>, <b>Android Studio</b> and <b>CLion</b>. <br><br>
+     <b>Coming soon</b> functionality:<br>
+     - variable's scope of visibility for navigation/renaming. <br>
+     - ENV variables navigation/renaming. <br>
+     - function's declaration and references navigation/renaming. <br>
+]]></description>
+
+  <change-notes><![CDATA[
+      192.1 - kgkjjkhkjklkljkjkghhhfgghfhghfhfghgfhgfghfgfhfhffffgfg <br>
+    ]]>
+  </change-notes>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="192.0" until-build="193.0"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends optional="true" config-file="clion.xml">com.intellij.modules.cidr.lang</depends>
+  <depends optional="true" config-file="idea.xml">com.intellij.modules.java</depends>
+  <depends>com.intellij.modules.clion</depends>
+  <depends>com.intellij.modules.androidstudio</depends>
+  <depends>com.intellij.modules.cmake</depends>
+  -->
+  <depends>com.intellij.modules.lang</depends>
+  <depends>artsiomch.cmake</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!--
+    <lang.parserDefinition language="CMake"
+                           factoryArgument="parserDefinition"
+                           factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+    <lang.syntaxHighlighterFactory language="CMake"
+                                   factoryArgument="syntaxHighlighterFactory"
+                                   factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+    <lang.braceMatcher language="CMake"
+                       factoryArgument="braceMatcher"
+                       factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+     -->
+
+    <psi.referenceContributor implementation="com.cmakeplugin.CMakeReferenceContributor" />
+    <lang.findUsagesProvider language="CMake" implementationClass="com.cmakeplugin.CMakeFindUsagesProvider"  />
+
+    <lang.refactoringSupport language="CMake"
+                             factoryArgument="refactoringSupport"
+                             factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+  </extensions>
+
+  <application-components>
+    <!-- Add your application components here -->
+    <component>
+      <implementation-class>com.cmakeplugin.CMakePlusComponent</implementation-class>
+    </component>
+  </application-components>
+
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
+
+</idea-plugin>

@@ -1,0 +1,31 @@
+import org.jetbrains.intellij.tasks.RunIdeTask
+
+sourceSets.main.java.srcDirs = ['src/main/java']
+
+dependencies {
+    compile group: 'org.javassist', name: 'javassist', version: '3.22.0-GA'
+    compile ('org.avaje:avaje-agentloader:3.0.1') {exclude group: 'org.slf4j'}
+    compileOnly project(':simple-highlighter')
+}
+
+/*
+patchPluginXml {
+    changeNotes """
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>"""
+}
+*/
+intellij {
+    plugins project(':simple-highlighter')
+}
+
+jar {
+    manifest{
+        attributes "Agent-Class": "com.cmakeplugin.agent.CMakeInstrumentationAgent",
+            "Can-Retransform-Classes": "true",
+            "Can-Redefine-Classes": "true"
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

@@ -63,15 +63,9 @@
     <fileTypeFactory implementation="com.cmakeplugin.CMakeFileTypeFactory"/>
     <colorSettingsPage implementation="com.cmakeplugin.CMakeColorSettingsPage"/>
 
-    <psi.referenceContributor implementation="com.cmakeplugin.CMakeReferenceContributor" />
-    <lang.findUsagesProvider language="CMake" implementationClass="com.cmakeplugin.CMakeFindUsagesProvider"  />
-
     <annotator language="CMake"
                factoryArgument="Annotator"
                factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
-    <lang.refactoringSupport language="CMake"
-                             factoryArgument="refactoringSupport"
-                             factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
   </extensions>
 
   <application-components>

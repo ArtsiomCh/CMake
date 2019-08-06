@@ -1,7 +1,6 @@
 package com.cmakeplugin;
 
 import static com.cmakeplugin.utils.CMakeIFWHILEcheck.getInnerVars;
-import static com.cmakeplugin.utils.CMakeProxyToJB.getCMakeArgumentClass;
 import static com.cmakeplugin.utils.CMakeProxyToJB.getCMakeLiteralClass;
 
 import com.cmakeplugin.utils.CMakePDC;
