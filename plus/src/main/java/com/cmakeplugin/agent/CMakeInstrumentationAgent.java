@@ -23,12 +23,14 @@ public class CMakeInstrumentationAgent {
 
     //    LOGGER.info("In agentmain method");
 
-    String srcInsertAfter =
-        "{ "
-            + "$_ = ($r) com.cmakeplugin.agent.CMakeInstrumentationUtils.concatArrays( "
-            + "  ($r)$_ ,"
-            + "  com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry.getReferencesFromProviders(this));"
-            + "}";
+    String srcInsertAfter;
+
+/*
+    srcInsertAfter = "{ "
+        + "$_ = ($r) com.cmakeplugin.agent.CMakeInstrumentationUtils.concatArrays( "
+        + "  ($r)$_ ,"
+        + "  com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry.getReferencesFromProviders(this));"
+        + "}";
     transformClass(
         new CMakeClassFileTransformer(
             getLoadedClass(CLASS_TO_TRANSFORM_REFERENCES, inst),
@@ -36,6 +38,7 @@ public class CMakeInstrumentationAgent {
             srcInsertAfter,
             inst),
         inst);
+*/
 
     srcInsertAfter =
         "{ "
@@ -53,7 +56,7 @@ public class CMakeInstrumentationAgent {
         "{ "
             + "if (!$_ && "
             + "  (parent instanceof com.jetbrains.cmake.psi.CMakeLiteral) && "
-            + "  com.cmakeplugin.utils.CMakePSITreeSearch.existReferenceTo(parent)"
+            + "  com.cmakeplugin.agent.CMakeInstrumentationUtils.existReferenceTo(parent)"
             + ") $_ = true;"
             + "}";
     transformClass(

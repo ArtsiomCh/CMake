@@ -64,7 +64,7 @@ class CMakeClassFileTransformer implements ClassFileTransformer {
         cc.detach();
         LOGGER.info("Successfully transformed class: " + className);
       } catch (NotFoundException | CannotCompileException | IOException e) {
-        LOGGER.warn("EXCEPTION transforming class: " + className + e);
+        LOGGER.warn("EXCEPTION transforming class [" + className + "]: " + e);
       }
     }
     return byteCode;

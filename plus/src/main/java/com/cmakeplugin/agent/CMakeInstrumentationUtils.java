@@ -31,7 +31,12 @@ public class CMakeInstrumentationUtils {
 
     String agentFilePath = PathManager.getJarPathForClass(CMakeInstrumentationUtils.class);
     if (agentFilePath == null || !new File(agentFilePath).isFile()) {
-      LOGGER.warn("Agent not found at: {}", agentFilePath);
+      LOGGER.warn("Agent (CMake-plus) not found at: {}", agentFilePath);
+      return;
+    }
+    String simpleHighlighterFilePath = PathManager.getJarPathForClass(CMakePSITreeSearch.class);
+    if (simpleHighlighterFilePath == null || !new File(simpleHighlighterFilePath).isFile()) {
+      LOGGER.warn("CMake-simple-highlighter not found at: {}", simpleHighlighterFilePath);
       return;
     }
 
@@ -42,12 +47,15 @@ public class CMakeInstrumentationUtils {
       Class.forName(CLASS_TO_TRANSFORM_SHOWUSAGES);
       Class.forName(CLASS_TO_TRANSFORM_FINDUSAGES);
       Class.forName(CLASS_TO_TRANSFORM_HIGHLIGHT_MULTIRESOLVE);
+      Class.forName(CLASS_TO_TRANSFORM_PRESENTATION);
 
-      ClassLoader cl = Class.forName(CLASS_TO_TRANSFORM_PRESENTATION).getClassLoader();
       // make com.cmakeplugin classes visible inside patched IDEA classes
+      ClassLoader cl = Class.forName("com.intellij.psi.impl.PsiElementBase").getClassLoader();
       Method method = cl.getClass().getDeclaredMethod("addURL", URL.class);
       method.setAccessible(true);
       method.invoke(cl, new File(agentFilePath).toURI().toURL());
+      method.invoke(cl, new File(simpleHighlighterFilePath).toURI().toURL());
+
     } catch (IllegalAccessException
         | InvocationTargetException
         | ClassNotFoundException
@@ -65,13 +73,10 @@ public class CMakeInstrumentationUtils {
   }
 
   public static <T> T[] concatArrays(T[] first, T[] second) {
-    T[] result;
-    if (first.length == 0) result = second;
-    else if (second.length == 0) result = first;
-    else {
-      result = Arrays.copyOf(first, first.length + second.length);
-      System.arraycopy(second, 0, result, first.length, second.length);
-    }
+    if (first.length == 0) return second;
+    if (second.length == 0) return first;
+    T[] result = Arrays.copyOf(first, first.length + second.length);
+    System.arraycopy(second, 0, result, first.length, second.length);
     return result;
   }
 
@@ -113,6 +118,10 @@ public class CMakeInstrumentationUtils {
       if (!CMakeIFWHILEcheck.getInnerVars(originalCMakeLiteral).isEmpty()) return null;
     }
     return originalCMakeLiteral;
+  }
+
+  public static boolean existReferenceTo(PsiElement cmakeLiteral) {
+    return CMakePSITreeSearch.existReferenceTo(cmakeLiteral);
   }
 
   private static boolean hasCallInStack(String clazz, String method) {

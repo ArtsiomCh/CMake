@@ -7,7 +7,8 @@
   <description><![CDATA[
      Plugin for CMake navigation support.<br>
      - It provides variables navigation/renaming(*see Notes) for <b>IntelliJ IDEA</b>, <b>Android Studio</b> and <b>CLion</b>. <br><br>
-     <b>Coming soon</b> functionality:<br>
+     <b>Coming soon</b>*[no commitments ;) ] functionality:<br>
+     - folding regions for functions, macros, if/for/while blocks and comments. <br>
      - variable's scope of visibility for navigation/renaming. <br>
      - ENV variables navigation/renaming. <br>
      - function's declaration and references navigation/renaming. <br>
