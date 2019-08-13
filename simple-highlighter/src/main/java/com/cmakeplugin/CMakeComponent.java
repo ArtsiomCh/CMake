@@ -1,17 +1,23 @@
 package com.cmakeplugin;
 
 import com.cmakeplugin.utils.CMakePDC;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.lang.*;
 import com.intellij.notification.*;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
+import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.NotNull;
 
 public class CMakeComponent implements ApplicationComponent {
+  private static final Logger LOG = Logger.getInstance(CMakeComponent.class);
 
-  private static final boolean isCMakePlusActive =
+  public static boolean isCMakePlusActive =
       isCMakePlusEnabled(); //&& com.cmakeplugin.CheckLicense.isLicensed();
 
   private static boolean isCMakePlusEnabled() {
@@ -33,16 +39,30 @@ public class CMakeComponent implements ApplicationComponent {
           CMakeLanguage.INSTANCE, new CMakeBraceMatcher());
     }
     if (!isCMakePlusActive) {
-      final String content =
-          "For more functionality (variables navigation/renaming) please consider "
-              + "<b><a href=\"https://plugins.jetbrains.com/plugin/10089-cmake-simple-highlighter\">CMake Plus</a></b> plugin.<br/>";
-      Notifications.Bus.notify(
-          NotificationGroup.balloonGroup("com.cmakeplugin")
-              .createNotification(
-                  "CMake simple highlighter",
-                  content,
-                  NotificationType.INFORMATION,
-                  NotificationListener.URL_OPENING_LISTENER));
+      final Notification notification = new balloonCmakePlusLink();
+      notification.notify(null);
     }
   }
+
+  private static class balloonCmakePlusLink extends Notification {
+    balloonCmakePlusLink() {
+      super("CMake simple highlighter",
+          "CMake simple highlighter",
+          "For more functionality consider plugin: ",
+          NotificationType.INFORMATION);
+      addAction(new ShowCmakePlusAction());
+    }
+  }
+
+  private static class ShowCmakePlusAction extends DumbAwareAction {
+    ShowCmakePlusAction() {
+      super("CMake Plus");
+    }
+
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+      BrowserUtil.open("https://plugins.jetbrains.com/plugin/12869-cmake-plus");
+    }
+  }
+
 }

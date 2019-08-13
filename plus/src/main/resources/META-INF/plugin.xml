@@ -4,18 +4,28 @@
   <version>GRADLE.BUILD</version>
   <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
 
+  <product-descriptor code="PCMAKEPLUS" release-date="20190810" release-version="1921"/>
+
   <description><![CDATA[
-     Plugin for CMake navigation support.<br>
-     - It provides variables navigation/renaming(*see Notes) for <b>IntelliJ IDEA</b>, <b>Android Studio</b> and <b>CLion</b>. <br><br>
-     <b>Coming soon</b>*[no commitments ;) ] functionality:<br>
+     Extend CMake language support in the IDE's Editor:<br>
+     - Provides variables navigation/renaming(*see Notes) for <b>IntelliJ IDEA</b>, <b>Android Studio</b>, <b>CLion</b>, etc. <br><br>
+
+     <b>Require <a href="https://plugins.jetbrains.com/plugin/10089-cmake-simple-highlighter">CMake simple highlighter</a></b> to be installed! <br><br>
+
+     Plugin is <b>paid</b> for commercial IDEs: IntelliJ IDEA Ultimate, CLion, etc. <br>
+     Plugin is <b>free</b>(for now) for community/free IDEs: IntelliJ IDEA Community, Android Studio, etc. <br><br>
+
+     <b>Plans for the future</b> [no commitments ;) ] functionality:<br>
      - folding regions for functions, macros, if/for/while blocks and comments. <br>
      - variable's scope of visibility for navigation/renaming. <br>
      - ENV variables navigation/renaming. <br>
-     - function's declaration and references navigation/renaming. <br>
+     - function's declaration and references navigation/renaming. <br> <br>
+
+     *Note: Variable's rename refactoring (Shift+F6) works fine for variables with single declaration. For multi declared (re-defined, amended) variables rename refactoring works only from variable declaration side (i.e. caret should be on variable declaration, not reference) and will change all visible references and only current declaration. Use with caution. <br>
 ]]></description>
 
   <change-notes><![CDATA[
-      192.1 - kgkjjkhkjklkljkjkghhhfgghfhghfhfghgfhgfghfgfhfhffffgfg <br>
+      192.1.1 - Navigation (Go to definition / Find usages) for variable's (re)definitions/references. <br>
     ]]>
   </change-notes>
 

@@ -16,7 +16,7 @@ public class CMakeReferenceContributor extends PsiReferenceContributor {
 
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
-    if (!CMakePDC.isCLION) return;
+    if (!CMakePDC.isCLION || !CMakeComponent.isCMakePlusActive) return;
     registrar.registerReferenceProvider(
         PlatformPatterns.psiElement(getCMakeLiteralClass()), //getCMakeArgumentClass()),
         new PsiReferenceProvider() {

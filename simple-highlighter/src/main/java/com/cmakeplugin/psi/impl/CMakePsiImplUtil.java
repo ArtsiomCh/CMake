@@ -1,5 +1,6 @@
 package com.cmakeplugin.psi.impl;
 
+import com.cmakeplugin.CMakeComponent;
 import com.cmakeplugin.psi.*;
 
 import com.cmakeplugin.utils.CMakePSITreeSearch;
@@ -37,7 +38,9 @@ public class CMakePsiImplUtil {
 
   @Nullable
   public static PsiElement getNameIdentifier(CMakeUnquotedArgumentMaybeVariableContainer o) {
-    return (CMakePSITreeSearch.existReferenceTo(o)) ? o.getUnquotedArgumentMaybeVarDef() : null;
+    return (CMakeComponent.isCMakePlusActive && CMakePSITreeSearch.existReferenceTo(o))
+        ? o.getUnquotedArgumentMaybeVarDef()
+        : null;
   }
 
   @Nullable
@@ -158,7 +161,7 @@ public class CMakePsiImplUtil {
 
   @NotNull
   public static PsiReference[] getReferences(PsiElement o) {
-// fixme
+    if (!CMakeComponent.isCMakePlusActive) return PsiReference.EMPTY_ARRAY;
     List<TextRange> innerVars = getInnerVars(o);
     if (innerVars.isEmpty()) return PsiReference.EMPTY_ARRAY;
     PsiReference[] result = new PsiReference[innerVars.size()];

@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '192.dev1'
+    version '192.1.1'
     sourceCompatibility = 1.8
 
     repositories {
@@ -40,8 +40,9 @@ subprojects {
 
     intellij {
         pluginName "$rootProject.name-$project.name"
-//    localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
-        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-2/192.5728.98'
+//        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
+//        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-2/192.5728.98'
+        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-3/192.6262.9/'
         downloadSources false
 //    alternativeIdePath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
 //    version '183.4284.36'
@@ -54,13 +55,15 @@ subprojects {
         archivesBaseName = intellij.pluginName
     }
 
+    task runIC_192_5728(type: RunIdeTask){
+        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-2/192.5728.98'
+    }
+
     task runCLion_191(type: RunIdeTask){
-        dependsOn(prepareSandbox)
         ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-2/191.7479.33/'
     }
 
     task runCLion_183(type: RunIdeTask){
-        dependsOn(prepareSandbox)
         ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-1/183.5429.37/'
     }
 
@@ -70,10 +73,10 @@ subprojects {
         into "${intellij.sandboxDirectory}/plugins"
     }
 
-    task runCLion_192(type: RunIdeTask){
-        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/192.5728.70/'
-        jbrVersion '11_0_2b159'
-        dependsOn(Copy192)
+    task runCLion_192(type: RunCLion192Task){
+    }
+
+    task runCLion_192_Demo_Marketplace(type: RunCLion192Task){
     }
 
     task Copy_182(type: Copy) {
@@ -88,17 +91,24 @@ subprojects {
     }
 
     task runAndroidStudio_34_183(type: RunIdeTask){
-        dependsOn(prepareSandbox)
         ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-1/183.5522156/'
     }
 
     task runAndroidStudio_35_191(type: RunIdeTask){
-        dependsOn(prepareSandbox)
         ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-2/191.5675373/'
     }
 
-    task runIdea_182(type: RunIdeTask){
-        dependsOn(prepareSandbox)
+    task runIC_182(type: RunIdeTask){
         ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-1/182.5262.2/'
+    }
+
+    tasks.withType(RunIdeTask).forEach {task -> task.dependsOn(prepareSandbox)}
+}
+
+
+class RunCLion192Task extends RunIdeTask {
+    RunCLion192Task(){
+        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/192.5728.70/'
+        jbrVersion '11_0_2b159'
     }
 }

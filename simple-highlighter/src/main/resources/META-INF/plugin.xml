@@ -5,17 +5,18 @@
   <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
 
   <description><![CDATA[
-     Plugin for CMake syntax highlight/navigation support.<br>
-     - It provides(extends) syntax highlight and variables navigation/renaming(*see Notes) for <b>IntelliJ IDEA</b>, <b>Android Studio</b> and <b>CLion</b>. <br><br>
-     <b>Vote!</b> for new functionality (write it in Note) and support the developer <a href="http://paypal.me/AChapialiou">Paypal.me/AChapialiou</a> :<br>
-     - variable's scope of visibility for navigation/renaming. <br>
-     - <s>variables navigation/renaming* in CLion and Android Studio(from 3.2).</s> - Done. <br>
-     - ENV variables navigation/renaming. <br>
-     - function's declaration and references navigation/renaming. <br>
-     - Other ... (just write in Note your needs!) <br>
+     Plugin for CMake syntax highlight support.<br>
+     - It provides(extends) syntax highlight for <b>IntelliJ IDEA</b>, <b>Android Studio</b>, <b>CLion</b>, etc. <br><br>
+
+     For more functionality (variables navigation/renaming) please consider
+     <b><a href="https://plugins.jetbrains.com/plugin/12869-cmake-plus">CMake Plus</a></b> plugin. <br/>
+
 ]]></description>
 
   <change-notes><![CDATA[
+      192.1.1 - Compatibility with IntelliJ 2019.2 and CMake Plus plugin added. <br>
+          &emsp; * Variables navigation/renaming moved to <b><a href="https://plugins.jetbrains.com/plugin/12869-cmake-plus">CMake Plus</a></b> plugin. <br>
+          &emsp; * Some CPU and Mem usage optimisations. <br>
       191.2 - Fix annotating Unquoted args as Var inside if/while.  <br>
       191.1 - Navigation for variable's declarations/references at CLion (2018.2 - 2019.1) and AS (3.3 - 3.6). <br>
           &emsp; * Bug fixes, some CPU and Mem usage optimisations. <br>
