@@ -4,7 +4,8 @@ sourceSets.main.java.srcDirs = ['src/main/java']
 
 dependencies {
     compile group: 'org.javassist', name: 'javassist', version: '3.22.0-GA'
-    compile ('org.avaje:avaje-agentloader:3.0.1') {exclude group: 'org.slf4j'}
+//    compile ('org.avaje:avaje-agentloader:3.0.1') {exclude group: 'org.slf4j'}
+    compile fileTree("$rootProject.projectDir/lib")
     compileOnly project(':simple-highlighter')
 }
 
