@@ -48,21 +48,22 @@
     <!--
     <lang.parserDefinition language="CMake"
                            factoryArgument="parserDefinition"
-                           factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+                           factoryClass="com.cmakeplugin.CMakePlusExtensionFactory"  />
     <lang.syntaxHighlighterFactory language="CMake"
                                    factoryArgument="syntaxHighlighterFactory"
-                                   factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+                                   factoryClass="com.cmakeplugin.CMakePlusExtensionFactory"  />
     <lang.braceMatcher language="CMake"
                        factoryArgument="braceMatcher"
-                       factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+                       factoryClass="com.cmakeplugin.CMakePlusExtensionFactory"  />
      -->
 
     <psi.referenceContributor implementation="com.cmakeplugin.CMakeReferenceContributor" />
     <lang.findUsagesProvider language="CMake" implementationClass="com.cmakeplugin.CMakeFindUsagesProvider"  />
+    <lang.foldingBuilder language="CMake" implementationClass="com.cmakeplugin.CMakeFoldingBuilderForMultiLineBodies"/>
 
     <lang.refactoringSupport language="CMake"
                              factoryArgument="refactoringSupport"
-                             factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+                             factoryClass="com.cmakeplugin.CMakePlusExtensionFactory"  />
   </extensions>
 
   <application-components>

@@ -4,7 +4,7 @@ import com.cmakeplugin.utils.CMakePDC;
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
 import com.intellij.openapi.extensions.ExtensionFactory;
 
-public class CMakeExtensionFactory implements ExtensionFactory {
+public class CMakePlusExtensionFactory implements ExtensionFactory {
   @Override
   public Object createInstance(String factoryArgument, String implementationClass) {
     switch (factoryArgument) {
@@ -14,7 +14,7 @@ public class CMakeExtensionFactory implements ExtensionFactory {
             : new CMakeRefactoringSupportProvider();
       default:
         throw new java.lang.RuntimeException(
-            "Unknown factoryArgument for CMakeExtensionFactory: " + factoryArgument);
+            "Unknown factoryArgument for CMakePlusExtensionFactory: " + factoryArgument);
     }
   }
 }

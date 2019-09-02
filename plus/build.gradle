@@ -16,7 +16,7 @@ patchPluginXml {
 }
 */
 intellij {
-    plugins project(':simple-highlighter')
+    plugins += project(':simple-highlighter')
 }
 
 jar {
