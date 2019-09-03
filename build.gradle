@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '192.2.dev2'
+    version '192.2.1'
     sourceCompatibility = 1.8
 
     repositories {
@@ -60,15 +60,19 @@ subprojects {
         outputs.upToDateWhen { false }
     }
 
-    task runIC_192_5728(type: RunIdeTask){
+    task runIC_192_5728(type: RunIdeTaskJbr11){
         ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-2/192.5728.98'
     }
 
-    task runIC_192_6262_58(type: RunIdeTask){
+    task runIC_192_6262_58(type: RunIdeTaskJbr11){
         ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-3/192.6262.58'
     }
 
-    task runIC_192_6262_41(type: RunIdeTask){
+    task runUltimate_192_6262_58(type: RunIdeTaskJbr11){
+        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/192.6262.58'
+    }
+
+    task runIC_192_6262_41(type: RunIdeTaskJbr11){
         ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-3/192.6262.41'
     }
 
@@ -118,11 +122,15 @@ subprojects {
     tasks.withType(RunIdeTask).forEach {task -> task.dependsOn(prepareSandbox)}
 }
 
+class RunIdeTaskJbr11 extends RunIdeTask {
+    RunIdeTaskJbr11(){
+        jbrVersion '11_0_2b159'
+    }
+}
 
-class RunCLion192Task extends RunIdeTask {
+class RunCLion192Task extends RunIdeTaskJbr11 {
     RunCLion192Task(){
 //        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/192.5728.70/'
         ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/192.6262.62/'
-        jbrVersion '11_0_2b159'
     }
 }
