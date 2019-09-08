@@ -63,6 +63,8 @@
     <psi.referenceContributor implementation="com.cmakeplugin.CMakeReferenceContributor" />
     <lang.findUsagesProvider language="CMake" implementationClass="com.cmakeplugin.CMakeFindUsagesProvider"  />
     <lang.foldingBuilder language="CMake" implementationClass="com.cmakeplugin.CMakeFoldingBuilderForMultiLineBodies"/>
+    <lang.foldingBuilder language="CMake" implementationClass="com.cmakeplugin.CMakeFoldingBuilderForSubsequentSingleLineComments"/>
+    <lang.commenter language="CMake" implementationClass="com.cmakeplugin.CMakeCommenter" />
 
     <lang.refactoringSupport language="CMake"
                              factoryArgument="refactoringSupport"
