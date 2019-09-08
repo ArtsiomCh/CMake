@@ -17,8 +17,7 @@ public class CMakeFoldingBuilderForMultiLineBodies implements FoldingBuilder {
   @NotNull
   @Override
   public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
-    return PsiTreeUtil.findChildrenOfAnyType(node.getPsi(), CmakePlusPDC.foldableBodies)
-        .stream()
+    return PsiTreeUtil.findChildrenOfAnyType(node.getPsi(), CmakePlusPDC.foldableBodies).stream()
         .filter(it -> isMultiLine(document, it))
         .map(this::createFoldingDescriptor)
         .toArray(FoldingDescriptor[]::new);
@@ -26,8 +25,10 @@ public class CMakeFoldingBuilderForMultiLineBodies implements FoldingBuilder {
 
   private boolean isMultiLine(@NotNull Document document, @NotNull PsiElement element) {
     final TextRange range = element.getTextRange();
+    if (range.isEmpty()) return false;
     final int firstLineNumber = document.getLineNumber(range.getStartOffset());
-    final int lastLineNumber = document.getLineNumber(range.getEndOffset());
+    // exclude EOL with '\n' that belongs to BodyBlock
+    final int lastLineNumber = document.getLineNumber(range.getEndOffset() - 1);
     return firstLineNumber != lastLineNumber;
   }
 
@@ -35,19 +36,18 @@ public class CMakeFoldingBuilderForMultiLineBodies implements FoldingBuilder {
   private FoldingDescriptor createFoldingDescriptor(PsiElement element) {
     return new NamedFoldingDescriptor(
         element.getNode(),
-        element.getTextRange(),
-        null, // FoldingGroup.newGroup("Block element " + element.getTextRange().toString()),
+        CmakePlusPDC.getBodyBlockRangeToFold(element),
+        null,
         getPlaceholderText(element));
   }
 
   @NotNull
   private String getPlaceholderText(PsiElement element) {
-    final String elementText = element.getText();
-    String text = (elementText.length() < 200) ? elementText : elementText.substring(0, 200);
-    text = text.replaceAll(" {2,}", " ");
-    return (text.length() < 60)
-        ? text
-        : text.substring(0, 50) + " ... ";
+    String text = element.getText();
+    if (text.length() < 50) return text;
+    String prefix = text.substring(0, 35);
+    String suffix = text.substring(text.length() - 10);
+    return prefix + " ... " + suffix;
   }
 
   @Nullable
