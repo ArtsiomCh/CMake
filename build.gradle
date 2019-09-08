@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '192.2.1'
+    version '192.3.1'
     sourceCompatibility = 1.8
 
     repositories {

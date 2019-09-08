@@ -9,7 +9,11 @@
   <description><![CDATA[
      Extend CMake language support in the IDE's Editor:<br>
      - Variables navigation/renaming(*see Notes) for <b>IntelliJ IDEA</b>, <b>Android Studio</b>, <b>CLion</b>, etc. <br>
-     - Folding regions for functions, macros, if/for/while blocks. <br><br>
+     - Folding regions for functions, macros, if/for/while blocks and: <br>
+          &emsp; * Multiline brackets comments; <br>
+          &emsp; * Consequent single-line comments;  <br>
+          &emsp; * Multiline function's arguments. <br>
+     - "Comment with Line / Block Comment" (`Ctrl + /` and `Shift + Ctrl + /`) actions added. <br><br>
 
      <b>Require <a href="https://plugins.jetbrains.com/plugin/10089-cmake-simple-highlighter">CMake simple highlighter</a></b> to be installed! <br><br>
 
@@ -17,7 +21,7 @@
      Plugin is <b>free</b>(for now) for community/free IDEs: IntelliJ IDEA Community, Android Studio, etc. <br><br>
 
      <b>Plans for the future</b> [no commitments ;) ] functionality:<br>
-     - folding regions for comments. <br>
+     - Structure View (macros, functions, etc.) <br>
      - variable's scope of visibility for navigation/renaming. <br>
      - ENV variables navigation/renaming. <br>
      - function's declaration and references navigation/renaming. <br> <br>
@@ -26,6 +30,11 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      192.3.1 - "Comment with Line / Block Comment" (`Ctrl + /` and `Shift + Ctrl + /`) actions added. <br>
+          &emsp; Folding regions for: <br>
+          &emsp; * Multiline brackets comments; <br>
+          &emsp; * Consequent single-line comments;  <br>
+          &emsp; * Multiline function's arguments. <br>
       192.2.1 - Folding regions for functions, macros, if/for/while blocks. <br>
           &emsp; * Fix <a href="https://github.com/ArtsiomCh/CMake/issues/5">Exception</a> if space symbol in Path presented. <br>
       192.1.1 - Navigation (Go to definition / Find usages) for variable's (re)definitions/references. <br>
