@@ -1,6 +1,6 @@
 package com.cmakeplugin;
 
-import com.cmakeplugin.utils.CmakePlusPDC;
+import com.cmakeplugin.utils.CMakePlusPDC;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.FoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
@@ -17,7 +17,7 @@ public class CMakeFoldingBuilderForMultiLineBodies implements FoldingBuilder {
   @NotNull
   @Override
   public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
-    return PsiTreeUtil.findChildrenOfAnyType(node.getPsi(), CmakePlusPDC.foldableBodies).stream()
+    return PsiTreeUtil.findChildrenOfAnyType(node.getPsi(), CMakePlusPDC.FOLDABLE_BODIES).stream()
         .filter(it -> isMultiLine(document, it))
         .map(this::createFoldingDescriptor)
         .toArray(FoldingDescriptor[]::new);
@@ -36,7 +36,7 @@ public class CMakeFoldingBuilderForMultiLineBodies implements FoldingBuilder {
   private FoldingDescriptor createFoldingDescriptor(PsiElement element) {
     return new NamedFoldingDescriptor(
         element.getNode(),
-        CmakePlusPDC.getBodyBlockRangeToFold(element),
+        CMakePlusPDC.getBodyBlockRangeToFold(element),
         null,
         getPlaceholderText(element));
   }

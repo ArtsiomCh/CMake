@@ -3,18 +3,21 @@ package com.cmakeplugin.utils;
 import static com.cmakeplugin.utils.CMakePDC.isCLION;
 
 import com.cmakeplugin.psi.*;
+import com.cmakeplugin.psi.impl.*;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class CmakePlusPDC {
+public class CMakePlusPDC {
 
   @NotNull
   @SuppressWarnings("unchecked")
-  public static final Class<? extends PsiElement>[] foldableBodies =
+  public static final Class<? extends PsiElement>[] FOLDABLE_BODIES =
       (isCLION)
           ? new Class[] {
             com.jetbrains.cmake.psi.CMakeBodyBlock.class,
@@ -60,4 +63,34 @@ public class CmakePlusPDC {
     }
     return range;
   }
+
+  public static Class<? extends PsiFile> getCMakeFileClass() {
+    return (isCLION) ? com.jetbrains.cmake.psi.CMakeFile.class : CMakeFile.class;
+  }
+
+  public static final Class<? extends NavigatablePsiElement> MACRO_CLASS =
+      (isCLION) ? com.jetbrains.cmake.psi.CMakeMacroCommandCallImpl.class : CMakeMbeginImpl.class;
+
+  public static final Class<? extends NavigatablePsiElement> FUNCTION_CLASS =
+      (isCLION)
+          ? com.jetbrains.cmake.psi.CMakeFunctionCommandCallImpl.class
+          : CMakeFbeginImpl.class;
+
+  public static String getFunMacroName(NavigatablePsiElement element) {
+    PsiElement arguments =
+        PsiTreeUtil.getChildOfType((isCLION) ? element.getParent() : element, ARGUMENTS_CLASS);
+    PsiElement name = PsiTreeUtil.findChildOfAnyType(arguments, ARGUMENT_CLASS);
+    return name != null ? name.getText() : element.getText();
+  }
+
+  private static final Class<? extends PsiElement> ARGUMENTS_CLASS =
+      (isCLION) ? com.jetbrains.cmake.psi.CMakeCommandArguments.class : CMakeArguments.class;
+
+  @SuppressWarnings("unchecked")
+  private static final Class<? extends PsiElement>[] ARGUMENT_CLASS =
+      (isCLION)
+          ? new Class[] {com.jetbrains.cmake.psi.CMakeArgument.class}
+          : new Class[] {
+            CMakeUnquotedArgumentContainer.class, CMakeUnquotedArgumentMaybeVariableContainer.class
+          };
 }

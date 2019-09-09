@@ -66,7 +66,7 @@ set(x a "b;c") # sets "x" to "a;b;c", not "a;b\;c"
 
 
 
-macro(temp_name fname)
+macro #[[hjhj]] (temp_name$1 fname)
   if(${ARGC} GREATER 1) # Have to escape ARGC to correctly compare
     set(_base ${ARGV1})
   else(${ARGC} GREATER 1)

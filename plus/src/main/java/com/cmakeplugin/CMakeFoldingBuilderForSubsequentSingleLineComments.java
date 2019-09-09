@@ -1,6 +1,6 @@
 package com.cmakeplugin;
 
-import com.cmakeplugin.utils.CmakePlusPDC;
+import com.cmakeplugin.utils.CMakePlusPDC;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.FoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
@@ -9,7 +9,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +29,7 @@ public class CMakeFoldingBuilderForSubsequentSingleLineComments implements Foldi
     Set<PsiComment> processedComments = new HashSet<>();
 
     for (PsiComment comment : comments) {
-      if (processedComments.add(comment) && CmakePlusPDC.isLineComment(comment)) {
+      if (processedComments.add(comment) && CMakePlusPDC.isLineComment(comment)) {
         final FoldingDescriptor commentDescriptor =
             getCommentDescriptor(comment, processedComments);
         if (commentDescriptor != null) result.add(commentDescriptor);
@@ -58,13 +57,13 @@ public class CMakeFoldingBuilderForSubsequentSingleLineComments implements Foldi
         current != null;
         current = current.getNextSibling()) {
       if (current instanceof PsiComment
-          && CmakePlusPDC.isLineComment((PsiComment) current)
+          && CMakePlusPDC.isLineComment((PsiComment) current)
           && !processedComments.contains(current)) {
         end = current;
         processedComments.add((PsiComment) current);
         continue;
       }
-      if (CmakePlusPDC.isSubsequentLineCommentsGlueElement(current)) continue;
+      if (CMakePlusPDC.isSubsequentLineCommentsGlueElement(current)) continue;
       break;
     }
     return (end == null)
