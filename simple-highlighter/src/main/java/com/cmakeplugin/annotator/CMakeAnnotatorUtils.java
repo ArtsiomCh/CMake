@@ -116,28 +116,22 @@ class CMakeAnnotatorUtils {
 
   static boolean annotateProperty(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String propertyName = element.getText();
-    for (String varRegexp : CMakeKeywords.properties_All) {
-      if (propertyName.matches(varRegexp)) {
-        return createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_PROPERTY);
-      }
+    if (CMakeVarStringUtil.isCMakeProperty(propertyName)) {
+      return createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_PROPERTY);
     }
-    for (String varRegexp : CMakeKeywords.properties_Deprecated) {
-      if (propertyName.matches(varRegexp)) {
-        return createDeprecatedAnnotation(element, holder, "Deprecated property");
-      }
+    if (CMakeVarStringUtil.isCMakePropertyDeprecated(propertyName)) {
+      return createDeprecatedAnnotation(element, holder, "Deprecated property");
     }
     return false;
   }
 
   static boolean annotateOperator(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String operatorName = element.getText();
-    if (CMakeKeywords.operators.contains(operatorName)) {
+    if (CMakeVarStringUtil.isCMakeOperator(operatorName)) {
       return createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_OPERATOR);
     }
-    for (String boolValue : CMakeKeywords.boolValues) {
-      if (operatorName.toUpperCase().matches(boolValue)) {
-        return createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_BOOLEAN);
-      }
+    if (CMakeVarStringUtil.isCMakeBoolValue(operatorName)) {
+      return createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_BOOLEAN);
     }
     return false;
   }

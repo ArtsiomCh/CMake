@@ -16,10 +16,10 @@ final public class CMakeKeywords {
   static final public Set<String> variables_All = new HashSet<>();
   static final Set<String> variables_ENV = new HashSet<>();
 
-  static final Set<String> properties_All = new HashSet<>();
-  static final Set<String> properties_Deprecated = new HashSet<>();
-  static final Set<String> operators = new HashSet<>();
-  static final Set<String> boolValues = new HashSet<>();
+  static final public Set<String> properties_All = new HashSet<>();
+  static final public Set<String> properties_Deprecated = new HashSet<>();
+  static final public Set<String> operators = new HashSet<>();
+  static final public Set<String> boolValues = new HashSet<>();
 
   static {
 // https://cmake.org/cmake/help/latest/manual/cmake-commands.7.html

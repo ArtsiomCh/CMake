@@ -23,6 +23,11 @@ public class CMakeVarStringUtil {
       "((^\\$|(?<=[^\\\\])\\$)ENV\\{)"; // Escaped \$ excluded
 
   private static Map<String, Boolean> cacheCouldBeVarName = new ConcurrentHashMap<>();
+  private static Map<String, Boolean> cacheIsPredefinedCMakeVar = new ConcurrentHashMap<>();
+  private static Map<String, Boolean> cacheIsCMakeProperty = new ConcurrentHashMap<>();
+  private static Map<String, Boolean> cacheIsCMakePropertyDeprecated = new ConcurrentHashMap<>();
+  private static Map<String, Boolean> cacheIsCMakeOperator = new ConcurrentHashMap<>();
+  private static Map<String, Boolean> cacheIsCMakeBoolValue = new ConcurrentHashMap<>();
   private static Map<String, List<TextRange>> cacheOuterVarRefs = new ConcurrentHashMap<>();
   private static Map<String, List<TextRange>> cacheInnerVars = new ConcurrentHashMap<>();
   private static Map<String, List<TextRange>> cacheInnerEnvVars = new ConcurrentHashMap<>();
@@ -32,11 +37,35 @@ public class CMakeVarStringUtil {
   @Contract(pure = true)
   static boolean couldBeVarName(@NotNull String text) {
     return cacheCouldBeVarName.computeIfAbsent(
-        text, key -> patternCouldBeVarName.matcher(key).matches());
+            text, key -> patternCouldBeVarName.matcher(key).matches())
+        && !(isCMakeOperator(text)
+            || isCMakeBoolValue(text)
+            || isCMakeProperty(text)
+            || isCMakePropertyDeprecated(text));
   }
 
-  public static boolean isPredefinedCMakeVar(@NotNull String text){
-    return CMakeKeywords.variables_All.stream().anyMatch(text::matches);
+  public static boolean isPredefinedCMakeVar(@NotNull String text) {
+    return cacheIsPredefinedCMakeVar.computeIfAbsent(
+        text, key -> CMakeKeywords.variables_All.stream().anyMatch(key::matches));
+  }
+
+  public static boolean isCMakeProperty(@NotNull String text) {
+    return cacheIsCMakeProperty.computeIfAbsent(
+        text, key -> CMakeKeywords.properties_All.stream().anyMatch(key::matches));
+  }
+
+  public static boolean isCMakePropertyDeprecated(@NotNull String text) {
+    return cacheIsCMakePropertyDeprecated.computeIfAbsent(
+        text, key -> CMakeKeywords.properties_Deprecated.stream().anyMatch(key::matches));
+  }
+
+  public static boolean isCMakeOperator(@NotNull String text) {
+    return cacheIsCMakeOperator.computeIfAbsent(text, CMakeKeywords.operators::contains);
+  }
+
+  public static boolean isCMakeBoolValue(@NotNull String text) {
+    return cacheIsCMakeBoolValue.computeIfAbsent(
+        text, key -> CMakeKeywords.boolValues.stream().anyMatch(key::matches));
   }
 
   private static final List<TextRange> EMPTY_RANGES_LIST = Collections.emptyList();

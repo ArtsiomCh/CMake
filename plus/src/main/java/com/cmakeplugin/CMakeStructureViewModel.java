@@ -68,7 +68,7 @@ public class CMakeStructureViewModel extends StructureViewModelBase
     @Override
     public ActionPresentation getPresentation() {
       return new ActionPresentationData(
-          "Show Variable definitions", null, PlatformIcons.VARIABLE_ICON);
+          "Show Variables (re)definitions", null, PlatformIcons.VARIABLE_ICON);
     }
 
     @NotNull
