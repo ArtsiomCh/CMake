@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-final class CMakeKeywords {
+final public class CMakeKeywords {
   private CMakeKeywords() {}
   private static String varRegexp = "[A-Za-z0-9/_.+-]+";
   private static String varNumberRegexp = "[0-9]";
@@ -13,7 +13,7 @@ final class CMakeKeywords {
   static final Set<String> commands_Test = new HashSet<>();
   static final Set<String> commands_Deprecated = new HashSet<>();
 
-  static final Set<String> variables_All = new HashSet<>();
+  static final public Set<String> variables_All = new HashSet<>();
   static final Set<String> variables_ENV = new HashSet<>();
 
   static final Set<String> properties_All = new HashSet<>();

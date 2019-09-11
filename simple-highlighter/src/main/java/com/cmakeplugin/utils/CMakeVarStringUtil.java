@@ -1,5 +1,6 @@
 package com.cmakeplugin.utils;
 
+import com.cmakeplugin.annotator.CMakeKeywords;
 import com.intellij.openapi.util.TextRange;
 import java.util.Collections;
 import java.util.Map;
@@ -32,6 +33,10 @@ public class CMakeVarStringUtil {
   static boolean couldBeVarName(@NotNull String text) {
     return cacheCouldBeVarName.computeIfAbsent(
         text, key -> patternCouldBeVarName.matcher(key).matches());
+  }
+
+  public static boolean isPredefinedCMakeVar(@NotNull String text){
+    return CMakeKeywords.variables_All.stream().anyMatch(text::matches);
   }
 
   private static final List<TextRange> EMPTY_RANGES_LIST = Collections.emptyList();

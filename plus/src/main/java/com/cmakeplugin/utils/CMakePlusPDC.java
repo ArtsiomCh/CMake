@@ -11,8 +11,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
+/** Provide Platform Dependent Code (IDEA/CLion) encapsulation into API */
 public class CMakePlusPDC {
 
   @NotNull
@@ -64,23 +66,37 @@ public class CMakePlusPDC {
     return range;
   }
 
-  public static Class<? extends PsiFile> getCMakeFileClass() {
-    return (isCLION) ? com.jetbrains.cmake.psi.CMakeFile.class : CMakeFile.class;
-  }
+  public static final Class<? extends PsiFile> CMAKE_FILE_CLASS =
+      (isCLION) ? com.jetbrains.cmake.psi.CMakeFile.class : CMakeFile.class;
 
   public static final Class<? extends NavigatablePsiElement> MACRO_CLASS =
-      (isCLION) ? com.jetbrains.cmake.psi.CMakeMacroCommandCallImpl.class : CMakeMbeginImpl.class;
+      (isCLION) ? com.jetbrains.cmake.psi.CMakeMacroCommandImpl.class : CMakeMbeginImpl.class;
 
   public static final Class<? extends NavigatablePsiElement> FUNCTION_CLASS =
+      (isCLION) ? com.jetbrains.cmake.psi.CMakeFunctionCommandImpl.class : CMakeFbeginImpl.class;
+
+  public static final Class<? extends NavigatablePsiElement> VARDEF_CLASS =
       (isCLION)
-          ? com.jetbrains.cmake.psi.CMakeFunctionCommandCallImpl.class
-          : CMakeFbeginImpl.class;
+          ? com.jetbrains.cmake.psi.CMakeLiteralImpl.class
+          : CMakeUnquotedArgumentMaybeVariableContainerImpl.class;
 
   public static String getFunMacroName(NavigatablePsiElement element) {
-    PsiElement arguments =
-        PsiTreeUtil.getChildOfType((isCLION) ? element.getParent() : element, ARGUMENTS_CLASS);
-    PsiElement name = PsiTreeUtil.findChildOfAnyType(arguments, ARGUMENT_CLASS);
+    PsiElement name = getFunMacroNameElement(element);
     return name != null ? name.getText() : element.getText();
+  }
+
+  public static NavigatablePsiElement getFunMacroNameElement(NavigatablePsiElement element) {
+    PsiElement arguments = PsiTreeUtil.getChildOfType(element, ARGUMENTS_CLASS);
+    PsiElement name = PsiTreeUtil.findChildOfAnyType(arguments, ARGUMENT_CLASS);
+    return (name instanceof NavigatablePsiElement) ? (NavigatablePsiElement) name : null;
+  }
+
+  public static String getFunMacroArgs(NavigatablePsiElement element) {
+    PsiElement arguments = PsiTreeUtil.getChildOfType(element, ARGUMENTS_CLASS);
+    return PsiTreeUtil.findChildrenOfAnyType(arguments, ARGUMENT_CLASS).stream()
+        .skip(1) // fun/macro name
+        .map(PsiElement::getText)
+        .collect(Collectors.joining(" "));
   }
 
   private static final Class<? extends PsiElement> ARGUMENTS_CLASS =

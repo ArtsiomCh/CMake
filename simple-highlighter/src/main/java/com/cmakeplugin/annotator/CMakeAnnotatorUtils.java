@@ -37,10 +37,9 @@ class CMakeAnnotatorUtils {
 
   static boolean annotatePredefinedVariable(
       @NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-    for (String varRegexp : CMakeKeywords.variables_All) {
-      if (CMakeIFWHILEcheck.couldBeVarDef(element) && element.getText().matches(varRegexp)) {
-        return createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_VAR_DEF);
-      }
+    if (CMakeIFWHILEcheck.couldBeVarDef(element)
+        && CMakeVarStringUtil.isPredefinedCMakeVar(element.getText())) {
+      return createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_VAR_DEF);
     }
     return false;
   }
@@ -64,29 +63,22 @@ class CMakeAnnotatorUtils {
     }
 
     // Highlight Inner variables.
-    boolean isCmakePredefinedVar = false;
     for (TextRange innerVarRange : CMakeIFWHILEcheck.getInnerVars(element)) {
       String innerVarName =
           argtext.substring(innerVarRange.getStartOffset(), innerVarRange.getEndOffset());
 
       // Highlight Inner CMake predefined variables
-      for (String varRegexp : CMakeKeywords.variables_All) {
-        if (innerVarName.matches(varRegexp)) {
-          isCmakePredefinedVar =
-              createInfoAnnotation(
-                  innerVarRange.shiftRight(elementStartInFile),
-                  holder,
-                  CMakeSyntaxHighlighter.CMAKE_VAR_REF);
-          break;
-        }
+      if (CMakeVarStringUtil.isPredefinedCMakeVar(innerVarName)) {
+        createInfoAnnotation(
+            innerVarRange.shiftRight(elementStartInFile),
+            holder,
+            CMakeSyntaxHighlighter.CMAKE_VAR_REF);
       }
-
-      // TODO Move it to Inspections? Also too many false negative.
       // Highlight not defined Inner variable.
-      if (!isCmakePredefinedVar
-          && !CMakePSITreeSearch.existDefinitionOf(element, innerVarName)
+      else if (!CMakePSITreeSearch.existDefinitionOf(element, innerVarName)
           // exclude unquoted arg inside If/While
           && !element.textMatches(innerVarName)) {
+        // TODO Move it to Inspections? Also too many false negative.
         createWeakWarningAnnotation(
             innerVarRange.shiftRight(elementStartInFile),
             holder,
