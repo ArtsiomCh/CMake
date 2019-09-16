@@ -17,6 +17,7 @@ public class CMakeFoldingBuilderForMultiLineBodies implements FoldingBuilder {
   @NotNull
   @Override
   public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
+    if (!CMakeComponent.isCMakePlusActive) return FoldingDescriptor.EMPTY;
     return PsiTreeUtil.findChildrenOfAnyType(node.getPsi(), CMakePlusPDC.FOLDABLE_BODIES).stream()
         .filter(it -> isMultiLine(document, it))
         .map(this::createFoldingDescriptor)

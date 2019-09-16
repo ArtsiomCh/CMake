@@ -12,6 +12,7 @@ public class CMakeStructureViewFactory implements PsiStructureViewFactory {
   @Nullable
   @Override
   public StructureViewBuilder getStructureViewBuilder(@NotNull PsiFile psiFile) {
+    if (!CMakeComponent.isCMakePlusActive) return null;
     return new TreeBasedStructureViewBuilder() {
       @NotNull
       @Override

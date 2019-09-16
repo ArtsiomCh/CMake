@@ -23,6 +23,7 @@ public class CMakeFoldingBuilderForSubsequentSingleLineComments implements Foldi
   @NotNull
   @Override
   public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
+    if (!CMakeComponent.isCMakePlusActive) return FoldingDescriptor.EMPTY;
     List<FoldingDescriptor> result = new ArrayList<>();
     final Collection<PsiComment> comments =
         PsiTreeUtil.findChildrenOfType(node.getPsi(), PsiComment.class);
