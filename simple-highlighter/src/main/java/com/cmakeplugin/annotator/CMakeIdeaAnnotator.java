@@ -1,5 +1,6 @@
 package com.cmakeplugin.annotator;
 
+import com.cmakeplugin.utils.CMakePDC;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
@@ -15,6 +16,10 @@ public class CMakeIdeaAnnotator implements Annotator {
   public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {
     if (element instanceof CMakeCommandName) {
       annotateCommand(element, holder);
+    } else if (CMakePDC.FUNCTION_CLASS.isInstance(element)) {
+      annotateFunctionName(element, holder);
+    } else if (CMakePDC.MACRO_CLASS.isInstance(element)) {
+      annotateMacrosName(element, holder);
     } else if (element instanceof CMakeQuotedArgumentContainer) {
       // Annotate Quoted argument
       assert element.getPrevSibling() instanceof CMakeBrace

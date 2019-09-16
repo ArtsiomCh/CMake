@@ -2,6 +2,7 @@ package com.cmakeplugin.annotator;
 
 import com.cmakeplugin.CMakeSyntaxHighlighter;
 
+import com.cmakeplugin.utils.CMakePDC;
 import com.cmakeplugin.utils.CMakePSITreeSearch;
 
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -9,6 +10,7 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -111,7 +113,23 @@ class CMakeAnnotatorUtils {
       createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_COMMAND);
     } else if (CMakeKeywords.commands_Deprecated.contains(commandName)) {
       createDeprecatedAnnotation(element, holder, "Deprecated command");
+    } else if (CMakePSITreeSearch.existFunctionDefFor(element)) {
+      createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.FUNCTION);
+    } else if (CMakePSITreeSearch.existMacroDefFor(element)) {
+      createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.MACROS);
     }
+  }
+
+  static void annotateFunctionName(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+    PsiElement nameElement = CMakePSITreeSearch.getFunMacroNameElement(element);
+    if (nameElement != null)
+      createInfoAnnotation(nameElement, holder, CMakeSyntaxHighlighter.FUNCTION);
+  }
+
+  static void annotateMacrosName(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+    PsiElement nameElement = CMakePSITreeSearch.getFunMacroNameElement(element);
+    if (nameElement != null)
+      createInfoAnnotation(nameElement, holder, CMakeSyntaxHighlighter.MACROS);
   }
 
   static boolean annotateProperty(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {

@@ -37,11 +37,13 @@ public class CMakeVarStringUtil {
   @Contract(pure = true)
   static boolean couldBeVarName(@NotNull String text) {
     return cacheCouldBeVarName.computeIfAbsent(
-            text, key -> patternCouldBeVarName.matcher(key).matches())
-        && !(isCMakeOperator(text)
-            || isCMakeBoolValue(text)
-            || isCMakeProperty(text)
-            || isCMakePropertyDeprecated(text));
+        text,
+        key ->
+            patternCouldBeVarName.matcher(key).matches()
+                && !(isCMakeOperator(key)
+                    || isCMakeBoolValue(key)
+                    || isCMakeProperty(key)
+                    || isCMakePropertyDeprecated(key)));
   }
 
   public static boolean isPredefinedCMakeVar(@NotNull String text) {

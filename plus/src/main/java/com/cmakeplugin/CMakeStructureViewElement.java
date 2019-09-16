@@ -2,6 +2,7 @@ package com.cmakeplugin;
 
 import com.cmakeplugin.annotator.CMakeKeywords;
 import com.cmakeplugin.utils.CMakeIFWHILEcheck;
+import com.cmakeplugin.utils.CMakePDC;
 import com.cmakeplugin.utils.CMakePSITreeSearch;
 import com.cmakeplugin.utils.CMakePlusPDC;
 import com.cmakeplugin.utils.CMakeVarStringUtil;
@@ -94,11 +95,11 @@ class CMakeFileElement extends CMakeStructureViewElement {
     if (!CMakePlusPDC.CMAKE_FILE_CLASS.isInstance(element)) return super.getChildren();
 
     Stream<TreeElement> macroElements =
-        PsiTreeUtil.findChildrenOfAnyType(element, CMakePlusPDC.MACRO_CLASS).stream()
+        PsiTreeUtil.findChildrenOfAnyType(element, CMakePDC.MACRO_CLASS).stream()
             .map(MacroElement::new);
 
     Stream<TreeElement> functionElements =
-        PsiTreeUtil.findChildrenOfAnyType(element, CMakePlusPDC.FUNCTION_CLASS).stream()
+        PsiTreeUtil.findChildrenOfAnyType(element, CMakePDC.FUNCTION_CLASS).stream()
             .map(FunctionElement::new);
 
     Stream<TreeElement> varDefElements =
@@ -122,13 +123,13 @@ abstract class FunMacroBase extends CMakeStructureViewElement {
 
   FunMacroBase(NavigatablePsiElement element) {
     super(element);
-    presentableText = CMakePlusPDC.getFunMacroName(element);
-    notesText = CMakePlusPDC.getFunMacroArgs(element);
+    presentableText = CMakePSITreeSearch.getFunMacroName(element);
+    notesText = CMakePSITreeSearch.getFunMacroArgs(element);
   }
 
   @Override
   public void navigate(boolean requestFocus) {
-    NavigatablePsiElement name = CMakePlusPDC.getFunMacroNameElement(element);
+    NavigatablePsiElement name = CMakePSITreeSearch.getFunMacroNameElement(element);
     name = (name != null) ? name : element;
     name.navigate(requestFocus);
   }
@@ -139,6 +140,7 @@ class MacroElement extends FunMacroBase {
   MacroElement(NavigatablePsiElement element) {
     super(element);
     icon = PlatformIcons.METHOD_ICON;
+    attributesKey = CMakeSyntaxHighlighter.MACROS;
   }
 }
 
@@ -147,6 +149,7 @@ class FunctionElement extends FunMacroBase {
   FunctionElement(NavigatablePsiElement element) {
     super(element);
     icon = PlatformIcons.FUNCTION_ICON;
+    attributesKey = CMakeSyntaxHighlighter.FUNCTION;
   }
 }
 

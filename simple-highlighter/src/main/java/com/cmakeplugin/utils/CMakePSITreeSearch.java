@@ -3,6 +3,7 @@ package com.cmakeplugin.utils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -24,6 +25,8 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.cmakeplugin.utils.CMakeIFWHILEcheck.*;
+import static com.cmakeplugin.utils.CMakePDC.ARGUMENTS_CLASS;
+import static com.cmakeplugin.utils.CMakePDC.ARGUMENT_CLASS;
 
 public class CMakePSITreeSearch {
 
@@ -109,12 +112,12 @@ public class CMakePSITreeSearch {
 
   /** Copy of {@link PsiTreeUtil#findChildOfType(PsiElement, Class, boolean, Class)} */
   private static <T extends PsiElement> boolean hasChild(
-      @Nullable final PsiElement element, @NotNull final PsiElementFilter filter) {
-    if (element == null) return false;
+      @Nullable final PsiElement rootElement, @NotNull final PsiElementFilter filter) {
+    if (rootElement == null) return false;
 
     PsiElementProcessor.FindFilteredElement<T> processor =
         new PsiElementProcessor.FindFilteredElement<T>(filter);
-    PsiTreeUtil.processElements(element, processor);
+    PsiTreeUtil.processElements(rootElement, processor);
     return processor.isFound();
   }
 
@@ -140,6 +143,59 @@ public class CMakePSITreeSearch {
     return referenceAt.resolve() != null
         || (referenceAt instanceof PsiPolyVariantReference
             && ((PsiPolyVariantReference) referenceAt).multiResolve(false).length > 0);
+  }
+
+  /**
+   * checking ANY definition of Function in Project scope including current file.
+   *
+   * @param command PsiElement with Function reference
+   * @return True if any definition found, False otherwise
+   */
+  public static boolean existFunctionDefFor(@NotNull PsiElement command) {
+    return existCommandDefFor(command, CMakePDC.FUNCTION_CLASS);
+  }
+
+  /**
+   * checking ANY definition of Macros in Project scope including current file.
+   *
+   * @param command PsiElement with Macros reference
+   * @return True if any definition found, False otherwise
+   */
+  public static boolean existMacroDefFor(@NotNull PsiElement command) {
+    return existCommandDefFor(command, CMakePDC.MACRO_CLASS);
+  }
+
+  private static boolean existCommandDefFor(@NotNull PsiElement command, final Class<? extends PsiElement> clazz) {
+    final String name = command.getText().toLowerCase();
+    final PsiElementFilter isFunMacroDefFilter =
+        element -> {
+          if (!clazz.isInstance(element)) return false;
+          PsiElement nameElement = getFunMacroNameElement(element);
+          return (nameElement != null) && nameElement.getText().toLowerCase().equals(name);
+        };
+    for (PsiFile cmakeFile : getCmakeFiles(command)) {
+      if (hasChild(cmakeFile, isFunMacroDefFilter)) return true;
+    }
+    return false;
+  }
+
+  public static String getFunMacroName(PsiElement element) {
+    PsiElement name = getFunMacroNameElement(element);
+    return name != null ? name.getText() : element.getText();
+  }
+
+  public static NavigatablePsiElement getFunMacroNameElement(PsiElement element) {
+    PsiElement arguments = PsiTreeUtil.getChildOfType(element, ARGUMENTS_CLASS);
+    PsiElement name = PsiTreeUtil.findChildOfAnyType(arguments, ARGUMENT_CLASS);
+    return (name instanceof NavigatablePsiElement) ? (NavigatablePsiElement) name : null;
+  }
+
+  public static String getFunMacroArgs(PsiElement element) {
+    PsiElement arguments = PsiTreeUtil.getChildOfType(element, ARGUMENTS_CLASS);
+    return PsiTreeUtil.findChildrenOfAnyType(arguments, ARGUMENT_CLASS).stream()
+        .skip(1) // fun/macro name
+        .map(PsiElement::getText)
+        .collect(Collectors.joining(" "));
   }
 
   //  /**

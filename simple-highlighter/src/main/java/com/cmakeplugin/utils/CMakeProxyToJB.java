@@ -1,8 +1,13 @@
 package com.cmakeplugin.utils;
 
+import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
+import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Provide "Proxy" to either of:
@@ -109,11 +114,23 @@ public class CMakeProxyToJB {
     throw new java.lang.RuntimeException("Unknown CMake classes");
   }
 
-  //todo
-/*
   static Lexer getJBCMakeLexer(){
-    if (hasNewCmake) return new com.jetbrains.cmake.psi.CMakeLexer();
+    if (hasNewCmake) {
+      try {
+        return (Lexer) Class.forName("com.jetbrains.cmake.psi.CMakeLexer").getDeclaredConstructor().newInstance();
+      } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+        e.printStackTrace();
+      }
+    }
     throw new java.lang.RuntimeException("Unknown CMake classes");
   }
-*/
+
+  public static TokenSet JB_KEYWORDS =
+      (hasNewCmake) ? com.jetbrains.cmake.psi.CMakeElementTypes.KEYWORDS : TokenSet.EMPTY;
+
+  public static IElementType JB_COMMENT =
+      (hasNewCmake) ? com.jetbrains.cmake.psi.CMakeElementTypes.COMMENT : null;
+
+  public static IElementType JB_LITERAL =
+      (hasNewCmake) ? com.jetbrains.cmake.psi.CMakeElementTypes.LITERAL : null;
 }

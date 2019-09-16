@@ -1,14 +1,18 @@
 package com.cmakeplugin.utils;
 
 import com.cmakeplugin.CMakeLexerAdapter;
+import com.cmakeplugin.psi.impl.CMakeFbeginImpl;
+import com.cmakeplugin.psi.impl.CMakeMbeginImpl;
 import com.intellij.lexer.EmptyLexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.cmakeplugin.psi.*;
 import com.cmakeplugin.CMakeFileType;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 import static com.cmakeplugin.utils.CMakeProxyToJB.*;
@@ -16,6 +20,23 @@ import static com.cmakeplugin.utils.CMakeProxyToJB.*;
 /** Provide Platform Dependent Code (IDEA/CLion) encapsulation into API */
 public class CMakePDC {
   public static final boolean isCLION = hasOldCmake || hasNewCmake;
+
+  public static final Class<? extends NavigatablePsiElement> MACRO_CLASS =
+      (isCLION) ? com.jetbrains.cmake.psi.CMakeMacroCommandImpl.class : CMakeMbeginImpl.class;
+
+  public static final Class<? extends NavigatablePsiElement> FUNCTION_CLASS =
+      (isCLION) ? com.jetbrains.cmake.psi.CMakeFunctionCommandImpl.class : CMakeFbeginImpl.class;
+
+  public static final Class<? extends PsiElement> ARGUMENTS_CLASS =
+      (isCLION) ? com.jetbrains.cmake.psi.CMakeCommandArguments.class : CMakeArguments.class;
+
+  @SuppressWarnings("unchecked")
+  public static final Class<? extends PsiElement>[] ARGUMENT_CLASS =
+      (isCLION)
+          ? new Class[] {com.jetbrains.cmake.psi.CMakeArgument.class}
+          : new Class[] {
+              CMakeUnquotedArgumentContainer.class, CMakeUnquotedArgumentMaybeVariableContainer.class
+          };
 
   static boolean isClassOfVarRefInsideIfWhile(PsiElement element) {
     return (isCLION)
@@ -82,7 +103,7 @@ public class CMakePDC {
 
   public static Lexer getCMakeLexer() {
     return (isCLION)
-        ? new EmptyLexer() // getJBCMakeLexer()
+        ? /*new EmptyLexer()*/ getJBCMakeLexer()
         : new CMakeLexerAdapter();
   }
 

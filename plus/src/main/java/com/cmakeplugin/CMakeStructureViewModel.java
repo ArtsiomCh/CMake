@@ -1,5 +1,6 @@
 package com.cmakeplugin;
 
+import com.cmakeplugin.utils.CMakePDC;
 import com.cmakeplugin.utils.CMakePlusPDC;
 import com.intellij.ide.structureView.*;
 import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
@@ -36,8 +37,8 @@ public class CMakeStructureViewModel extends StructureViewModelBase
   protected Class[] getSuitableClasses() {
     return new Class[] {
       CMakePlusPDC.CMAKE_FILE_CLASS,
-      CMakePlusPDC.FUNCTION_CLASS,
-      CMakePlusPDC.MACRO_CLASS,
+      CMakePDC.FUNCTION_CLASS,
+      CMakePDC.MACRO_CLASS,
       CMakePlusPDC.VARDEF_CLASS
     };
   }

@@ -1,6 +1,7 @@
 package com.cmakeplugin;
 
 import com.cmakeplugin.utils.CMakePDC;
+import com.cmakeplugin.utils.CMakeProxyToJB;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -57,6 +58,14 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
   public static final TextAttributesKey CMAKE_COMMAND =
       TextAttributesKey.createTextAttributesKey(
           "CMAKE.COMMAND", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+
+  public static final TextAttributesKey FUNCTION =
+      createTextAttributesKey(
+          "CMAKE.FUNCTION", Font.BOLD, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+
+  public static final TextAttributesKey MACROS =
+      createTextAttributesKey(
+          "CMAKE.MACROS", Font.BOLD, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
 
   public static final TextAttributesKey UNQUOTED_LEGACY =
       TextAttributesKey.createTextAttributesKey(
@@ -119,16 +128,21 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
   static {
     keys1 = new THashMap<IElementType, TextAttributesKey>();
     keys2 = new THashMap<IElementType, TextAttributesKey>();
+    keys1.put(TokenType.BAD_CHARACTER, BADCHAR);
+    keys1.put(TokenType.WHITE_SPACE, SEPARATOR);
     // TODO: Populate maps here
-    if (!CMakePDC.isCLION) {
+    if (CMakePDC.isCLION) {
+      for (IElementType keyword: CMakeProxyToJB.JB_KEYWORDS.getTypes()) {
+        keys1.put(keyword, DefaultLanguageHighlighterColors.KEYWORD);
+      }
+      keys1.put(CMakeProxyToJB.JB_COMMENT, DefaultLanguageHighlighterColors.LINE_COMMENT);
+      keys1.put(CMakeProxyToJB.JB_LITERAL, DefaultLanguageHighlighterColors.STRING);
+    } else {
       keys1.put(CMakeTypes.LINE_COMMENT, COMMENT);
       keys1.put(CMakeTypes.BRACKET_COMMENT, COMMENT);
       keys1.put(CMakeTypes.QUOTED_ARGUMENT, STRING);
       keys1.put(CMakeTypes.LPAR, BRACES);
       keys1.put(CMakeTypes.RPAR, BRACES);
-      keys1.put(TokenType.BAD_CHARACTER, BADCHAR);
-
-      keys1.put(com.intellij.psi.TokenType.WHITE_SPACE, SEPARATOR);
       keys1.put(CMakeTypes.CMAKE_COMMAND, CMAKE_COMMAND);
       keys1.put(CMakeTypes.BRACKET_ARGUMENT, BRACKET_ARGUMENT);
       // IF keywords highlight

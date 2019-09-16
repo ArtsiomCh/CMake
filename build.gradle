@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '192.4.dev3'
+    version '193.1.dev1'
     sourceCompatibility = 1.8
 
     repositories {
@@ -44,8 +44,6 @@ subprojects {
 //        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-2/192.5728.98'
         localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-3/192.6262.58'
         downloadSources false
-//    alternativeIdePath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
-//    version '183.4284.36'
 //    plugins += 'PsiViewer:191.4212'
         plugins += 'PsiViewer:192-SNAPSHOT'
         plugins += 'java'
@@ -60,8 +58,8 @@ subprojects {
         outputs.upToDateWhen { false }
     }
 
-    task runIC_192_5728(type: RunIdeTaskJbr11){
-        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-2/192.5728.98'
+    task runIC_193_2956(type: RunIdeTaskJbr11){
+        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-3/193.2956.37/'
     }
 
     task runIC_192_6262_58(type: RunIdeTaskJbr11){

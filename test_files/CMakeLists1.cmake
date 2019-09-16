@@ -64,7 +64,14 @@ set(srcs a.c b.c c.c) # sets "srcs" to "a.c;b.c;c.c"
 set(x a "b;c") # sets "x" to "a;b;c", not "a;b\;c"
 
 
+function(fun1)
+  set(var_fun1 1)
+  fun2()
+endfunction(fun1)
 
+function(fun2)
+  message(2${var_fun1}2)
+endfunction(fun2)
 
 macro #[[hjhj]] (temp_name$1 fname)
   if(${ARGC} GREATER 1) # Have to escape ARGC to correctly compare
