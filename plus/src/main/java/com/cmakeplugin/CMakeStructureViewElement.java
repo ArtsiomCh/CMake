@@ -1,6 +1,5 @@
 package com.cmakeplugin;
 
-import com.cmakeplugin.annotator.CMakeKeywords;
 import com.cmakeplugin.utils.CMakeIFWHILEcheck;
 import com.cmakeplugin.utils.CMakePDC;
 import com.cmakeplugin.utils.CMakePSITreeSearch;
@@ -13,7 +12,6 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.NavigatablePsiElement;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PlatformIcons;
@@ -73,6 +71,12 @@ public abstract class CMakeStructureViewElement
   public TreeElement[] getChildren() {
     return EMPTY_ARRAY;
   }
+
+  boolean isVarDef(NavigatablePsiElement element) {
+    return CMakePSITreeSearch.existReferenceTo(element)
+        || (CMakeIFWHILEcheck.couldBeVarDef(element)
+        && CMakeVarStringUtil.isPredefinedCMakeVar(element.getText()));
+  }
 }
 
 class CMakeFileElement extends CMakeStructureViewElement {
@@ -105,6 +109,7 @@ class CMakeFileElement extends CMakeStructureViewElement {
     Stream<TreeElement> varDefElements =
         PsiTreeUtil.findChildrenOfAnyType(element, CMakePlusPDC.VARDEF_CLASS).stream()
             .filter(this::isVarDef)
+            .filter(this::hasNoFunMacroParent)
             .map(VarDefElement::new);
 
     return Stream.of(functionElements, macroElements, varDefElements)
@@ -112,10 +117,9 @@ class CMakeFileElement extends CMakeStructureViewElement {
         .toArray(TreeElement[]::new);
   }
 
-  private boolean isVarDef(NavigatablePsiElement element) {
-    return CMakePSITreeSearch.existReferenceTo(element)
-        || (CMakeIFWHILEcheck.couldBeVarDef(element)
-            && CMakeVarStringUtil.isPredefinedCMakeVar(element.getText()));
+  private boolean hasNoFunMacroParent(NavigatablePsiElement varDef) {
+    return PsiTreeUtil.getParentOfType(varDef, CMakePDC.FUNCTION_CLASS, CMakePDC.MACRO_CLASS)
+        == null;
   }
 }
 
@@ -132,6 +136,15 @@ abstract class FunMacroBase extends CMakeStructureViewElement {
     NavigatablePsiElement name = CMakePSITreeSearch.getFunMacroNameElement(element);
     name = (name != null) ? name : element;
     name.navigate(requestFocus);
+  }
+
+  @Override
+  @NotNull
+  public TreeElement[] getChildren() {
+    return PsiTreeUtil.findChildrenOfAnyType(element, CMakePlusPDC.VARDEF_CLASS).stream()
+        .filter(this::isVarDef)
+        .map(VarDefElement::new)
+        .toArray(TreeElement[]::new);
   }
 }
 

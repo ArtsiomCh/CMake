@@ -74,7 +74,7 @@ It runs until the close bracket.]]
 <info descr="CMAKE.COMMAND">set</info>(<info descr="CMAKE.VAR_DEF">x</info> a "b;c") # sets "x" to "a;b;c", not "a;b\;c"
 
 <info descr="CMAKE.COMMAND">set</info>(<info descr="CMAKE.VAR_DEF">_base</info> fff)
-macro(temp_name <info descr="CMAKE.VAR_DEF">fname</info>)
+macro(<info descr="CMAKE.MACROS">temp_name</info> <info descr="CMAKE.VAR_DEF">fname</info>)
   <info descr="CMAKE.COMMAND">set</info>(<info descr="CMAKE.VAR_DEF">_base</info> ggg)
   if(<info descr="CMAKE.VAR_REF">${<info descr="CMAKE.CMAKE_VAR_REF">ARGC</info>}</info> <info descr="CMAKE.OPERATOR">GREATER</info> 1) # Have to escape ARGC to correctly compare
     <info descr="CMAKE.COMMAND">set</info>(<info descr="CMAKE.VAR_DEF">_base</info> <info descr="CMAKE.VAR_REF">${<info descr="CMAKE.CMAKE_VAR_REF">ARGV1</info>}</info> "<info descr="CMAKE.VAR_REF">${<info descr="CMAKE.CMAKE_VAR_REF">ARGV2</info>}</info>")
@@ -116,37 +116,37 @@ endif()
 
 FAKE_COMMAND_NAME_FOR_VAR_DECLARATION_CREATION_1234567890(ffff)
 
-function(fun1)
+function(<info descr="CMAKE.FUNCTION">fun1</info>)
   <info descr="CMAKE.COMMAND">set</info>(<info descr="CMAKE.VAR_DEF">var_fun1</info> 1)
-  fun2()
+  <info descr="CMAKE.FUNCTION">Fun2</info>()
 endfunction(fun1)
 
-function(fun2)
+function(<info descr="CMAKE.FUNCTION">fun2</info>)
   <info descr="CMAKE.COMMAND">message</info>(2<info descr="CMAKE.VAR_REF">${var_fun1}</info>2)
 endfunction(fun2)
 
 # Evaluate expression
 # Suggestion from the Wiki: <info descr="Open in browser (Ctrl+Click, Ctrl+B)">http://cmake.org/Wiki/CMake/Language_Syntax</info>
 # Unfortunately, no built-in stuff for this: <info descr="Open in browser (Ctrl+Click, Ctrl+B)">http://public.kitware.com/Bug/view.php?id=4034</info>
-macro(eval <info descr="CMAKE.VAR_DEF">expr</info>)
-  temp_name(<info descr="CMAKE.VAR_DEF">_fname</info>)
+macro(<info descr="CMAKE.MACROS">eval</info> <info descr="CMAKE.VAR_DEF">expr</info>)
+  <info descr="CMAKE.MACROS">temp_name</info>(<info descr="CMAKE.VAR_DEF">_fname</info>)
   <info descr="CMAKE.COMMAND">set</info>(<info descr="CMAKE.VAR_DEF">_fname</info> <info descr="CMAKE.VAR_REF">${_fname}</info>+1<info descr="CMAKE.VAR_REF">${expr}</info>)
   <info descr="CMAKE.COMMAND">file</info>(<info descr="CMAKE.OPERATOR">WRITE</info> <info descr="CMAKE.VAR_REF">${_fname}</info> "<info descr="CMAKE.VAR_REF">${expr}</info>")
   <info descr="CMAKE.COMMAND">include</info>(<info descr="CMAKE.VAR_REF">${_fname}</info>)
   <info descr="CMAKE.COMMAND">file</info>(<info descr="CMAKE.OPERATOR">REMOVE</info> trr$ <info descr="CMAKE.VAR_REF">${_fname}</info>)
 endmacro(eval)
 
-eval("message(\"Hai\")")
+<info descr="CMAKE.MACROS">Eval</info>("message(\"Hai\")")
 
 <info descr="CMAKE.COMMAND">set</info>(<info descr="CMAKE.VAR_DEF">funcs</info> a;b)
-macro(test_a <info descr="CMAKE.VAR_DEF">arg</info>)
+macro(<info descr="CMAKE.MACROS">test_a</info> <info descr="CMAKE.VAR_DEF">arg</info>)
   <info descr="CMAKE.COMMAND">message</info>("A: <info descr="CMAKE.VAR_REF">${arg}</info>")
 endmacro(test_a)
-macro(test_b <info descr="CMAKE.VAR_DEF">arg</info>)
+macro(<info descr="CMAKE.MACROS">test_b</info> <info descr="CMAKE.VAR_DEF">arg</info>)
   <info descr="CMAKE.COMMAND">message</info>("B: <info descr="CMAKE.VAR_REF">${arg}</info>")
 endmacro(test_b)
 
 foreach(<info descr="CMAKE.VAR_DEF">func</info> <info descr="CMAKE.VAR_REF">${funcs}</info>)
   <info descr="CMAKE.COMMAND">set</info>(<info descr="CMAKE.VAR_DEF">func_name</info> test_<info descr="CMAKE.VAR_REF">${func}</info>)
-  eval("<info descr="CMAKE.VAR_REF">${func_name}</info>(\"Test\")")
+  <info descr="CMAKE.MACROS">eval</info>("<info descr="CMAKE.VAR_REF">${func_name}</info>(\"Test\")")
 endforeach(<info descr="CMAKE.VAR_DEF">func</info>)

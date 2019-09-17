@@ -2,6 +2,8 @@ package com.cmakeplugin.utils;
 
 import com.cmakeplugin.CMakeLexerAdapter;
 import com.cmakeplugin.psi.impl.CMakeFbeginImpl;
+import com.cmakeplugin.psi.impl.CMakeFunDefImpl;
+import com.cmakeplugin.psi.impl.CMakeMacroDefImpl;
 import com.cmakeplugin.psi.impl.CMakeMbeginImpl;
 import com.intellij.lexer.EmptyLexer;
 import com.intellij.lexer.Lexer;
@@ -22,10 +24,10 @@ public class CMakePDC {
   public static final boolean isCLION = hasOldCmake || hasNewCmake;
 
   public static final Class<? extends NavigatablePsiElement> MACRO_CLASS =
-      (isCLION) ? com.jetbrains.cmake.psi.CMakeMacroCommandImpl.class : CMakeMbeginImpl.class;
+      (isCLION) ? com.jetbrains.cmake.psi.CMakeMacroCommandImpl.class : CMakeMacroDefImpl.class;
 
   public static final Class<? extends NavigatablePsiElement> FUNCTION_CLASS =
-      (isCLION) ? com.jetbrains.cmake.psi.CMakeFunctionCommandImpl.class : CMakeFbeginImpl.class;
+      (isCLION) ? com.jetbrains.cmake.psi.CMakeFunctionCommandImpl.class : CMakeFunDefImpl.class;
 
   public static final Class<? extends PsiElement> ARGUMENTS_CLASS =
       (isCLION) ? com.jetbrains.cmake.psi.CMakeCommandArguments.class : CMakeArguments.class;

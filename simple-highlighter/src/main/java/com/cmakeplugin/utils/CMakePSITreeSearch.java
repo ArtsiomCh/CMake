@@ -185,13 +185,13 @@ public class CMakePSITreeSearch {
   }
 
   public static NavigatablePsiElement getFunMacroNameElement(PsiElement element) {
-    PsiElement arguments = PsiTreeUtil.getChildOfType(element, ARGUMENTS_CLASS);
+    PsiElement arguments = PsiTreeUtil.findChildOfType(element, ARGUMENTS_CLASS);
     PsiElement name = PsiTreeUtil.findChildOfAnyType(arguments, ARGUMENT_CLASS);
     return (name instanceof NavigatablePsiElement) ? (NavigatablePsiElement) name : null;
   }
 
   public static String getFunMacroArgs(PsiElement element) {
-    PsiElement arguments = PsiTreeUtil.getChildOfType(element, ARGUMENTS_CLASS);
+    PsiElement arguments = PsiTreeUtil.findChildOfType(element, ARGUMENTS_CLASS);
     return PsiTreeUtil.findChildrenOfAnyType(arguments, ARGUMENT_CLASS).stream()
         .skip(1) // fun/macro name
         .map(PsiElement::getText)

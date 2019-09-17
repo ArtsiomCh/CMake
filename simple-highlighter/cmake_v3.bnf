@@ -30,7 +30,8 @@
    {recoverWhile=root_recover} private root_recover::=!(identifier|if|function|foreach|while|macro)
    //
  private file_element ::=
-                 (funmacro                    |
+                 (fun_def                    |
+                  macro_def                        |
                   loop                        |
                   cond                        |
                   fake_cmd_for_var_delaration |
@@ -64,11 +65,13 @@
  command_name        ::= cmake_command | identifier
 
  // Function/macro definition need to be separated
- funmacro  ::= <<compound_expr fbegin funbody fend>> | <<compound_expr mbegin macrobody mend>>
+ fun_def ::= <<compound_expr fbegin funbody fend>>
  fbegin ::= <<command_expr (function)>>
  funbody::=body
    { recoverWhile=funbody_recover } private funbody_recover::=!(endfunction)
  fend   ::= <<command_expr (endfunction)>>
+
+ macro_def ::= <<compound_expr mbegin macrobody mend>>
  mbegin ::= <<command_expr (macro)>>
  macrobody::=body
    { recoverWhile=macrobody_recover } private macrobody_recover::=!(endmacro)
