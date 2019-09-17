@@ -8,12 +8,17 @@
 
   <description><![CDATA[
      Extend CMake language support in the IDE's Editor:<br>
-     - Variables navigation/renaming(*see Notes) for <b>IntelliJ IDEA</b>, <b>Android Studio</b>, <b>CLion</b>, etc. <br>
+     - Variables navigation (Go to definition / Find usages) and renaming(*see Notes). <br>
      - Folding regions for functions, macros, if/for/while blocks and: <br>
           &emsp; * Multiline brackets comments; <br>
           &emsp; * Consequent single-line comments;  <br>
           &emsp; * Multiline function's arguments. <br>
-     - "Comment with Line / Block Comment" (`Ctrl + /` and `Shift + Ctrl + /`) actions added. <br><br>
+     - "Comment with Line / Block Comment" (`Ctrl + /` and `Shift + Ctrl + /`) actions added. <br>
+     - Structure View (for the current file) with:  <br>
+          &emsp; * Function/Macros declarations; <br>
+          &emsp; * Variable (re)definitions; <br>
+          &emsp; * Filtering by Functions, Macros, Variables and Sorting alphabetical; <br>
+          &emsp; * Navigation in both directions (Structure View &lt;-> Editor). <br><br>
 
      <b>Require <a href="https://plugins.jetbrains.com/plugin/10089-cmake-simple-highlighter">CMake simple highlighter</a></b> to be installed! <br><br>
 
@@ -21,15 +26,20 @@
      Plugin is <b>free</b>(for now) for community/free IDEs: IntelliJ IDEA Community, Android Studio, etc. <br><br>
 
      <b>Plans for the future</b> [no commitments ;) ] functionality:<br>
-     - Structure View (macros, functions, etc.) <br>
-     - variable's scope of visibility for navigation/renaming. <br>
+     - Variable's scope of visibility. <br>
+     - Performance optimisation for large projects. <br>
      - ENV variables navigation/renaming. <br>
      - function's declaration and references navigation/renaming. <br> <br>
 
-     *Note: Variable's rename refactoring (Shift+F6) works fine for variables with single declaration. For multi declared (re-defined, amended) variables rename refactoring works only from variable declaration side (i.e. caret should be on variable declaration, not reference) and will change all visible references and only current declaration. Use with caution. <br>
+     *Note: Variable's scope of visibility is not implemented yet, i.e. all variables withing Project are shown as global. Variable's rename refactoring (Shift+F6) works fine for variables with single declaration. For multi declared (re-defined, amended) variables rename refactoring works only from variable declaration side (i.e. caret should be on variable declaration, not reference) and will change all visible references and only current declaration. Use with caution. <br>
 ]]></description>
 
   <change-notes><![CDATA[
+      192.4.1 - Structure View added with:
+          &emsp; * Function/Macros declarations; <br>
+          &emsp; * Variable (re)definitions; <br>
+          &emsp; * Filtering by Functions, Macros, Variables and Sorting alphabetical; <br>
+          &emsp; * Navigation in both directions (Structure View <-> Editor). <br>
       192.3.1 - "Comment with Line / Block Comment" (`Ctrl + /` and `Shift + Ctrl + /`) actions added. <br>
           &emsp; Folding regions for: <br>
           &emsp; * Multiline brackets comments; <br>
@@ -42,7 +52,7 @@
   </change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="192.0" until-build="194.0"/>
+<!--  <idea-version since-build="192.0" until-build="194.0"/>-->
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->

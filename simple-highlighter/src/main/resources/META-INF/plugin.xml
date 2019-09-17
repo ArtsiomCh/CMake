@@ -8,12 +8,26 @@
      Plugin for CMake syntax highlight support.<br>
      - It provides(extends) syntax highlight for <b>IntelliJ IDEA</b>, <b>Android Studio</b>, <b>CLion</b>, etc. <br><br>
 
-     For more functionality (variables navigation/renaming) please consider
-     <b><a href="https://plugins.jetbrains.com/plugin/12869-cmake-plus">CMake Plus</a></b> plugin. <br/>
+     Please consider <b><a href="https://plugins.jetbrains.com/plugin/12869-cmake-plus">CMake Plus</a></b> plugin for more functionality:<br>
+     - Variables navigation (Go to definition / Find usages) and renaming(*see Notes). <br>
+     - Folding regions for functions, macros, if/for/while blocks and: <br>
+          &emsp; * Multiline brackets comments; <br>
+          &emsp; * Consequent single-line comments;  <br>
+          &emsp; * Multiline function's arguments. <br>
+     - "Comment with Line / Block Comment" (`Ctrl + /` and `Shift + Ctrl + /`) actions added. <br>
+     - Structure View (for the current file) with:  <br>
+          &emsp; * Function/Macros declarations; <br>
+          &emsp; * Variable (re)definitions; <br>
+          &emsp; * Filtering by Functions, Macros, Variables and Sorting alphabetical; <br>
+          &emsp; * Navigation in both directions (Structure View &lt;-> Editor). <br><br>
+
 
 ]]></description>
 
   <change-notes><![CDATA[
+      192.4.1 - Function/Macros name in definition/call highlighting + enable CLion Lexer for colors setting. <br>
+          &emsp; * Do not treat property/operator/bool value as possible Variable name + cashing optimisation. <br>
+          &emsp; * Enable CLion Lexer for colors setting. <br>
       192.1.1 - Compatibility with IntelliJ 2019.2 and CMake Plus plugin added. <br>
           &emsp; * Variables navigation/renaming moved to <b><a href="https://plugins.jetbrains.com/plugin/12869-cmake-plus">CMake Plus</a></b> plugin. <br>
           &emsp; * Some CPU and Mem usage optimisations. <br>
@@ -36,7 +50,7 @@
   </change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="192.0" until-build="194.0"/>
+<!--  <idea-version since-build="192.0" until-build="194.0"/>-->
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->

@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '192.4.dev4'
+    version '192.4.1'
     sourceCompatibility = 1.8
 
     repositories {
@@ -47,8 +47,10 @@ subprojects {
 //    plugins += 'PsiViewer:191.4212'
         plugins += 'PsiViewer:192-SNAPSHOT'
         plugins += 'java'
-        updateSinceUntilBuild false
+        sameSinceUntilBuild true
     }
+
+    patchPluginXml.sinceBuild 192
 
     jar {
         archivesBaseName = intellij.pluginName
