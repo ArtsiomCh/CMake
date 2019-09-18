@@ -26,7 +26,7 @@
 
   <change-notes><![CDATA[
       192.4.1 - Function/Macros name in definition/call highlighting + enable CLion Lexer for colors setting. <br>
-          &emsp; * Do not treat property/operator/bool value as possible Variable name + cashing optimisation. <br>
+          &emsp; * Do not treat property/operator/bool value as possible Variable name + caching optimisation. <br>
           &emsp; * Enable CLion Lexer for colors setting. <br>
       192.1.1 - Compatibility with IntelliJ 2019.2 and CMake Plus plugin added. <br>
           &emsp; * Variables navigation/renaming moved to <b><a href="https://plugins.jetbrains.com/plugin/12869-cmake-plus">CMake Plus</a></b> plugin. <br>

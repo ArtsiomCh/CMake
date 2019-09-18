@@ -1,26 +1,23 @@
 package com.cmakeplugin.annotator;
 
-import com.cmakeplugin.utils.CMakePDC;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
-import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-// import com.jetbrains.cidr.cpp.cmake.psi.*;
-
 import static com.cmakeplugin.annotator.CMakeAnnotatorUtils.*;
 import static com.cmakeplugin.utils.CMakeProxyToJB.*;
+import static com.cmakeplugin.utils.CMakePDC.*;
 
 public class CMakeCLionAnnotator implements Annotator {
 
   @Override
   public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {
-    if (getCMakeCommandNameClass().isInstance(element)) {
+    if (COMMAND_NAME_CLASS.isInstance(element)) {
       annotateCommand(element, holder);
-    } else if (CMakePDC.FUNCTION_CLASS.isInstance(element)) {
+    } else if (FUNCTION_CLASS.isInstance(element)) {
       annotateFunctionName(element, holder);
-    } else if (CMakePDC.MACRO_CLASS.isInstance(element)) {
+    } else if (MACRO_CLASS.isInstance(element)) {
       annotateMacrosName(element, holder);
     } else if (getCMakeArgumentClass().isInstance(element)) {
       if (!hasBracketArg(element)) {

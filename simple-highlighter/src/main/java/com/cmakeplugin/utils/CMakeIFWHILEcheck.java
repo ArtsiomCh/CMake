@@ -32,7 +32,7 @@ public class CMakeIFWHILEcheck {
 
   public static boolean isVarRefInsideIFWHILE(PsiElement element) {
     return CMakePDC.isClassOfVarRefInsideIfWhile(element)
-        && CMakePDC.hasIfWhileParent(element)
+        && CMakePDC.isIfWhileConditionArgument(element)
         && CMakeVarStringUtil.couldBeVarName(element.getText())
         // hack to skip numbers... not really correct
         && !element.getText().matches("[0-9]+")
@@ -42,7 +42,7 @@ public class CMakeIFWHILEcheck {
 
   public static boolean couldBeVarDef(PsiElement element) {
     return CMakePDC.isClassOfVarDef(element)
-        && !CMakePDC.hasIfWhileParent(element)
+        && !CMakePDC.isIfWhileConditionArgument(element)
         && CMakeVarStringUtil.couldBeVarName(element.getText())
         && CMakePDC.checkSetCommandSemantic(element)
         ;

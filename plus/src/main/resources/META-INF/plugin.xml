@@ -35,7 +35,7 @@
 ]]></description>
 
   <change-notes><![CDATA[
-      192.4.1 - Structure View added with:
+      192.4.1 - Structure View added with: <br>
           &emsp; * Function/Macros declarations; <br>
           &emsp; * Variable (re)definitions; <br>
           &emsp; * Filtering by Functions, Macros, Variables and Sorting alphabetical; <br>

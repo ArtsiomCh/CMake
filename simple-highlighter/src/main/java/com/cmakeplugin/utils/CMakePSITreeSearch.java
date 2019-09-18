@@ -26,7 +26,7 @@ import java.util.List;
 
 import static com.cmakeplugin.utils.CMakeIFWHILEcheck.*;
 import static com.cmakeplugin.utils.CMakePDC.ARGUMENTS_CLASS;
-import static com.cmakeplugin.utils.CMakePDC.ARGUMENT_CLASS;
+import static com.cmakeplugin.utils.CMakePDC.ARGUMENT_CLASSES;
 
 public class CMakePSITreeSearch {
 
@@ -186,13 +186,13 @@ public class CMakePSITreeSearch {
 
   public static NavigatablePsiElement getFunMacroNameElement(PsiElement element) {
     PsiElement arguments = PsiTreeUtil.findChildOfType(element, ARGUMENTS_CLASS);
-    PsiElement name = PsiTreeUtil.findChildOfAnyType(arguments, ARGUMENT_CLASS);
+    PsiElement name = PsiTreeUtil.findChildOfAnyType(arguments, ARGUMENT_CLASSES);
     return (name instanceof NavigatablePsiElement) ? (NavigatablePsiElement) name : null;
   }
 
   public static String getFunMacroArgs(PsiElement element) {
     PsiElement arguments = PsiTreeUtil.findChildOfType(element, ARGUMENTS_CLASS);
-    return PsiTreeUtil.findChildrenOfAnyType(arguments, ARGUMENT_CLASS).stream()
+    return PsiTreeUtil.findChildrenOfAnyType(arguments, ARGUMENT_CLASSES).stream()
         .skip(1) // fun/macro name
         .map(PsiElement::getText)
         .collect(Collectors.joining(" "));

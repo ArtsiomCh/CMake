@@ -97,7 +97,7 @@ endmacro(temp_name)
 
 <info descr="CMAKE.COMMAND">set</info>(<info descr="CMAKE.VAR_DEF">var3</info> 3)
 <info descr="CMAKE.COMMAND">set</info>(<info descr="CMAKE.CMAKE_VAR_DEF">CMAKE_CXX_FLAGS</info> "<info descr="CMAKE.VAR_REF">${<info descr="CMAKE.CMAKE_VAR_REF">CMAKE_CXX_FLAGS</info>}</info> bla bla bla")
-if (<info descr="CMAKE.OPERATOR">NOT</info> <info descr="CMAKE.VAR_REF">var1</info> <info descr="CMAKE.CMAKE_VAR_REF"><info descr="CMAKE.VAR_REF">CMAKE_CXX_FLAGS</info></info>
+if #[[nnn]] (<info descr="CMAKE.OPERATOR">NOT</info> <info descr="CMAKE.VAR_REF">var1</info> <info descr="CMAKE.CMAKE_VAR_REF"><info descr="CMAKE.VAR_REF">CMAKE_CXX_FLAGS</info></info>
     <info descr="CMAKE.VAR_REF">${var1}</info> #${var3}
     "<info descr="CMAKE.VAR_REF">${var1}</info>"
     "var1"

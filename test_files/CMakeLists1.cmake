@@ -86,6 +86,18 @@ macro #[[hjhj]] (temp_name$1 fname)
   set(${fname} "${_base}${_counter}")
 endmacro(temp_name)
 
+set #[[jhj]] (var3 3)
+
+if #[[jhj]] (NOT var1 CMAKE_CXX_FLAGS
+    ${var1} #${var3}
+    "${var1}"
+    "var1"
+    var3 )
+    set(var1 1)
+else()
+    set(var1 3)
+endif()
+
 # Evaluate expression
 # Suggestion from the Wiki: http://cmake.org/Wiki/CMake/Language_Syntax
 # Unfortunately, no built-in stuff for this: http://public.kitware.com/Bug/view.php?id=4034

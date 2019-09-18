@@ -1,21 +1,15 @@
 package com.cmakeplugin.utils;
 
 import com.cmakeplugin.CMakeLexerAdapter;
-import com.cmakeplugin.psi.impl.CMakeFbeginImpl;
 import com.cmakeplugin.psi.impl.CMakeFunDefImpl;
 import com.cmakeplugin.psi.impl.CMakeMacroDefImpl;
-import com.cmakeplugin.psi.impl.CMakeMbeginImpl;
-import com.intellij.lexer.EmptyLexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.cmakeplugin.psi.*;
 import com.cmakeplugin.CMakeFileType;
-import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
 
 import static com.cmakeplugin.utils.CMakeProxyToJB.*;
 
@@ -32,12 +26,15 @@ public class CMakePDC {
   public static final Class<? extends PsiElement> ARGUMENTS_CLASS =
       (isCLION) ? com.jetbrains.cmake.psi.CMakeCommandArguments.class : CMakeArguments.class;
 
+  public static final Class<? extends PsiElement> COMMAND_NAME_CLASS =
+      (isCLION) ? com.jetbrains.cmake.psi.CMakeCommandName.class : CMakeCommandName.class;
+
   @SuppressWarnings("unchecked")
-  public static final Class<? extends PsiElement>[] ARGUMENT_CLASS =
+  public static final Class<? extends PsiElement>[] ARGUMENT_CLASSES =
       (isCLION)
           ? new Class[] {com.jetbrains.cmake.psi.CMakeArgument.class}
           : new Class[] {
-              CMakeUnquotedArgumentContainer.class, CMakeUnquotedArgumentMaybeVariableContainer.class
+            CMakeUnquotedArgumentContainer.class, CMakeUnquotedArgumentMaybeVariableContainer.class
           };
 
   static boolean isClassOfVarRefInsideIfWhile(PsiElement element) {
@@ -52,40 +49,36 @@ public class CMakePDC {
         : (element instanceof CMakeUnquotedArgumentMaybeVariableContainer);
   }
 
-  static boolean hasIfWhileParent(PsiElement element) {
-    if (isCLION) {
-      PsiElement commandName = getCommandNameElement(element);
-      return PsiTreeUtil.instanceOf(
-          commandName,
-          getCMakeIfCommandCallClass(),
-          getCMakeElseIfCommandCallClass(),
-          getCMakeElseCommandCallClass(),
-          getCMakeEndIfCommandCallClass(),
-          getCMakeWhileCommandCallClass(),
-          getCMakeEndWhileCommandCallClass());
-    } else {
-      return PsiTreeUtil.getParentOfType(
-              element,
-              CMakeIfExpr.class,
-              CMakeElseifExpr.class,
-              CMakeElseExpr.class,
-              CMakeEndifExpr.class,
-              CMakeWhilebegin.class,
-              CMakeWhileend.class)
-          != null;
-    }
-  }
+  @SuppressWarnings("unchecked")
+  private static final Class<? extends PsiElement>[] IF_WHILE_CLASSES =
+      (isCLION)
+          ? new Class[] {
+            com.jetbrains.cmake.psi.CMakeIfCommand.class,
+            com.jetbrains.cmake.psi.CMakeElseIfCommand.class,
+            com.jetbrains.cmake.psi.CMakeElseCommand.class,
+            com.jetbrains.cmake.psi.CMakeEndIfCommand.class,
+            com.jetbrains.cmake.psi.CMakeWhileCommand.class,
+            com.jetbrains.cmake.psi.CMakeEndWhileCommand.class
+          }
+          : new Class[] {
+            CMakeIfExpr.class,
+            CMakeElseifExpr.class,
+            CMakeElseExpr.class,
+            CMakeEndifExpr.class,
+            CMakeWhilebegin.class,
+            CMakeWhileend.class
+          };
 
-  @NotNull
-  private static PsiElement getCommandNameElement(PsiElement element) {
-    PsiElement commandArguments = PsiTreeUtil.getParentOfType(element, getArgumentsClass());
-    assert (commandArguments != null && commandArguments.getPrevSibling() != null);
-    PsiElement prevSibling = commandArguments.getPrevSibling();
-    if (prevSibling instanceof PsiWhiteSpace
-        && prevSibling.getPrevSibling() != null) { // workaround for "if (...)"
-      prevSibling = prevSibling.getPrevSibling();
+  static boolean isIfWhileConditionArgument(PsiElement element) {
+    PsiElement condCommandName = PsiTreeUtil.getParentOfType(element, IF_WHILE_CLASSES);
+    if (condCommandName == null) return false;
+    if (isCLION) {
+      PsiElement commandArguments = PsiTreeUtil.getParentOfType(element, ARGUMENTS_CLASS);
+      if (commandArguments == null) return false;
+      PsiElement condArguments = PsiTreeUtil.getChildOfType(condCommandName, ARGUMENTS_CLASS);
+      return commandArguments == condArguments;
     }
-    return prevSibling;
+    return true;
   }
 
   static FileType getCmakeFileType() {
@@ -99,26 +92,19 @@ public class CMakePDC {
             || element instanceof CMakeQuotedArgumentContainer;
   }
 
-  public static Class<? extends PsiElement> getArgumentsClass() {
-    return (isCLION) ? getCMakeCommandArgumentsClass() : CMakeArguments.class;
-  }
-
   public static Lexer getCMakeLexer() {
-    return (isCLION)
-        ? /*new EmptyLexer()*/ getJBCMakeLexer()
-        : new CMakeLexerAdapter();
+    return (isCLION) ? /*new EmptyLexer()*/ getJBCMakeLexer() : new CMakeLexerAdapter();
   }
 
-  static boolean checkSetCommandSemantic(PsiElement element) {
-    PsiElement commandName = getCommandNameElement(element);
-    //      assert getCMakeCommandNameClass().isInstance(commandName);
-    if (commandName.textMatches("set")) {
-      PsiElement prevArgument =
-          isCLION ? element.getParent().getPrevSibling() : element.getPrevSibling();
-      while (prevArgument != null) {
-        if (isClassOfVarDef(isCLION ? prevArgument.getFirstChild() : prevArgument)) return false;
-        prevArgument = prevArgument.getPrevSibling();
-      }
+  static boolean checkSetCommandSemantic(PsiElement possibleVarDef) {
+    if (!PsiTreeUtil.instanceOf(possibleVarDef, ARGUMENT_CLASSES))
+      possibleVarDef = PsiTreeUtil.getParentOfType(possibleVarDef, ARGUMENT_CLASSES);
+    PsiElement commandArguments = PsiTreeUtil.getParentOfType(possibleVarDef, ARGUMENTS_CLASS);
+    PsiElement commandName = PsiTreeUtil.getPrevSiblingOfType(commandArguments, COMMAND_NAME_CLASS);
+    if (commandName != null && commandName.textMatches("set")) {
+      final PsiElement firstArgument =
+          PsiTreeUtil.getChildOfAnyType(commandArguments, ARGUMENT_CLASSES);
+      return possibleVarDef == firstArgument;
     }
     return true;
   }

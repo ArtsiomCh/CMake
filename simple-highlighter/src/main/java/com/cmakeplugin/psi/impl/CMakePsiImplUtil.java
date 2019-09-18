@@ -50,7 +50,7 @@ public class CMakePsiImplUtil {
       @Override
       @Nullable
       public String getPresentableText() {
-        PsiElement argumentsElement = PsiTreeUtil.getParentOfType(o, getArgumentsClass());
+        PsiElement argumentsElement = PsiTreeUtil.getParentOfType(o, ARGUMENTS_CLASS);
         Document document =  o.getContainingFile().getViewProvider().getDocument();
         return (argumentsElement!=null && argumentsElement.getParent()!=null && document!=null)
                 ? String.format("%20.20s:%4d  %s",

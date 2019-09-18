@@ -34,57 +34,9 @@ public class CMakeProxyToJB {
     throw new java.lang.RuntimeException("Unknown CMake classes");
   }
 
-  static Class<? extends PsiElement> getCMakeCommandArgumentsClass() {
-//    if (hasOldCmake) return com.jetbrains.cidr.cpp.cmake.psi.CMakeCommandArguments.class;
-    if (hasNewCmake) return com.jetbrains.cmake.psi.CMakeCommandArguments.class;
-    throw new java.lang.RuntimeException("Unknown CMake classes");
-  }
-
   public static Class<? extends PsiElement> getCMakeLiteralClass() {
 //    if (hasOldCmake) return com.jetbrains.cidr.cpp.cmake.psi.CMakeLiteral.class;
     if (hasNewCmake) return com.jetbrains.cmake.psi.CMakeLiteral.class;
-    throw new java.lang.RuntimeException("Unknown CMake classes");
-  }
-
-  static Class<? extends PsiElement> getCMakeIfCommandCallClass() {
-//    if (hasOldCmake) return com.jetbrains.cidr.cpp.cmake.psi.CMakeIfCommandCall.class;
-    if (hasNewCmake) return com.jetbrains.cmake.psi.CMakeIfCommandCall.class;
-    throw new java.lang.RuntimeException("Unknown CMake classes");
-  }
-
-  static Class<? extends PsiElement> getCMakeElseIfCommandCallClass() {
-//    if (hasOldCmake) return com.jetbrains.cidr.cpp.cmake.psi.CMakeElseIfCommandCall.class;
-    if (hasNewCmake) return com.jetbrains.cmake.psi.CMakeElseIfCommandCall.class;
-    throw new java.lang.RuntimeException("Unknown CMake classes");
-  }
-
-  static Class<? extends PsiElement> getCMakeElseCommandCallClass() {
-//    if (hasOldCmake) return com.jetbrains.cidr.cpp.cmake.psi.CMakeElseCommandCall.class;
-    if (hasNewCmake) return com.jetbrains.cmake.psi.CMakeElseCommandCall.class;
-    throw new java.lang.RuntimeException("Unknown CMake classes");
-  }
-
-  static Class<? extends PsiElement> getCMakeEndIfCommandCallClass() {
-//    if (hasOldCmake) return com.jetbrains.cidr.cpp.cmake.psi.CMakeEndIfCommandCall.class;
-    if (hasNewCmake) return com.jetbrains.cmake.psi.CMakeEndIfCommandCall.class;
-    throw new java.lang.RuntimeException("Unknown CMake classes");
-  }
-
-  static Class<? extends PsiElement> getCMakeWhileCommandCallClass() {
-//    if (hasOldCmake) return com.jetbrains.cidr.cpp.cmake.psi.CMakeWhileCommandCall.class;
-    if (hasNewCmake) return com.jetbrains.cmake.psi.CMakeWhileCommandCall.class;
-    throw new java.lang.RuntimeException("Unknown CMake classes");
-  }
-
-  static Class<? extends PsiElement> getCMakeEndWhileCommandCallClass() {
-//    if (hasOldCmake) return com.jetbrains.cidr.cpp.cmake.psi.CMakeEndWhileCommandCall.class;
-    if (hasNewCmake) return com.jetbrains.cmake.psi.CMakeEndWhileCommandCall.class;
-    throw new java.lang.RuntimeException("Unknown CMake classes");
-  }
-
-  public static Class<? extends PsiElement> getCMakeCommandNameClass() {
-//    if (hasOldCmake) return com.jetbrains.cidr.cpp.cmake.psi.CMakeCommandName.class;
-    if (hasNewCmake) return com.jetbrains.cmake.psi.CMakeCommandName.class;
     throw new java.lang.RuntimeException("Unknown CMake classes");
   }
 
