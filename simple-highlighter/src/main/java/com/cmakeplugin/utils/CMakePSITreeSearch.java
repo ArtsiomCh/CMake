@@ -1,34 +1,78 @@
 package com.cmakeplugin.utils;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiTreeAnyChangeAbstractAdapter;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiElementFilter;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.psi.util.PsiUtilCore;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 import static com.cmakeplugin.utils.CMakeIFWHILEcheck.*;
 import static com.cmakeplugin.utils.CMakePDC.ARGUMENTS_CLASS;
 import static com.cmakeplugin.utils.CMakePDC.ARGUMENT_CLASSES;
 
 public class CMakePSITreeSearch {
+
+  private static Set<Project> projects = ConcurrentHashMap.newKeySet();
+
+  /** Add File Listener to clear caches for file if it was changed. */
+  private static void addFileListener(@NotNull final Project project) {
+    if (!projects.contains(project)) {
+      PsiManager.getInstance(project)
+          .addPsiTreeChangeListener(
+              new PsiTreeAnyChangeAbstractAdapter() {
+                @Override
+                protected void onChange(@Nullable PsiFile file) {
+                  if (file != null) {
+                    mapFilesToAllPossibleVarDefs.remove(file);
+                    mapFilesToVarNameToVarDefs.remove(file);
+                    mapFilesToAllVarRefs.remove(file);
+                    mapFilesToAllCommandDefs.remove(file);
+                  }
+                }
+              });
+      projects.add(project);
+    }
+  }
+
+  /** Copy of {@link PsiTreeUtil#findChildrenOfAnyType(PsiElement, Class[])} */
+  @NotNull
+  private static Collection<PsiElement> findChildrenByFilter(
+      @NotNull final PsiFile cmakeFile, @NotNull final PsiElementFilter filter) {
+    PsiElementProcessor.CollectFilteredElements<PsiElement> processor =
+        new PsiElementProcessor.CollectFilteredElements<>(filter);
+    PsiTreeUtil.processElements(cmakeFile, processor);
+    return processor.getCollection();
+  }
+
+  @NotNull
+  private static Collection<PsiFile> getCmakeFiles(@NotNull PsiElement element) {
+    Project project = element.getProject();
+    Collection<VirtualFile> virtualFiles =
+        FileTypeIndex.getFiles(CMakePDC.getCmakeFileType(), GlobalSearchScope.allScope(project));
+    virtualFiles.add(element.getContainingFile().getVirtualFile());
+    addFileListener(project);
+    return PsiUtilCore.toPsiFiles(PsiManager.getInstance(project), virtualFiles);
+    //        virtualFiles.stream().map(psiManager::findFile).collect(Collectors.toSet());
+  }
 
   /**
    * looking ANY definitions of Variable in Project scope including current file.
@@ -39,39 +83,37 @@ public class CMakePSITreeSearch {
    */
   @NotNull
   public static List<PsiElement> findVariableDefinitions(
-      @NotNull PsiElement varReference, String varName) {
+      @NotNull PsiElement varReference, final String varName) {
     List<PsiElement> result = new ArrayList<>();
-    final PsiElementFilter isVarDefFilter =
-        element -> couldBeVarDef(element) && element.textMatches(varName);
     for (PsiFile cmakeFile : getCmakeFiles(varReference)) {
-      result.addAll(findChildren(cmakeFile, isVarDefFilter));
+      result.addAll(findVarDefs(cmakeFile, varName));
     }
     return result;
   }
 
-  /** Copy of {@link PsiTreeUtil#findChildrenOfAnyType(PsiElement, Class[])} */
-  @NotNull
-  private static <T extends PsiElement> Collection<T> findChildren(
-      @Nullable final PsiElement element, @NotNull final PsiElementFilter filter) {
-    if (element == null) return ContainerUtil.emptyList();
-    PsiElementProcessor.CollectFilteredElements<T> processor =
-        new PsiElementProcessor.CollectFilteredElements<T>(filter);
-    PsiTreeUtil.processElements(element, processor);
-    return processor.getCollection();
-  }
+  private static Map<PsiFile, Map<String, Collection<PsiElement>>> mapFilesToVarNameToVarDefs =
+      new ConcurrentHashMap<>();
 
   @NotNull
-  private static Collection<PsiFile> getCmakeFiles(@NotNull PsiElement element) {
-    Project project = element.getProject();
-    Collection<VirtualFile> virtualFiles =
-        FileBasedIndex.getInstance()
-            .getContainingFiles(
-                FileTypeIndex.NAME,
-                CMakePDC.getCmakeFileType(),
-                GlobalSearchScope.allScope(project));
-    virtualFiles.add(element.getContainingFile().getVirtualFile());
-    final PsiManager psiManager = PsiManager.getInstance(project);
-    return virtualFiles.stream().map(psiManager::findFile).collect(Collectors.toSet());
+  private static Collection<PsiElement> findVarDefs(
+      @NotNull final PsiFile cmakeFile, final String varName) {
+    return mapFilesToVarNameToVarDefs
+        .computeIfAbsent(cmakeFile, keyF -> new ConcurrentHashMap<>())
+        .computeIfAbsent(varName, keyN -> doFindVarNameInVarDefs(cmakeFile, keyN));
+  }
+
+  private static Map<PsiFile, Collection<PsiElement>> mapFilesToAllPossibleVarDefs =
+      new ConcurrentHashMap<>();
+
+  @NotNull
+  private static Collection<PsiElement> doFindVarNameInVarDefs(
+      @NotNull final PsiFile cmakeFile, final String varName) {
+    return mapFilesToAllPossibleVarDefs
+        .computeIfAbsent(
+            cmakeFile, keyFile -> findChildrenByFilter(keyFile, CMakeIFWHILEcheck::couldBeVarDef))
+        .stream()
+        .filter(element -> element.textMatches(varName))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -83,42 +125,36 @@ public class CMakePSITreeSearch {
   public static boolean existReferenceTo(@NotNull PsiElement varDef) {
     if (!couldBeVarDef(varDef)) return false;
     final String varDefText = varDef.getText();
-    final PsiElementFilter filter = element -> hasVarRefToVarDef(element, varDefText);
     for (PsiFile cmakeFile : getCmakeFiles(varDef)) {
-      if (hasChild(cmakeFile, filter)) return true;
+      if (hasVarRefToVarName(cmakeFile, varDefText)) return true;
     }
     return false;
   }
 
-  private static boolean hasVarRefToVarDef(PsiElement element, @NotNull PsiElement varDef) {
-    if (CMakePDC.classCanHoldVarRef(element))
-      for (PsiReference reference : element.getReferences()) {
-        if (reference.isReferenceTo(varDef)) return true;
-      }
-    return false;
+  private static Map<PsiFile, Map<String, Collection<PsiElement>>> mapFilesToAllVarRefs =
+      new ConcurrentHashMap<>();
+
+  private static boolean hasVarRefToVarName(PsiFile psiFile, String varName) {
+    return mapFilesToAllVarRefs
+        .computeIfAbsent(psiFile, CMakePSITreeSearch::createVarRefsForFileMap)
+        .containsKey(varName);
   }
 
-  private static boolean hasVarRefToVarDef(PsiElement element, String varDefText) {
-    if (CMakePDC.classCanHoldVarRef(element)) {
-      for (TextRange innerVarRange : getInnerVars(element)) {
-        if (element
-            .getText()
-            .substring(innerVarRange.getStartOffset(), innerVarRange.getEndOffset())
-            .equals(varDefText)) return true;
+  private static Map<String, Collection<PsiElement>> createVarRefsForFileMap(PsiFile psiFile) {
+    Map<String, Collection<PsiElement>> mapVarRefsToElements = new ConcurrentHashMap<>();
+    for (PsiElement element : findChildrenByFilter(psiFile, CMakePDC::classCanHoldVarRef)) {
+      for (String varRef : getAllVarRefs(element)) {
+        mapVarRefsToElements.computeIfAbsent(varRef, keyVar -> new HashSet<>()).add(element);
       }
     }
-    return false;
+    return mapVarRefsToElements;
   }
 
-  /** Copy of {@link PsiTreeUtil#findChildOfType(PsiElement, Class, boolean, Class)} */
-  private static <T extends PsiElement> boolean hasChild(
-      @Nullable final PsiElement rootElement, @NotNull final PsiElementFilter filter) {
-    if (rootElement == null) return false;
-
-    PsiElementProcessor.FindFilteredElement<T> processor =
-        new PsiElementProcessor.FindFilteredElement<T>(filter);
-    PsiTreeUtil.processElements(rootElement, processor);
-    return processor.isFound();
+  @NotNull
+  private static Collection<String> getAllVarRefs(@NotNull final PsiElement element) {
+    return getInnerVars(element).stream()
+        .map(range -> element.getText().substring(range.getStartOffset(), range.getEndOffset()))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -129,20 +165,10 @@ public class CMakePSITreeSearch {
    * @return True if any definition found, False otherwise
    */
   public static boolean existDefinitionOf(@NotNull PsiElement varRef, String varName) {
-    final PsiElementFilter isVarDefFilter =
-        element -> couldBeVarDef(element) && element.textMatches(varName);
     for (PsiFile cmakeFile : getCmakeFiles(varRef)) {
-      if (hasChild(cmakeFile, isVarDefFilter)) return true;
+      if (!findVarDefs(cmakeFile, varName).isEmpty()) return true;
     }
     return false;
-  }
-
-  public static boolean existDefinitionOf(@NotNull PsiElement varRef, int offset) {
-    final PsiReference referenceAt = varRef.findReferenceAt(offset);
-    if (referenceAt == null) return false;
-    return referenceAt.resolve() != null
-        || (referenceAt instanceof PsiPolyVariantReference
-            && ((PsiPolyVariantReference) referenceAt).multiResolve(false).length > 0);
   }
 
   /**
@@ -165,20 +191,37 @@ public class CMakePSITreeSearch {
     return existCommandDefFor(command, CMakePDC.MACRO_CLASS);
   }
 
-  private static boolean existCommandDefFor(@NotNull PsiElement command, final Class<? extends PsiElement> clazz) {
-    final String name = command.getText().toLowerCase();
-    final PsiElementFilter isFunMacroDefFilter =
-        element -> {
-          if (!clazz.isInstance(element)) return false;
-          PsiElement nameElement = getFunMacroNameElement(element);
-          return (nameElement != null) && nameElement.getText().toLowerCase().equals(name);
-        };
-    for (PsiFile cmakeFile : getCmakeFiles(command)) {
-      if (hasChild(cmakeFile, isFunMacroDefFilter)) return true;
+  private static Map<PsiFile, Map<String, PsiElement>> mapFilesToAllCommandDefs =
+      new ConcurrentHashMap<>();
+
+  private static boolean existCommandDefFor(
+      @NotNull PsiElement commandRef, final Class<? extends PsiElement> clazz) {
+    final String name = commandRef.getText().toLowerCase();
+    PsiElement commandDef;
+    for (PsiFile cmakeFile : getCmakeFiles(commandRef)) {
+      if ((commandDef = getCommandDef(cmakeFile, name)) != null && clazz.isInstance(commandDef))
+        return true;
     }
     return false;
   }
 
+  private static PsiElement getCommandDef(PsiFile psiFile, String commandName) {
+    return mapFilesToAllCommandDefs
+        .computeIfAbsent(psiFile, CMakePSITreeSearch::createCommandDefsForFileMap)
+        .get(commandName);
+  }
+
+  private static Map<String, PsiElement> createCommandDefsForFileMap(PsiFile psiFile) {
+    Map<String, PsiElement> mapCommandDefsToElement = new ConcurrentHashMap<>();
+    final PsiElementFilter isFunMacroDefFilter =
+        element -> PsiTreeUtil.instanceOf(element, CMakePDC.FUNCTION_CLASS, CMakePDC.MACRO_CLASS);
+    for (PsiElement element : findChildrenByFilter(psiFile, isFunMacroDefFilter)) {
+      mapCommandDefsToElement.put(getFunMacroName(element).toLowerCase(), element);
+    }
+    return mapCommandDefsToElement;
+  }
+
+  /** ----------------------------------------------------------------------- */
   public static String getFunMacroName(PsiElement element) {
     PsiElement name = getFunMacroNameElement(element);
     return name != null ? name.getText() : element.getText();
@@ -198,32 +241,6 @@ public class CMakePSITreeSearch {
         .collect(Collectors.joining(" "));
   }
 
-  //  /**
-  //   * Copy of {@link PsiTreeUtil#findChildrenOfAnyType(PsiElement, Class[])}
-  //   */
-  //  @NotNull
-  //  private static <T extends PsiElement> Collection<T> findChildrenOfTypeWithText(@Nullable final
-  // PsiElement element,
-  //                                                                                 @NotNull final
-  // String text,
-  //                                                                                 @NotNull final
-  // Class<? extends T> aClass) {
-  //    if (element == null) return ContainerUtil.emptyList();
-  //    PsiElementProcessor.CollectElements<T> processor = new
-  // PsiElementProcessor.CollectElements<T>() {
-  //      @Override
-  //      public boolean execute(@NotNull T each) {
-  //        if (each == element) return true;
-  //        if ( aClass.isInstance(each) && text.equals(each.getText()) ) {
-  //          return super.execute(each);
-  //        }
-  //        return true;
-  //      }
-  //    };
-  //    PsiTreeUtil.processElements(element, processor);
-  //    return processor.getCollection();
-  //  }
-
   /*  @NotNull
   private static List<PsiElement> findVarDefsFileScope(@NotNull PsiElement o, String name) {
     List<PsiElement> result = new ArrayList<>();
@@ -237,8 +254,8 @@ public class CMakePSITreeSearch {
                 : checkUpperSiblings(foundDeclaration.getParent(), name);
     }
    return result;
-  }*/
-  /*
+  }
+
   private static boolean isSameIfScope(PsiElement declarationIfBody, PsiElement referenceIfBody){
     while (referenceIfBody != null) {
       if (declarationIfBody == referenceIfBody)
