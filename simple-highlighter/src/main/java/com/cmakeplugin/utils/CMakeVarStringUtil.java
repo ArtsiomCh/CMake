@@ -47,27 +47,24 @@ public class CMakeVarStringUtil {
   }
 
   public static boolean isPredefinedCMakeVar(@NotNull String text) {
-    return cacheIsPredefinedCMakeVar.computeIfAbsent(
-        text, key -> CMakeKeywords.variables_All.stream().anyMatch(key::matches));
+    return cacheIsPredefinedCMakeVar.computeIfAbsent(text, CMakeKeywords::isVariable);
   }
 
   public static boolean isCMakeProperty(@NotNull String text) {
-    return cacheIsCMakeProperty.computeIfAbsent(
-        text, key -> CMakeKeywords.properties_All.stream().anyMatch(key::matches));
+    return cacheIsCMakeProperty.computeIfAbsent(text, CMakeKeywords::isProperty);
   }
 
   public static boolean isCMakePropertyDeprecated(@NotNull String text) {
     return cacheIsCMakePropertyDeprecated.computeIfAbsent(
-        text, key -> CMakeKeywords.properties_Deprecated.stream().anyMatch(key::matches));
+        text, CMakeKeywords::isPropertyDeprecated);
   }
 
   public static boolean isCMakeOperator(@NotNull String text) {
-    return cacheIsCMakeOperator.computeIfAbsent(text, CMakeKeywords.operators::contains);
+    return cacheIsCMakeOperator.computeIfAbsent(text, CMakeKeywords::isOperator);
   }
 
   public static boolean isCMakeBoolValue(@NotNull String text) {
-    return cacheIsCMakeBoolValue.computeIfAbsent(
-        text, key -> CMakeKeywords.boolValues.stream().anyMatch(key::matches));
+    return cacheIsCMakeBoolValue.computeIfAbsent(text, CMakeKeywords::isBoolValue);
   }
 
   private static final List<TextRange> EMPTY_RANGES_LIST = Collections.emptyList();
@@ -84,6 +81,20 @@ public class CMakeVarStringUtil {
   static List<TextRange> getOuterVarRefs(String text) {
     return cacheOuterVarRefs.computeIfAbsent(text, CMakeVarStringUtil::doGetOuterVarRefs);
   }
+
+  private static final Pattern patternVarCheck =
+      Pattern.compile(
+          "("
+              + VAR_BEGIN
+              + "|"
+              + ENV_VAR_BEGIN
+              + "|"
+              + ENV_VAR_REF_BEGIN
+              + "|"
+              + VAR_NAME
+              + "|"
+              + VAR_END
+              + ")+");
 
   @NotNull
   private static List<TextRange> doGetOuterVarRefs(String text) {
@@ -110,21 +121,9 @@ public class CMakeVarStringUtil {
         varLevel--;
       }
       if ((varLevel == 0)
-          && text.substring(outerVarBegin, matcher.end())
-              .matches(
-                  // check if allowed cmake variable symbols only used
-                  // https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#variable-references
-                  "("
-                      + VAR_BEGIN
-                      + "|"
-                      + ENV_VAR_BEGIN
-                      + "|"
-                      + ENV_VAR_REF_BEGIN
-                      + "|"
-                      + VAR_NAME
-                      + "|"
-                      + VAR_END
-                      + ")+")) {
+          // check if allowed cmake variable symbols only used
+          // https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#variable-references
+          && patternVarCheck.matcher(text.substring(outerVarBegin, matcher.end())).matches()) {
         result.add(new TextRange(outerVarBegin, matcher.end()));
       }
     } while (matcher.find());

@@ -91,27 +91,24 @@ class CMakeAnnotatorUtils {
     // Highlight Inner CMake predefined ENV variables
     // fixme: implement ref/resolve for ENV
     for (TextRange innerVarRange : CMakeVarStringUtil.getInnerEnvVars(argtext)) {
-      for (String varRegexp : CMakeKeywords.variables_ENV) {
-        if (argtext
-            .substring(innerVarRange.getStartOffset(), innerVarRange.getEndOffset())
-            .matches(varRegexp)) {
-          createInfoAnnotation(
-              innerVarRange.shiftRight(elementStartInFile),
-              holder,
-              CMakeSyntaxHighlighter.CMAKE_VAR_REF);
-          break;
-        }
+      final String varEnv =
+          argtext.substring(innerVarRange.getStartOffset(), innerVarRange.getEndOffset());
+      if (CMakeKeywords.isVariableENV(varEnv)) {
+        createInfoAnnotation(
+            innerVarRange.shiftRight(elementStartInFile),
+            holder,
+            CMakeSyntaxHighlighter.CMAKE_VAR_REF);
       }
     }
   }
 
   static void annotateCommand(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String commandName = element.getText().toLowerCase();
-    if (CMakeKeywords.commands_Project.contains(commandName)
-        || CMakeKeywords.commands_Scripting.contains(commandName)
-        || CMakeKeywords.commands_Test.contains(commandName)) {
+    if (CMakeKeywords.isCommandProject(commandName)
+        || CMakeKeywords.isCommandScripting(commandName)
+        || CMakeKeywords.isCommandTest(commandName)) {
       createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_COMMAND);
-    } else if (CMakeKeywords.commands_Deprecated.contains(commandName)) {
+    } else if (CMakeKeywords.isCommandDeprecated(commandName)) {
       createDeprecatedAnnotation(element, holder, "Deprecated command");
     } else if (CMakePSITreeSearch.existFunctionDefFor(element)) {
       createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.FUNCTION);
