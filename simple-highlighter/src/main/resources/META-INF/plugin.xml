@@ -25,6 +25,8 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      192.4.2 - Significant speedup in parsing CMake files by heavily caching (probably a bit too right on Shipilev's curve ;). <br>
+          &emsp; * Fix the bug with wrong variable references recognition inside if/while condition at CLion. <br>
       192.4.1 - Function/Macros name in definition/call highlighting + enable CLion Lexer for colors setting. <br>
           &emsp; * Do not treat property/operator/bool value as possible Variable name + caching optimisation. <br>
           &emsp; * Enable CLion Lexer for colors setting. <br>
