@@ -6,6 +6,7 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.extensions.PluginId;
 import org.slf4j.Logger;
@@ -16,7 +17,8 @@ public class CMakePlusComponent implements ApplicationComponent {
 
   @Override
   public void initComponent() {
-    CMakeComponent.isCMakePlusActive = CheckLicense.isLicensed();
+    CMakeComponent.isCMakePlusActive =
+        ApplicationManager.getApplication().isEAP() || CheckLicense.isLicensed();
     if (!CMakeComponent.isCMakePlusActive) {
       final String message =
           "CMake Plus plugin License not found. Plugin functionality will be disabled.";
@@ -27,7 +29,10 @@ public class CMakePlusComponent implements ApplicationComponent {
     CMakeComponent.isCMakePlusActive = checkVersionOfCmakeSimpleHighlighter();
     if (!CMakeComponent.isCMakePlusActive) {
       final String message =
-          "Update CMake Simple Highlighter plugin above " + FROM_BRANCH + "." + FROM_BUILD
+          "Update CMake Simple Highlighter plugin above "
+              + FROM_BRANCH
+              + "."
+              + FROM_BUILD
               + " please, to enable CMake Plus functionality.";
       LOGGER.warn(message);
       new Notification("CMake Plus", "CMake Plus", message, NotificationType.WARNING).notify(null);
@@ -46,9 +51,12 @@ public class CMakePlusComponent implements ApplicationComponent {
         PluginManager.getPlugin(PluginId.getId("artsiomch.cmake"));
     String versionStr = (pluginDescriptor != null) ? pluginDescriptor.getVersion() : "";
     String[] versionArr = versionStr.split("\\.");
-    return versionArr.length > 2
-        && Integer.parseInt(versionArr[0]) >= FROM_BRANCH
-        && Integer.parseInt(versionArr[1]) >= FROM_BUILD
-        ;
+    int branch = 0;
+    int build = 0;
+    if (versionArr.length > 1) {
+        branch = Integer.parseInt(versionArr[0]);
+        build =  Integer.parseInt(versionArr[1]);
+    }
+    return branch > FROM_BRANCH || (branch == FROM_BRANCH && build >= FROM_BUILD);
   }
 }
