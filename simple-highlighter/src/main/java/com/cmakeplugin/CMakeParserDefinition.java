@@ -18,15 +18,14 @@ import org.jetbrains.annotations.NotNull;
 import com.cmakeplugin.psi.CMakeTypes;
 import com.cmakeplugin.parsing.CMakeParser;
 
-/**
- * Created by alex on 12/21/14.
- */
+/** Created by alex on 12/21/14. */
 public class CMakeParserDefinition implements ParserDefinition {
-  public static final TokenSet WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);
-  public static final TokenSet COMMENTS = TokenSet.create(CMakeTypes.LINE_COMMENT,
-          CMakeTypes.BRACKET_COMMENT);
-  public static final TokenSet STRINGS = TokenSet.create(CMakeTypes.QUOTED_ARGUMENT);
-  public static final IFileElementType FILE = new IFileElementType(Language.<CMakeLanguage>findInstance(CMakeLanguage.class));
+  private static TokenSet WHITE_SPACES;
+  private static TokenSet COMMENTS;
+  private static TokenSet STRINGS;
+  private static IFileElementType FILE =
+      new IFileElementType(Language.<CMakeLanguage>findInstance(CMakeLanguage.class));
+
   @NotNull
   @Override
   public Lexer createLexer(Project project) {
@@ -46,17 +45,24 @@ public class CMakeParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public TokenSet getWhitespaceTokens() {
+    if (WHITE_SPACES == null) WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);
     return WHITE_SPACES;
   }
 
   @NotNull
   @Override
   public TokenSet getCommentTokens() {
+    if (COMMENTS == null)
+      COMMENTS = TokenSet.create(CMakeTypes.LINE_COMMENT, CMakeTypes.BRACKET_COMMENT);
     return COMMENTS;
   }
+
   @NotNull
   @Override
-  public TokenSet getStringLiteralElements() { return STRINGS; }
+  public TokenSet getStringLiteralElements() {
+    if (STRINGS == null) STRINGS = TokenSet.create(CMakeTypes.QUOTED_ARGUMENT);
+    return STRINGS;
+  }
 
   @NotNull
   @Override
@@ -72,20 +78,20 @@ public class CMakeParserDefinition implements ParserDefinition {
   @Override
   public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
     // Tune the separator behavior between the tokens
-/*    if( (astNode.getElementType()  == CMakeTypes.FILE_ELEMENT
-//            ||astNode.getElementType() == CMakeTypes.COMPOUND_EXPR
-//            ||astNode.getElementType() == CMakeTypes.COMMAND_EXPR
-            ||astNode.getElementType() == CMakeTypes.LINE_COMMENT)
-            && !getCommentTokens().contains(astNode1.getElementType())  )
-      return SpaceRequirements.MUST_LINE_BREAK;
+    /*    if( (astNode.getElementType()  == CMakeTypes.FILE_ELEMENT
+    //            ||astNode.getElementType() == CMakeTypes.COMPOUND_EXPR
+    //            ||astNode.getElementType() == CMakeTypes.COMMAND_EXPR
+                ||astNode.getElementType() == CMakeTypes.LINE_COMMENT)
+                && !getCommentTokens().contains(astNode1.getElementType())  )
+          return SpaceRequirements.MUST_LINE_BREAK;
 
-    if( (astNode.getElementType() == CMakeTypes.ARGUMENT
-            && astNode1.getElementType() == CMakeTypes.ARGUMENT))
-      return SpaceRequirements.MUST;
-    if( astNode.getElementType() == CMakeTypes.UNQUOTED_ARGUMENT )
-      return SpaceRequirements.MUST;
-//    if( (astNode.getElementType() == CMakeTypes.COMMAND_NAME))
-//      return SpaceRequirements.MUST_NOT;*/
+        if( (astNode.getElementType() == CMakeTypes.ARGUMENT
+                && astNode1.getElementType() == CMakeTypes.ARGUMENT))
+          return SpaceRequirements.MUST;
+        if( astNode.getElementType() == CMakeTypes.UNQUOTED_ARGUMENT )
+          return SpaceRequirements.MUST;
+    //    if( (astNode.getElementType() == CMakeTypes.COMMAND_NAME))
+    //      return SpaceRequirements.MUST_NOT;*/
     return SpaceRequirements.MAY;
   }
 }

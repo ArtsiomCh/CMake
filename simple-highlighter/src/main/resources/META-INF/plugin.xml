@@ -10,6 +10,7 @@
 
      Please consider <b><a href="https://plugins.jetbrains.com/plugin/12869-cmake-plus">CMake Plus</a></b> plugin for more functionality:<br>
      - Variables navigation (Go to definition / Find usages) and renaming(*see Notes). <br>
+     - User variables definition/reference completion added (no scopes, very little semantic checks yet). <br>
      - Folding regions for functions, macros, if/for/while blocks and: <br>
           &emsp; * Multiline brackets comments; <br>
           &emsp; * Consequent single-line comments;  <br>
@@ -25,6 +26,7 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      192.5.1 - Some bug fixes and optimisations. <br>
       192.4.2 - Significant speedup in parsing CMake files by heavily caching (probably a bit too right on Shipilev's curve ;). <br>
           &emsp; * Fix the bug with wrong variable references recognition inside if/while condition at CLion. <br>
       192.4.1 - Function/Macros name in definition/call highlighting + enable CLion Lexer for colors setting. <br>

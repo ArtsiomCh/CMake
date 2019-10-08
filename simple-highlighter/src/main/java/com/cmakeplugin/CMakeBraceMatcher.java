@@ -22,23 +22,28 @@ import org.jetbrains.annotations.Nullable;
 
 public class CMakeBraceMatcher implements PairedBraceMatcher {
 
-  private static final BracePair[] PAIRS = new BracePair[]{
-          new BracePair(LPAR, RPAR, false),
-          new BracePair(IF, ENDIF, false),
-          new BracePair(FOREACH, ENDFOREACH, false),
-          new BracePair(WHILE, ENDWHILE, false),
-          new BracePair(FUNCTION, ENDFUNCTION, false),
-          new BracePair(MACRO, ENDMACRO, false),
-//          new BracePair(, , false),
-  };
+  private static BracePair[] PAIRS;
 
   @Override
   public BracePair[] getPairs() {
+    if (PAIRS == null) {
+      PAIRS =
+          new BracePair[] {
+            new BracePair(LPAR, RPAR, false),
+            new BracePair(IF, ENDIF, false),
+            new BracePair(FOREACH, ENDFOREACH, false),
+            new BracePair(WHILE, ENDWHILE, false),
+            new BracePair(FUNCTION, ENDFUNCTION, false),
+            new BracePair(MACRO, ENDMACRO, false),
+            //          new BracePair(, , false),
+          };
+    }
     return PAIRS;
   }
 
   @Override
-  public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType lbraceType, @Nullable IElementType contextType) {
+  public boolean isPairedBracesAllowedBeforeType(
+      @NotNull IElementType lbraceType, @Nullable IElementType contextType) {
     return true;
   }
 
