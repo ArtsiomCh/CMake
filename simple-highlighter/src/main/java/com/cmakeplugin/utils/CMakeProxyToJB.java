@@ -77,12 +77,4 @@ public class CMakeProxyToJB {
     throw new java.lang.RuntimeException("Unknown CMake classes");
   }
 
-  public static TokenSet JB_KEYWORDS =
-      (hasNewCmake) ? com.jetbrains.cmake.psi.CMakeElementTypes.KEYWORDS : TokenSet.EMPTY;
-
-  public static IElementType JB_COMMENT =
-      (hasNewCmake) ? com.jetbrains.cmake.psi.CMakeElementTypes.COMMENT : null;
-
-  public static IElementType JB_LITERAL =
-      (hasNewCmake) ? com.jetbrains.cmake.psi.CMakeElementTypes.LITERAL : null;
 }

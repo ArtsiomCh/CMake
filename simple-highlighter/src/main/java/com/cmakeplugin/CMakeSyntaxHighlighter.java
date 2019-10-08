@@ -1,7 +1,6 @@
 package com.cmakeplugin;
 
 import com.cmakeplugin.utils.CMakePDC;
-import com.cmakeplugin.utils.CMakeProxyToJB;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -132,11 +131,11 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
     keys1.put(TokenType.WHITE_SPACE, SEPARATOR);
     // TODO: Populate maps here
     if (CMakePDC.isCLION) {
-      for (IElementType keyword: CMakeProxyToJB.JB_KEYWORDS.getTypes()) {
+      for (IElementType keyword: CMakePDC.getJBKeywords().getTypes()) {
         keys1.put(keyword, DefaultLanguageHighlighterColors.KEYWORD);
       }
-      keys1.put(CMakeProxyToJB.JB_COMMENT, DefaultLanguageHighlighterColors.LINE_COMMENT);
-      keys1.put(CMakeProxyToJB.JB_LITERAL, DefaultLanguageHighlighterColors.STRING);
+      keys1.put(CMakePDC.getJBComment(), DefaultLanguageHighlighterColors.LINE_COMMENT);
+      keys1.put(CMakePDC.getJBLiteral(), DefaultLanguageHighlighterColors.STRING);
     } else {
       keys1.put(CMakeTypes.LINE_COMMENT, COMMENT);
       keys1.put(CMakeTypes.BRACKET_COMMENT, COMMENT);

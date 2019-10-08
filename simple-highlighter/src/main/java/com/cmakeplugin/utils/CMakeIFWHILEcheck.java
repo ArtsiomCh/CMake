@@ -44,7 +44,7 @@ public class CMakeIFWHILEcheck {
     return CMakePDC.isClassOfVarDef(element)
         && !CMakePDC.isIfWhileConditionArgument(element)
         && CMakeVarStringUtil.couldBeVarName(element.getText())
-        && CMakePDC.checkSetCommandSemantic(element)
+        && SemanticChecks.possibleVarDef(element)
         ;
   }
 }

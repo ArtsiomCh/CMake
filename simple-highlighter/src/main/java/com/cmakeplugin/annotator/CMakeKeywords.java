@@ -79,6 +79,10 @@ final public class CMakeKeywords {
         || boolValues_regexp.stream().anyMatch(p -> p.matcher(text).matches());
   }
 
+  public static Set<String> getAllVariables(){
+    return variables_All;
+  }
+
   static {
 // https://cmake.org/cmake/help/latest/manual/cmake-commands.7.html
     Collections.addAll(commands_Scripting,"break","cmake_host_system_information","cmake_minimum_required","cmake_parse_arguments","cmake_policy","configure_file","continue","elseif","else","endforeach","endfunction","endif","endmacro","endwhile","execute_process","file","find_file","find_library","find_package","find_path","find_program","foreach","function","get_cmake_property","get_directory_property","get_filename_component","get_property","if","include","include_guard","list","macro","mark_as_advanced","math","message","option","return","separate_arguments","set_directory_properties","set_property","set","site_name","string","unset","variable_watch","while" );

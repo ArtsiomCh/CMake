@@ -44,7 +44,7 @@ public class CMakePlusComponent implements ApplicationComponent {
   }
 
   private static final int FROM_BRANCH = 192;
-  private static final int FROM_BUILD = 4;
+  private static final int FROM_BUILD = 5;
 
   private boolean checkVersionOfCmakeSimpleHighlighter() {
     final IdeaPluginDescriptor pluginDescriptor =

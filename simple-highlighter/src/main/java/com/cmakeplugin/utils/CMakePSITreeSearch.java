@@ -15,9 +15,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -102,18 +104,59 @@ public class CMakePSITreeSearch {
         .computeIfAbsent(varName, keyN -> doFindVarNameInVarDefs(cmakeFile, keyN));
   }
 
+  @NotNull
+  private static Collection<PsiElement> doFindVarNameInVarDefs(
+      @NotNull final PsiFile cmakeFile, final String varName) {
+    return getAllPossibleVarDefsInFile(cmakeFile)
+        .filter(element -> element.textMatches(varName))
+        .collect(Collectors.toList());
+  }
+
   private static Map<PsiFile, Collection<PsiElement>> mapFilesToAllPossibleVarDefs =
       new ConcurrentHashMap<>();
 
   @NotNull
-  private static Collection<PsiElement> doFindVarNameInVarDefs(
-      @NotNull final PsiFile cmakeFile, final String varName) {
+  private static Stream<PsiElement> getAllPossibleVarDefsInFile(@NotNull PsiFile cmakeFile) {
     return mapFilesToAllPossibleVarDefs
         .computeIfAbsent(
             cmakeFile, keyFile -> findChildrenByFilter(keyFile, CMakeIFWHILEcheck::couldBeVarDef))
+        .stream();
+  }
+
+  /**
+   * return ALL <b>possible</b> Variable definitions in Project scope including current file.
+   *
+   * @param startElement PsiElement to start from
+   * @return Collection of Variable definitions or empty List
+   */
+  @NotNull
+  public static Stream<String> getAllPossibleVarDefs(@NotNull PsiElement startElement) {
+    return getCmakeFiles(startElement)
         .stream()
-        .filter(element -> element.textMatches(varName))
-        .collect(Collectors.toList());
+        .flatMap(CMakePSITreeSearch::getAllPossibleVarDefsInFile)
+        .map(PsiElement::getText)
+        .distinct();
+  }
+
+  final static Map<String, Collection<PsiElement>> EMPTY_MAP = new ConcurrentHashMap<>();
+  /**
+   * return ALL <b>referenced</b> Variable definitions in Project scope including current file.
+   *
+   * @param startElement PsiElement to start from
+   * @return Collection of Variable definitions or empty List
+   */
+  @NotNull
+  public static Stream<String> getAllReferencedVarDefs(@NotNull PsiElement startElement) {
+    return getCmakeFiles(startElement)
+        .stream()
+//        .flatMap(CMakePSITreeSearch::getAllPossibleVarDefsInFile)
+//        .filter(CMakePSITreeSearch::existReferenceTo)
+//        .map(PsiElement::getText)
+        .map(file -> mapFilesToVarNameToVarDefs.getOrDefault(file, EMPTY_MAP))
+        .flatMap(mapNameToDefs -> mapNameToDefs.entrySet().stream())
+        .filter(nameToDefs -> !nameToDefs.getValue().isEmpty())
+        .map(Entry::getKey)
+        .distinct();
   }
 
   /**
@@ -222,13 +265,14 @@ public class CMakePSITreeSearch {
   }
 
   /** ----------------------------------------------------------------------- */
-  public static String getFunMacroName(PsiElement element) {
-    PsiElement name = getFunMacroNameElement(element);
-    return name != null ? name.getText() : element.getText();
+  public static String getFunMacroName(PsiElement rootOfFunMacro) {
+    PsiElement name = getFunMacroNameElement(rootOfFunMacro);
+    return name != null ? name.getText() : rootOfFunMacro.getText();
   }
 
-  public static NavigatablePsiElement getFunMacroNameElement(PsiElement element) {
-    PsiElement arguments = PsiTreeUtil.findChildOfType(element, ARGUMENTS_CLASS);
+  public static NavigatablePsiElement getFunMacroNameElement(PsiElement rootOfFunMacro) {
+    if (rootOfFunMacro == null) return null;
+    PsiElement arguments = PsiTreeUtil.findChildOfType(rootOfFunMacro, ARGUMENTS_CLASS);
     PsiElement name = PsiTreeUtil.findChildOfAnyType(arguments, ARGUMENT_CLASSES);
     return (name instanceof NavigatablePsiElement) ? (NavigatablePsiElement) name : null;
   }
@@ -239,6 +283,19 @@ public class CMakePSITreeSearch {
         .skip(1) // fun/macro name
         .map(PsiElement::getText)
         .collect(Collectors.joining(" "));
+  }
+
+  public static PsiElement getCommandNameElement(PsiElement argument) {
+    PsiElement command = PsiTreeUtil.getParentOfType(argument, CMakePDC.COMMAND_CLASS);
+    return PsiTreeUtil.getChildOfType(command, CMakePDC.COMMAND_NAME_CLASS);
+  }
+
+  public static PsiElement getFunMacroRootElement(PsiElement argument) {
+    return PsiTreeUtil.getParentOfType(argument, CMakePDC.FUNCTION_CLASS, CMakePDC.MACRO_CLASS);
+  }
+
+  public static PsiElement getFunMacroEndElement(PsiElement argument) {
+    return PsiTreeUtil.getParentOfType(argument, CMakePDC.FUN_MACRO_END_CLASSES);
   }
 
   /*  @NotNull

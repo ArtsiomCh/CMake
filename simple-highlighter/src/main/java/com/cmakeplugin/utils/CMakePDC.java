@@ -7,6 +7,8 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.cmakeplugin.psi.*;
 import com.cmakeplugin.CMakeFileType;
@@ -23,11 +25,23 @@ public class CMakePDC {
   public static final Class<? extends NavigatablePsiElement> FUNCTION_CLASS =
       (isCLION) ? com.jetbrains.cmake.psi.CMakeFunctionCommandImpl.class : CMakeFunDefImpl.class;
 
+  @SuppressWarnings("unchecked")
+  public static final Class<? extends PsiElement>[] FUN_MACRO_END_CLASSES =
+      (isCLION)
+          ? new Class[] {
+            com.jetbrains.cmake.psi.CMakeEndFunctionCommand.class,
+            com.jetbrains.cmake.psi.CMakeEndMacroCommand.class
+          }
+          : new Class[] {CMakeFend.class, CMakeMend.class};
+
   public static final Class<? extends PsiElement> ARGUMENTS_CLASS =
       (isCLION) ? com.jetbrains.cmake.psi.CMakeCommandArguments.class : CMakeArguments.class;
 
   public static final Class<? extends PsiElement> COMMAND_NAME_CLASS =
       (isCLION) ? com.jetbrains.cmake.psi.CMakeCommandName.class : CMakeCommandName.class;
+
+  public static final Class<? extends PsiElement> COMMAND_CLASS =
+      (isCLION) ? com.jetbrains.cmake.psi.CMakeCommand.class : CMakeCmd.class;
 
   @SuppressWarnings("unchecked")
   public static final Class<? extends PsiElement>[] ARGUMENT_CLASSES =
@@ -36,6 +50,18 @@ public class CMakePDC {
           : new Class[] {
             CMakeUnquotedArgumentContainer.class, CMakeUnquotedArgumentMaybeVariableContainer.class
           };
+
+  public static TokenSet getJBKeywords(){
+    return (isCLION) ? com.jetbrains.cmake.psi.CMakeElementTypes.KEYWORDS : TokenSet.EMPTY;
+  }
+
+  public static IElementType getJBComment() {
+    return (isCLION) ? com.jetbrains.cmake.psi.CMakeElementTypes.COMMENT : null;
+  }
+
+  public static IElementType getJBLiteral() {
+    return (isCLION) ? com.jetbrains.cmake.psi.CMakeElementTypes.LITERAL : null;
+  }
 
   static boolean isClassOfVarRefInsideIfWhile(PsiElement element) {
     return (isCLION)
@@ -94,18 +120,5 @@ public class CMakePDC {
 
   public static Lexer getCMakeLexer() {
     return (isCLION) ? /*new EmptyLexer()*/ getJBCMakeLexer() : new CMakeLexerAdapter();
-  }
-
-  static boolean checkSetCommandSemantic(PsiElement possibleVarDef) {
-    if (!PsiTreeUtil.instanceOf(possibleVarDef, ARGUMENT_CLASSES))
-      possibleVarDef = PsiTreeUtil.getParentOfType(possibleVarDef, ARGUMENT_CLASSES);
-    PsiElement commandArguments = PsiTreeUtil.getParentOfType(possibleVarDef, ARGUMENTS_CLASS);
-    PsiElement commandName = PsiTreeUtil.getPrevSiblingOfType(commandArguments, COMMAND_NAME_CLASS);
-    if (commandName != null && commandName.textMatches("set")) {
-      final PsiElement firstArgument =
-          PsiTreeUtil.getChildOfAnyType(commandArguments, ARGUMENT_CLASSES);
-      return possibleVarDef == firstArgument;
-    }
-    return true;
   }
 }

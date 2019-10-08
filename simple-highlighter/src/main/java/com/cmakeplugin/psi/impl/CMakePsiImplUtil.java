@@ -141,6 +141,8 @@ public class CMakePsiImplUtil {
 //              new CommonProcessors.CollectProcessor<>();
 //      processUnquotedArgumentVariants(getElement(), processor);
 //      return ArrayUtil.toObjectArray(processor.getResults());
+
+      //return CMakePSITreeSearch.getAllPossibleVarDefs(getElement()).toArray();
       return EMPTY_ARRAY;
     }
 

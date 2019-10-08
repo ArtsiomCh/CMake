@@ -85,6 +85,7 @@
     <lang.foldingBuilder language="CMake" implementationClass="com.cmakeplugin.CMakeFoldingBuilderForSubsequentSingleLineComments"/>
     <lang.commenter language="CMake" implementationClass="com.cmakeplugin.CMakeCommenter" />
     <lang.psiStructureViewFactory language="CMake" implementationClass="com.cmakeplugin.CMakeStructureViewFactory"/>
+    <completion.contributor language="CMake" implementationClass="com.cmakeplugin.CMakeVariableCompletionContributor" order="first"/>
 
     <lang.refactoringSupport language="CMake"
                              factoryArgument="refactoringSupport"

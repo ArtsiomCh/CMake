@@ -69,7 +69,7 @@ public class CMakeStructureViewModel extends StructureViewModelBase
     @Override
     public ActionPresentation getPresentation() {
       return new ActionPresentationData(
-          "Show Variables (re)definitions", null, PlatformIcons.VARIABLE_ICON);
+          "Show Variables (re)definitions", null, CMakePlusPDC.ICON_VAR);
     }
 
     @NotNull
@@ -95,7 +95,7 @@ public class CMakeStructureViewModel extends StructureViewModelBase
     @Override
     public ActionPresentation getPresentation() {
       return new ActionPresentationData(
-          "Show Macros definitions", null, PlatformIcons.METHOD_ICON);
+          "Show Macros definitions", null, CMakePlusPDC.ICON_CMAKE_MACRO);
     }
 
     @NotNull
@@ -121,7 +121,7 @@ public class CMakeStructureViewModel extends StructureViewModelBase
     @Override
     public ActionPresentation getPresentation() {
       return new ActionPresentationData(
-          "Show Functions definitions", null, PlatformIcons.FUNCTION_ICON);
+          "Show Functions definitions", null, CMakePlusPDC.ICON_CMAKE_FUNCTION);
     }
 
     @NotNull

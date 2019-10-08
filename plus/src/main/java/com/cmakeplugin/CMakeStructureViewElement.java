@@ -152,7 +152,7 @@ class MacroElement extends FunMacroBase {
 
   MacroElement(NavigatablePsiElement element) {
     super(element);
-    icon = PlatformIcons.METHOD_ICON;
+    icon = CMakePlusPDC.ICON_CMAKE_MACRO;
     attributesKey = CMakeSyntaxHighlighter.MACROS;
   }
 }
@@ -161,7 +161,7 @@ class FunctionElement extends FunMacroBase {
 
   FunctionElement(NavigatablePsiElement element) {
     super(element);
-    icon = PlatformIcons.FUNCTION_ICON;
+    icon = CMakePlusPDC.ICON_CMAKE_FUNCTION;
     attributesKey = CMakeSyntaxHighlighter.FUNCTION;
   }
 }
