@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '192.5.dev1'
+    version '192.5.1'
     sourceCompatibility = 1.8
 
     repositories {
@@ -41,16 +41,17 @@ subprojects {
     intellij {
         pluginName "$rootProject.name-$project.name"
 //        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
-//        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-2/192.5728.98'
-        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-3/192.6262.58'
+        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-3/193.3519.25'
+//        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-2/192.6817.14'
         downloadSources false
-//    plugins += 'PsiViewer:191.4212'
-        plugins += 'PsiViewer:192-SNAPSHOT'
+//        plugins += 'PsiViewer:192-SNAPSHOT'
+//        plugins += 'PsiViewer:193-SNAPSHOT'
         plugins += 'java'
         sameSinceUntilBuild true
     }
 
     patchPluginXml.sinceBuild 192
+//    patchPluginXml.untilBuild 194
 
     jar {
         archivesBaseName = intellij.pluginName
@@ -60,8 +61,12 @@ subprojects {
         outputs.upToDateWhen { false }
     }
 
-    task runIC_193_2956(type: RunIdeTaskJbr11){
-        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-3/193.2956.37/'
+    task runCLion_193(type: RunIdeTaskJbr11){
+        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-3/193.3519.24/'
+    }
+
+    task runIC_193(type: RunIdeTaskJbr11){
+        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-3/193.3519.25/'
     }
 
     task runIC_192(type: RunIdeTaskJbr11){
@@ -72,8 +77,8 @@ subprojects {
         ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/192.6262.58'
     }
 
-    task runIC_192_6262_41(type: RunIdeTaskJbr11){
-        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-3/192.6262.41'
+    task runUltimate_193_3519_25(type: RunIdeTaskJbr11){
+        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-1/193.3519.25/'
     }
 
     task runCLion_191(type: RunIdeTask){

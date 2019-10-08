@@ -9,6 +9,7 @@
   <description><![CDATA[
      Extend CMake language support in the IDE's Editor:<br>
      - Variables navigation (Go to definition / Find usages) and renaming(*see Notes). <br>
+     - User variables definition/reference completion added (no scopes, very little semantic checks yet). <br>
      - Folding regions for functions, macros, if/for/while blocks and: <br>
           &emsp; * Multiline brackets comments; <br>
           &emsp; * Consequent single-line comments;  <br>
@@ -35,6 +36,7 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      192.5.1 - user variables definition/reference completion added (no scopes, very little semantic checks yet). <br>
       192.4.1 - Structure View added with: <br>
           &emsp; * Function/Macros declarations; <br>
           &emsp; * Variable (re)definitions; <br>
