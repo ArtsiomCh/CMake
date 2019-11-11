@@ -94,6 +94,10 @@ public class CMakeSyntaxHighlighter extends SyntaxHighlighterBase {
       TextAttributesKey.createTextAttributesKey(
           "CMAKE.OPERATOR", DefaultLanguageHighlighterColors.METADATA);
 
+  public static final TextAttributesKey CMAKE_MODULE =
+      TextAttributesKey.createTextAttributesKey(
+          "CMAKE.MODULE", DefaultLanguageHighlighterColors.METADATA);
+
   public static final TextAttributesKey CMAKE_PATH_URL =
       TextAttributesKey.createTextAttributesKey(
           "CMAKE.PATH_URL", DefaultLanguageHighlighterColors.DOC_COMMENT_TAG_VALUE);

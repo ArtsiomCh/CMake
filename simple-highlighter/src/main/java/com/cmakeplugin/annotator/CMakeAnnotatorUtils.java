@@ -1,8 +1,8 @@
 package com.cmakeplugin.annotator;
 
+import com.cmakeplugin.CMakeKeywords;
 import com.cmakeplugin.CMakeSyntaxHighlighter;
 
-import com.cmakeplugin.utils.CMakePDC;
 import com.cmakeplugin.utils.CMakePSITreeSearch;
 
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -10,7 +10,6 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -104,12 +103,10 @@ class CMakeAnnotatorUtils {
 
   static void annotateCommand(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String commandName = element.getText().toLowerCase();
-    if (CMakeKeywords.isCommandProject(commandName)
-        || CMakeKeywords.isCommandScripting(commandName)
-        || CMakeKeywords.isCommandTest(commandName)) {
-      createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_COMMAND);
-    } else if (CMakeKeywords.isCommandDeprecated(commandName)) {
+    if (CMakeKeywords.isCommandDeprecated(commandName)) {
       createDeprecatedAnnotation(element, holder, "Deprecated command");
+    } else if (CMakeKeywords.isCommand(commandName)) {
+      createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_COMMAND);
     } else if (CMakePSITreeSearch.existFunctionDefFor(element)) {
       createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.FUNCTION);
     } else if (CMakePSITreeSearch.existMacroDefFor(element)) {
@@ -131,11 +128,11 @@ class CMakeAnnotatorUtils {
 
   static boolean annotateProperty(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     String propertyName = element.getText();
-    if (CMakeVarStringUtil.isCMakeProperty(propertyName)) {
-      return createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_PROPERTY);
-    }
     if (CMakeVarStringUtil.isCMakePropertyDeprecated(propertyName)) {
       return createDeprecatedAnnotation(element, holder, "Deprecated property");
+    }
+    if (CMakeVarStringUtil.isCMakeProperty(propertyName)) {
+      return createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_PROPERTY);
     }
     return false;
   }
@@ -147,6 +144,15 @@ class CMakeAnnotatorUtils {
     }
     if (CMakeVarStringUtil.isCMakeBoolValue(operatorName)) {
       return createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_BOOLEAN);
+    }
+    // Modules
+    if (CMakeVarStringUtil.isCMakeModule(operatorName)) {
+      final PsiElement commandNameElement = CMakePSITreeSearch.getCommandNameElement(element);
+      if (commandNameElement != null
+          && (commandNameElement.textMatches("include")
+          || commandNameElement.textMatches("find_package"))) {
+      return createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.CMAKE_MODULE);
+      }
     }
     return false;
   }

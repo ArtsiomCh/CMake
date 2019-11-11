@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '192.5.1'
+    version '193.1.1'
     sourceCompatibility = 1.8
 
     repositories {
@@ -45,13 +45,13 @@ subprojects {
 //        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-2/192.6817.14'
         downloadSources false
 //        plugins += 'PsiViewer:192-SNAPSHOT'
-//        plugins += 'PsiViewer:193-SNAPSHOT'
+        plugins += 'PsiViewer:193-SNAPSHOT'
         plugins += 'java'
         sameSinceUntilBuild true
     }
 
     patchPluginXml.sinceBuild 192
-//    patchPluginXml.untilBuild 194
+    patchPluginXml.untilBuild 194
 
     jar {
         archivesBaseName = intellij.pluginName
@@ -62,7 +62,7 @@ subprojects {
     }
 
     task runCLion_193(type: RunIdeTaskJbr11){
-        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-3/193.3519.24/'
+        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/CLion/ch-3/193.4932.12/'
     }
 
     task runIC_193(type: RunIdeTaskJbr11){
@@ -77,8 +77,8 @@ subprojects {
         ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/192.6262.58'
     }
 
-    task runUltimate_193_3519_25(type: RunIdeTaskJbr11){
-        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-1/193.3519.25/'
+    task runUltimate_193(type: RunIdeTaskJbr11){
+        ideaDirectory '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-1/193.5096.12/'
     }
 
     task runCLion_191(type: RunIdeTask){

@@ -1,6 +1,5 @@
 package com.cmakeplugin;
 
-import com.cmakeplugin.annotator.CMakeKeywords;
 import com.cmakeplugin.utils.CMakePDC;
 import com.cmakeplugin.utils.CMakePSITreeSearch;
 import com.cmakeplugin.utils.CMakePlusPDC;
@@ -17,7 +16,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
-import java.awt.Color;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 

@@ -24,9 +24,8 @@ import static com.cmakeplugin.utils.CMakePDC.*;
 
 public class CMakePsiImplUtil {
 
-  @NotNull
-  public static String getName(CMakeUnquotedArgumentMaybeVariableContainer o) {
-    return ObjectUtils.assertNotNull(o.getUnquotedArgumentMaybeVarDef()).getText();
+  public static String getName(PsiElement o) {
+    return o.getText();
   }
 
   @NotNull

@@ -63,7 +63,7 @@ public class CMakePDC {
     return (isCLION) ? com.jetbrains.cmake.psi.CMakeElementTypes.LITERAL : null;
   }
 
-  static boolean isClassOfVarRefInsideIfWhile(PsiElement element) {
+  public static boolean isClassOfVarRefInsideIfWhile(PsiElement element) {
     return (isCLION)
         ? getCMakeLiteralClass().isInstance(element) && !hasQuotedArg(element.getParent())
         : (element instanceof CMakeUnquotedArgumentContainer);

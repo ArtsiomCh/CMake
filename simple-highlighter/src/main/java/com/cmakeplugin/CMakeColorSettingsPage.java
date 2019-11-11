@@ -34,10 +34,11 @@ public class CMakeColorSettingsPage implements ColorSettingsPage {
         new AttributesDescriptor("Variable//Local variable reference", CMakeSyntaxHighlighter.VAR_REF),
         new AttributesDescriptor("Variable//CMake variable definition", CMakeSyntaxHighlighter.CMAKE_VAR_DEF),
         new AttributesDescriptor("Variable//Local variable definition", CMakeSyntaxHighlighter.VAR_DEF),
-        new AttributesDescriptor("Predefined literal//CMake operator", CMakeSyntaxHighlighter.CMAKE_OPERATOR),
         new AttributesDescriptor("Path or URL reference", CMakeSyntaxHighlighter.CMAKE_PATH_URL),
+        new AttributesDescriptor("Predefined literal//CMake operator", CMakeSyntaxHighlighter.CMAKE_OPERATOR),
         new AttributesDescriptor("Predefined literal//CMake property", CMakeSyntaxHighlighter.CMAKE_PROPERTY),
         new AttributesDescriptor("Predefined literal//CMake boolean", CMakeSyntaxHighlighter.CMAKE_BOOLEAN),
+        new AttributesDescriptor("Predefined literal//CMake module", CMakeSyntaxHighlighter.CMAKE_MODULE),
         new AttributesDescriptor("Function name", CMakeSyntaxHighlighter.FUNCTION),
         new AttributesDescriptor("Macros name", CMakeSyntaxHighlighter.MACROS)
       };
@@ -60,6 +61,7 @@ public class CMakeColorSettingsPage implements ColorSettingsPage {
     return "# Line Comment\n"
         + "#[[This is a bracket comment.\n"
         + "It runs until the close bracket.]]\n"
+        + "<c>include</c>(<mod>CheckCXXCompilerFlag</mod>)\n"
         + "if(<b>TRUE</b>)\n"
         + "\tunknown_command(\n"
         + "\t\tunquoted_argument=<vr>${outer_${inner_variable}_variable}</vr><u>/followed/by/path</u>\n"
@@ -91,7 +93,7 @@ public class CMakeColorSettingsPage implements ColorSettingsPage {
   @Override
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return ContainerUtil.newHashMap(
-        Arrays.asList("c", "o", "u", "p", "b", "l", "cvr", "vr", "cvd", "vd", "f", "m"),
+        Arrays.asList("c", "o", "u", "p", "b", "l", "cvr", "vr", "cvd", "vd", "f", "m", "mod"),
         Arrays.asList(
             CMakeSyntaxHighlighter.CMAKE_COMMAND,
             CMakeSyntaxHighlighter.CMAKE_OPERATOR,
@@ -104,7 +106,9 @@ public class CMakeColorSettingsPage implements ColorSettingsPage {
             CMakeSyntaxHighlighter.CMAKE_VAR_DEF,
             CMakeSyntaxHighlighter.VAR_DEF,
             CMakeSyntaxHighlighter.FUNCTION,
-            CMakeSyntaxHighlighter.MACROS));
+            CMakeSyntaxHighlighter.MACROS,
+            CMakeSyntaxHighlighter.CMAKE_MODULE
+        ));
   }
 
   @NotNull

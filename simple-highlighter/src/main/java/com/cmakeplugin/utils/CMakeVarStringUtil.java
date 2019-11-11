@@ -1,6 +1,6 @@
 package com.cmakeplugin.utils;
 
-import com.cmakeplugin.annotator.CMakeKeywords;
+import com.cmakeplugin.CMakeKeywords;
 import com.intellij.openapi.util.TextRange;
 import java.util.Collections;
 import java.util.Map;
@@ -27,6 +27,7 @@ public class CMakeVarStringUtil {
   private static Map<String, Boolean> cacheIsCMakeProperty = new ConcurrentHashMap<>();
   private static Map<String, Boolean> cacheIsCMakePropertyDeprecated = new ConcurrentHashMap<>();
   private static Map<String, Boolean> cacheIsCMakeOperator = new ConcurrentHashMap<>();
+  private static Map<String, Boolean> cacheIsCMakeModule = new ConcurrentHashMap<>();
   private static Map<String, Boolean> cacheIsCMakeBoolValue = new ConcurrentHashMap<>();
   private static Map<String, List<TextRange>> cacheOuterVarRefs = new ConcurrentHashMap<>();
   private static Map<String, List<TextRange>> cacheInnerVars = new ConcurrentHashMap<>();
@@ -61,6 +62,10 @@ public class CMakeVarStringUtil {
 
   public static boolean isCMakeOperator(@NotNull String text) {
     return cacheIsCMakeOperator.computeIfAbsent(text, CMakeKeywords::isOperator);
+  }
+
+  public static boolean isCMakeModule(@NotNull String text) {
+    return cacheIsCMakeModule.computeIfAbsent(text, CMakeKeywords::isModule);
   }
 
   public static boolean isCMakeBoolValue(@NotNull String text) {

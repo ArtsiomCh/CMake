@@ -6,7 +6,8 @@
 
   <description><![CDATA[
      Plugin for CMake syntax highlight support.<br>
-     - It provides(extends) syntax highlight for <b>IntelliJ IDEA</b>, <b>Android Studio</b>, <b>CLion</b>, etc. <br><br>
+     - It provides(extends) syntax highlight for <b>IntelliJ IDEA</b>, <b>Android Studio</b>, <b>CLion</b>, etc. <br>
+     - Highlighting styles are customisable at Settings -> Editor -> Color Scheme -> CMake [additional syntax]. <br><br>
 
      Please consider <b><a href="https://plugins.jetbrains.com/plugin/12869-cmake-plus">CMake Plus</a></b> plugin for more functionality:<br>
      - Variables navigation (Go to definition / Find usages) and renaming(*see Notes). <br>
@@ -20,12 +21,14 @@
           &emsp; * Function/Macros declarations; <br>
           &emsp; * Variable (re)definitions; <br>
           &emsp; * Filtering by Functions, Macros, Variables and Sorting alphabetical; <br>
-          &emsp; * Navigation in both directions (Structure View &lt;-> Editor). <br><br>
+          &emsp; * Navigation in both directions (Structure View &lt;-> Editor). <br>
+     - Quick Documentation for CMake commands, modules, policies, properties, and variables. <br><br>
 
 
 ]]></description>
 
   <change-notes><![CDATA[
+      193.1.1 - Update to the latest list of predefined CMake commands, properties, and variables. List of CMake modules and policies added. Modules highlighting. <br>
       192.5.1 - Some bug fixes and optimisations. <br>
       192.4.2 - Significant speedup in parsing CMake files by heavily caching (probably a bit too right on Shipilev's curve ;). <br>
           &emsp; * Fix the bug with wrong variable references recognition inside if/while condition at CLion. <br>

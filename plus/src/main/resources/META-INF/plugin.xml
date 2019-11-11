@@ -19,7 +19,8 @@
           &emsp; * Function/Macros declarations; <br>
           &emsp; * Variable (re)definitions; <br>
           &emsp; * Filtering by Functions, Macros, Variables and Sorting alphabetical; <br>
-          &emsp; * Navigation in both directions (Structure View &lt;-> Editor). <br><br>
+          &emsp; * Navigation in both directions (Structure View &lt;-> Editor). <br>
+     - Quick Documentation for CMake commands, modules, policies, properties, and variables. <br><br>
 
      <b>Require <a href="https://plugins.jetbrains.com/plugin/10089-cmake-simple-highlighter">CMake simple highlighter</a></b> to be installed! <br><br>
 
@@ -27,8 +28,7 @@
      Plugin is <b>free</b>(for now) for community/free IDEs: IntelliJ IDEA Community, Android Studio, etc. <br><br>
 
      <b>Plans for the future</b> [no commitments ;) ] functionality:<br>
-     - Variable's scope of visibility. <br>
-     - Performance optimisation for large projects. <br>
+     - First priority: Variable's scope of visibility. <br>
      - ENV variables navigation/renaming. <br>
      - function's declaration and references navigation/renaming. <br> <br>
 
@@ -36,6 +36,7 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      193.1.1 - Quick Documentation for CMake commands, modules, policies, properties, and variables: Ctrl+Q and mouse hover (if enabled) <br>
       192.5.1 - user variables definition/reference completion added (no scopes, very little semantic checks yet). <br>
       192.4.1 - Structure View added with: <br>
           &emsp; * Function/Macros declarations; <br>
@@ -88,6 +89,7 @@
     <lang.commenter language="CMake" implementationClass="com.cmakeplugin.CMakeCommenter" />
     <lang.psiStructureViewFactory language="CMake" implementationClass="com.cmakeplugin.CMakeStructureViewFactory"/>
     <completion.contributor language="CMake" implementationClass="com.cmakeplugin.CMakeVariableCompletionContributor" order="first"/>
+    <lang.documentationProvider implementationClass="com.cmakeplugin.CMakeDocProvider" language="CMake" order="first" />
 
     <lang.refactoringSupport language="CMake"
                              factoryArgument="refactoringSupport"
