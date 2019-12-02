@@ -185,9 +185,9 @@ final public class CMakeKeywords {
 
     // fixme: Macro Argument Caveats https://cmake.org/cmake/help/latest/command/macro.html
     variables_regexp.put(
-        Pattern.compile("ARG(C|N|V[0-9]+)"),
-        "In addition to referencing the formal parameters you can reference the values ${ARGC} which will be set to the number of arguments passed into the function as well as ${ARGV0}, ${ARGV1}, ${ARGV2}, … which will have the actual values of the arguments passed in. This facilitates creating macros with optional arguments.\n"
-            + "\n"
+        Pattern.compile("ARG(C|N|V[0-9]*)"),
+        "In addition to referencing the formal parameters you can reference the values ${ARGC} which will be set to the number of arguments passed into the function as well as ${ARGV0}, ${ARGV1}, ${ARGV2}, … which will have the actual values of the arguments passed in. This facilitates creating macros with optional arguments."
+            + "<br>"
             + "Furthermore, ${ARGV} holds the list of all arguments given to the macro and ${ARGN} holds the list of arguments past the last expected argument. Referencing to ${ARGV#} arguments beyond ${ARGC} have undefined behavior. Checking that ${ARGC} is greater than # is the only way to ensure that ${ARGV#} was passed to the function as an extra argument.");
 
     // https://cmake.org/cmake/help/latest/manual/cmake-env-variables.7.html
@@ -239,7 +239,7 @@ final public class CMakeKeywords {
             ,"WRITE","APPEND","READ","STRINGS","GLOB","GLOB_RECURSE","RENAME","REMOVE","REMOVE_RECURSE","MAKE_DIRECTORY","RELATIVE_PATH","TO_CMAKE_PATH","TO_NATIVE_PATH","DOWNLOAD","UPLOAD","TIMESTAMP","COPY","INSTALL","LOCK",
 // My addition
         "SHARED","STATIC","MODULE","PRIVATE","PUBLIC","INTERFACE","TARGET","TARGETS","PROPERTY","PROPERTIES","REQUIRED","EXPORT","NAMESPACE","DESTINATION","FILES","CONFIG","REQUIRED","COMPONENTS","FATAL_ERROR","STATUS","WARNING","AUTHOR_WARNING","SEND_ERROR","DEPRECATION",
-        "POLICY", "SET", "NEW", "OLD"
+        "POLICY", "SET", "NEW", "OLD", "PARENT_SCOPE"
     );
 
 //Boolean values in CMake https://cmake.org/Wiki/CMake:VariablesListsStrings
