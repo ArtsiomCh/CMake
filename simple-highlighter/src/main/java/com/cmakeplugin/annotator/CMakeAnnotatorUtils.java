@@ -73,16 +73,6 @@ class CMakeAnnotatorUtils {
             holder,
             CMakeSyntaxHighlighter.CMAKE_VAR_REF);
       }
-      // Highlight not defined Inner variable.
-      else if (!CMakePSITreeSearch.existDefinitionOf(element, innerVarName)
-          // exclude unquoted arg inside If/While
-          && !element.textMatches(innerVarName)) {
-        // TODO Move it to Inspections? Also too many false negative.
-        createWeakWarningAnnotation(
-            innerVarRange.shiftRight(elementStartInFile),
-            holder,
-            "Possibly not defined Variable: " + innerVarName);
-      }
     }
 
     // Highlight Inner CMake predefined ENV variables

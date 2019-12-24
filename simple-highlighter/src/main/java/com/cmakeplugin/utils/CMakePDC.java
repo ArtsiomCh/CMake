@@ -111,7 +111,7 @@ public class CMakePDC {
     return (isCLION) ? getCMakeListsFileTypeINSTANCE() : CMakeFileType.INSTANCE;
   }
 
-  static boolean classCanHoldVarRef(PsiElement element) {
+  public static boolean classCanHoldVarRef(PsiElement element) {
     return (isCLION)
         ? getCMakeLiteralClass().isInstance(element)
         : element instanceof CMakeUnquotedArgumentContainer

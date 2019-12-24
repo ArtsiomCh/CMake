@@ -88,6 +88,16 @@
     <annotator language="CMake"
                factoryArgument="Annotator"
                factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+
+    <localInspection language="CMake"
+                     displayName="CMake: Possibly not defined Variable"
+                     groupPath="CMake"
+                     groupBundle="messages.InspectionsBundle"
+                     groupKey="group.names.probable.bugs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     implementationClass="com.cmakeplugin.inspections.NotDefinedVariableInspection" />
+
   </extensions>
 
   <application-components>
