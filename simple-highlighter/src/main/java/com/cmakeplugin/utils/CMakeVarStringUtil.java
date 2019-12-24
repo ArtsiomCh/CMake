@@ -21,6 +21,7 @@ public class CMakeVarStringUtil {
   private static final String ENV_VAR_BEGIN = "(^ENV\\{)";
   private static final String ENV_VAR_REF_BEGIN =
       "((^\\$|(?<=[^\\\\])\\$)ENV\\{)"; // Escaped \$ excluded
+  private static final String LEGACY_ARGUMENT = "(.*[^\\\\]\"([^\"]*[^\\\\])?\".*)+|(.*\\$\\(.*\\).*)";
 
   private static Map<String, Boolean> cacheCouldBeVarName = new ConcurrentHashMap<>();
   private static Map<String, Boolean> cacheIsPredefinedCMakeVar = new ConcurrentHashMap<>();
@@ -29,6 +30,7 @@ public class CMakeVarStringUtil {
   private static Map<String, Boolean> cacheIsCMakeOperator = new ConcurrentHashMap<>();
   private static Map<String, Boolean> cacheIsCMakeModule = new ConcurrentHashMap<>();
   private static Map<String, Boolean> cacheIsCMakeBoolValue = new ConcurrentHashMap<>();
+  private static Map<String, Boolean> cacheIsCMakeLegacy = new ConcurrentHashMap<>();
   private static Map<String, List<TextRange>> cacheOuterVarRefs = new ConcurrentHashMap<>();
   private static Map<String, List<TextRange>> cacheInnerVars = new ConcurrentHashMap<>();
   private static Map<String, List<TextRange>> cacheInnerEnvVars = new ConcurrentHashMap<>();
@@ -70,6 +72,12 @@ public class CMakeVarStringUtil {
 
   public static boolean isCMakeBoolValue(@NotNull String text) {
     return cacheIsCMakeBoolValue.computeIfAbsent(text, CMakeKeywords::isBoolValue);
+  }
+
+  private static final Pattern patternLegacyArg = Pattern.compile(LEGACY_ARGUMENT);
+
+  public static boolean isCMakeLegacy(@NotNull String text) {
+    return cacheIsCMakeLegacy.computeIfAbsent(text, keyText -> patternLegacyArg.matcher(keyText).find());
   }
 
   private static final List<TextRange> EMPTY_RANGES_LIST = Collections.emptyList();

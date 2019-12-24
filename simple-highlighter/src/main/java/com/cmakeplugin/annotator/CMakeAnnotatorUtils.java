@@ -21,9 +21,7 @@ import com.cmakeplugin.utils.CMakeVarStringUtil;
 class CMakeAnnotatorUtils {
 
   static boolean annotateLegacy(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-    if (element
-        .getText()
-        .matches("(.*[^\\\\]\"([^\"]*[^\\\\])?\".*)+|(.*\\$\\(.*\\).*)")) { // fixme
+    if (CMakeVarStringUtil.isCMakeLegacy(element.getText())) {
       return createInfoAnnotation(element, holder, CMakeSyntaxHighlighter.UNQUOTED_LEGACY);
     }
     return false;
