@@ -5,23 +5,28 @@ import com.cmakeplugin.utils.CMakePDC;
 
 import com.cmakeplugin.utils.CMakePSITreeSearch;
 import com.cmakeplugin.utils.CMakePlusPDC;
-import com.intellij.ide.DataManager;
 import com.intellij.lang.documentation.DocumentationProviderEx;
-import com.intellij.openapi.actionSystem.DataConstants;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CMakeDocProvider extends DocumentationProviderEx {
+  private static final Logger LOG = LoggerFactory.getLogger(CMakeDocProvider.class);
 
   @Nullable
   @Override
-  public PsiElement getCustomDocumentationElement(@NotNull Editor editor, @NotNull PsiFile file, @Nullable PsiElement contextElement) {
-    if (contextElement != null && CMakePDC.COMMAND_NAME_CLASS.isInstance(contextElement.getParent()) )
+  public PsiElement getCustomDocumentationElement(
+      @NotNull Editor editor, @NotNull PsiFile file, @Nullable PsiElement contextElement) {
+    if (contextElement != null
+        && CMakePDC.COMMAND_NAME_CLASS.isInstance(contextElement.getParent()))
       return contextElement.getParent();
     return null;
   }
@@ -63,11 +68,7 @@ public class CMakeDocProvider extends DocumentationProviderEx {
     if (originalElement != null
         && CMakePlusPDC.VARREF_ELEMENT_TYPES.contains(originalElement.getNode().getElementType())) {
       final String elementText = originalElement.getText();
-      final Editor editor =
-          (Editor) DataManager.getInstance().getDataContext().getData(DataConstants.EDITOR);
-      int offsetInText =
-          editor.getCaretModel().getOffset() - element.getTextRange().getStartOffset();
-      //      if (offsetInText < 0) offsetInText = 0 ;
+      int offsetInText = getCaretOffsetInElement(originalElement);
       for (TextRange innerVarRange : CMakeIFWHILEcheck.getInnerVars(originalElement)) {
         if (innerVarRange.contains(offsetInText)) {
           String innerVarName =
@@ -79,5 +80,25 @@ public class CMakeDocProvider extends DocumentationProviderEx {
     }
 
     return null;
+  }
+
+  // fixme
+  // https://intellij-support.jetbrains.com/hc/en-us/community/posts/206794335-How-to-get-cursor-position-in-the-current-editor-?
+  private int getCaretOffsetInElement(PsiElement element){
+    // PsiUtilBase.findEditor(element);
+    // (Editor) DataManager.getInstance().getDataContext().getData(DataConstants.EDITOR);
+    Editor[] editor = new Editor[1];
+    ApplicationManager.getApplication()
+        .invokeLater(
+            () ->
+                editor[0] =
+                    FileEditorManager.getInstance(element.getProject()).getSelectedTextEditor());
+    try {
+      Thread.sleep(100);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    return editor[0].getCaretModel().getOffset() - element.getTextRange().getStartOffset();
+    //      if (offsetInText < 0) offsetInText = 0 ;
   }
 }
