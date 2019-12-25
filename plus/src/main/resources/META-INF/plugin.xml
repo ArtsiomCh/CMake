@@ -36,6 +36,8 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      193.2.1 - fix bug: QuickDoc for VarRefs not shown (2019.3 RC and above). <br>
+       &emsp; - fix bug: Plugin did not work properly on CLion under Windows OS. <br>
       193.1.1 - Quick Documentation for CMake commands, modules, policies, properties, and variables: Ctrl+Q and mouse hover (if enabled) <br>
       192.5.1 - user variables definition/reference completion added (no scopes, very little semantic checks yet). <br>
       192.4.1 - Structure View added with: <br>
@@ -65,6 +67,7 @@
   <depends>com.intellij.modules.clion</depends>
   <depends>com.intellij.modules.androidstudio</depends>
   <depends>com.intellij.modules.cmake</depends>
+  <depends>com.intellij.marketplace</depends>
   -->
   <depends>com.intellij.modules.lang</depends>
   <depends>artsiomch.cmake</depends>
