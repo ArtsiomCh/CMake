@@ -67,7 +67,7 @@
   <depends>com.intellij.modules.clion</depends>
   <depends>com.intellij.modules.androidstudio</depends>
   <depends>com.intellij.modules.cmake</depends>
-  <depends>com.intellij.marketplace</depends>
+  <depends optional="true" config-file="marketplace_required.xml">com.intellij.modules.androidstudio</depends>
   -->
   <depends>com.intellij.modules.lang</depends>
   <depends>artsiomch.cmake</depends>

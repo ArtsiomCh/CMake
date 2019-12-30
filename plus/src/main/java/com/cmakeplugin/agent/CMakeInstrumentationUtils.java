@@ -51,7 +51,7 @@ public class CMakeInstrumentationUtils {
 
       // make com.cmakeplugin classes visible inside patched IDEA classes
       ClassLoader cl = Class.forName("com.intellij.psi.impl.PsiElementBase").getClassLoader();
-      Method method = cl.getClass().getDeclaredMethod("addURL", URL.class);
+      Method method = cl.getClass().getMethod("addURL", URL.class);
       method.setAccessible(true);
       method.invoke(cl, new File(agentFilePath).toURI().toURL());
       method.invoke(cl, new File(simpleHighlighterFilePath).toURI().toURL());
