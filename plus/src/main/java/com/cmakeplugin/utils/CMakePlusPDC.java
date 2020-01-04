@@ -93,6 +93,30 @@ public class CMakePlusPDC {
               com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_COMMAND_ARGUMENTS)
           : TokenSet.create(CMakeTypes.UNQUOTED_ARGUMENT, CMakeTypes.QUOTED_ARGUMENT);
 
+  public static final TokenSet COMMAND_KEYWORD_ELEMENT_TYPES =
+          (isCLION)
+                  ? TokenSet.create(
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_IF_COMMAND_CALL_NAME,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_ELSE_IF_COMMAND_CALL_NAME,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_ELSE_COMMAND_CALL_NAME,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_IF_COMMAND_CALL_NAME,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_FOREACH_COMMAND_CALL_NAME,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_FOREACH_COMMAND_CALL_NAME,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_WHILE_COMMAND_CALL_NAME,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_WHILE_COMMAND_CALL_NAME,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_FUNCTION_COMMAND_CALL_NAME,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_FUNCTION_COMMAND_CALL_NAME,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_MACRO_COMMAND_CALL_NAME,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_MACRO_COMMAND_CALL_NAME
+          )
+                  : TokenSet.create(
+                  CMakeTypes.IF, CMakeTypes.ELSE, CMakeTypes.ELSEIF, CMakeTypes.ENDIF,
+                  CMakeTypes.FOREACH, CMakeTypes.ENDFOREACH,
+                  CMakeTypes.WHILE, CMakeTypes.ENDWHILE,
+                  CMakeTypes.FUNCTION, CMakeTypes.ENDFUNCTION,
+                  CMakeTypes.MACRO, CMakeTypes.ENDMACRO
+          );
+
   public static Language getLanguageInstance() {
     try {
       return (isCLION)

@@ -25,9 +25,11 @@ public class CMakeDocProvider extends DocumentationProviderEx {
   @Override
   public PsiElement getCustomDocumentationElement(
       @NotNull Editor editor, @NotNull PsiFile file, @Nullable PsiElement contextElement) {
-    if (contextElement != null
-        && CMakePDC.COMMAND_NAME_CLASS.isInstance(contextElement.getParent()))
+    if (contextElement == null) return null;
+    if (CMakePDC.COMMAND_NAME_CLASS.isInstance(contextElement.getParent()))
       return contextElement.getParent();
+    if (CMakePlusPDC.COMMAND_KEYWORD_ELEMENT_TYPES.contains(contextElement.getNode().getElementType()))
+      return contextElement;
     return null;
   }
 
@@ -37,7 +39,8 @@ public class CMakeDocProvider extends DocumentationProviderEx {
 
     if (!CMakeComponent.isCMakePlusActive) return null;
 
-    if (CMakePDC.COMMAND_NAME_CLASS.isInstance(element)) {
+    if (CMakePDC.COMMAND_NAME_CLASS.isInstance(element)
+        || CMakePlusPDC.COMMAND_KEYWORD_ELEMENT_TYPES.contains(element.getNode().getElementType()) ) {
       return CMakeKeywords.getCommandHelp(element.getText());
     }
 
