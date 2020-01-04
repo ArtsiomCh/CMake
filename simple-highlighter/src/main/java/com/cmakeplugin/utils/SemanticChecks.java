@@ -8,8 +8,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 public class SemanticChecks {
 
   public static boolean possibleVarDef(PsiElement possibleVarDef) {
-    if (!PsiTreeUtil.instanceOf(possibleVarDef, CMakePDC.ARGUMENT_CLASSES))
-      possibleVarDef = PsiTreeUtil.getParentOfType(possibleVarDef, CMakePDC.ARGUMENT_CLASSES);
+    if (!PsiTreeUtil.instanceOf(possibleVarDef, CMakePDC.VARDEF_ARGUMENT_CLASSES))
+      possibleVarDef = PsiTreeUtil.getParentOfType(possibleVarDef, CMakePDC.VARDEF_ARGUMENT_CLASSES);
 
     PsiElement commandName = getCommandNameElement(possibleVarDef);
     if (commandName != null) {
@@ -17,7 +17,7 @@ public class SemanticChecks {
           PsiTreeUtil.getParentOfType(possibleVarDef, CMakePDC.ARGUMENTS_CLASS);
       if (commandName.textMatches("set")) {
         final PsiElement firstArgument =
-            PsiTreeUtil.getChildOfAnyType(commandArguments, CMakePDC.ARGUMENT_CLASSES);
+            PsiTreeUtil.getChildOfAnyType(commandArguments, CMakePDC.VARDEF_ARGUMENT_CLASSES);
         return possibleVarDef == firstArgument;
       }
     }

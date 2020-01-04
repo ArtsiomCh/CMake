@@ -36,7 +36,7 @@ public class NotDefinedVariableInspection extends LocalInspectionTool {
               && !element.textMatches(innerVarName) // exclude unquoted arg inside If/While
               && !CMakePSITreeSearch.existDefinitionOf(element, innerVarName)) {
             holder.registerProblem(
-                element, varRefRange, "Possibly not defined Variable: " + innerVarName, null);
+                element, varRefRange, "Possibly not defined Variable: " + innerVarName);
           }
         }
       }

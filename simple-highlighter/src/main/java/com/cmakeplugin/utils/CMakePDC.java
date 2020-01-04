@@ -44,14 +44,31 @@ public class CMakePDC {
       (isCLION) ? com.jetbrains.cmake.psi.CMakeCommand.class : CMakeCmd.class;
 
   @SuppressWarnings("unchecked")
-  public static final Class<? extends PsiElement>[] ARGUMENT_CLASSES =
+  public static final Class<? extends PsiElement>[] VARDEF_ARGUMENT_CLASSES =
+      (isCLION)
+          ? new Class[] {com.jetbrains.cmake.psi.CMakeArgument.class}
+          : new Class[] {CMakeUnquotedArgumentMaybeVariableContainer.class};
+
+  @SuppressWarnings("unchecked")
+  public static final Class<? extends PsiElement>[] FUN_MACRO_ARGUMENT_CLASSES =
       (isCLION)
           ? new Class[] {com.jetbrains.cmake.psi.CMakeArgument.class}
           : new Class[] {
             CMakeUnquotedArgumentContainer.class, CMakeUnquotedArgumentMaybeVariableContainer.class
           };
 
-  public static TokenSet getJBKeywords(){
+  @SuppressWarnings("unchecked")
+  public static final Class<? extends PsiElement>[] COMMAND_ARGUMENT_CLASSES =
+      (isCLION)
+          ? new Class[] {com.jetbrains.cmake.psi.CMakeArgument.class}
+          : new Class[] {
+            CMakeUnquotedArgumentContainer.class,
+            CMakeUnquotedArgumentMaybeVariableContainer.class,
+            CMakeQuotedArgumentContainer.class,
+            CMakeBracketArgumentContainer.class
+          };
+
+  public static TokenSet getJBKeywords() {
     return (isCLION) ? com.jetbrains.cmake.psi.CMakeElementTypes.KEYWORDS : TokenSet.EMPTY;
   }
 

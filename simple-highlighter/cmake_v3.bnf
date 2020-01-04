@@ -51,14 +51,16 @@
  private arguments_inner::= ( argument | arguments )*
    { recoverWhile=argument_recover } private argument_recover::=!(rpar)
 
- private argument       ::=  bracket_argument | bracket_comment |line_comment
+ private argument       ::=  bracket_comment | line_comment
                          | unquoted_argument_maybe_variable_container
                          | unquoted_argument_container
                          | brace quoted_argument_container? brace
+                         | bracket_argument_container
 
  unquoted_argument_maybe_variable_container ::= unquoted_argument_maybe_var_def { methods=[getName setName getNameIdentifier getPresentation] }
  unquoted_argument_container ::= unquoted_argument { methods=[getReferences] }
  quoted_argument_container ::=  quoted_argument { methods=[getReferences] }
+ bracket_argument_container ::= bracket_argument
 
 // Single command invocation
  cmd                 ::=  <<command_expr command_name>>

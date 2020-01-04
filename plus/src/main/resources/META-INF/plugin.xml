@@ -97,6 +97,27 @@
     <lang.refactoringSupport language="CMake"
                              factoryArgument="refactoringSupport"
                              factoryClass="com.cmakeplugin.CMakePlusExtensionFactory"  />
+
+<!--
+    <localInspection language="CMake"
+                     displayName="CMake: Set command signature mismatch"
+                     groupPath="CMake"
+                     groupBundle="messages.InspectionsBundle"
+                     groupKey="group.names.probable.bugs"
+                     enabledByDefault="true"
+                     level="ERROR"
+                     implementationClass="com.cmakeplugin.inspections.SetSignatureInspection" />
+-->
+
+    <localInspection language="CMake"
+                     displayName="CMake: Variable is set but never used"
+                     groupPath="CMake"
+                     groupBundle="messages.InspectionsBundle"
+                     groupKey="group.names.probable.bugs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     implementationClass="com.cmakeplugin.inspections.VariableUnusedInspection" />
+
   </extensions>
 
   <application-components>
