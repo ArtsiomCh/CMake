@@ -38,7 +38,7 @@ public class CMakeVarStringUtil {
   private static final Pattern patternCouldBeVarName = Pattern.compile(VAR_NAME);
 
   @Contract(pure = true)
-  static boolean couldBeVarName(@NotNull String text) {
+  public static boolean couldBeVarName(@NotNull String text) {
     return cacheCouldBeVarName.computeIfAbsent(
         text,
         key ->

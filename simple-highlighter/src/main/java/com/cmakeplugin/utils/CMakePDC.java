@@ -68,6 +68,12 @@ public class CMakePDC {
             CMakeBracketArgumentContainer.class
           };
 
+  public static PsiElement transformToLiteral (PsiElement cmakeArgument) {
+    return (isCLION)
+            ? CMakeProxyToJB.getCMakeLiteral(cmakeArgument)
+            : cmakeArgument;
+  }
+
   public static TokenSet getJBKeywords() {
     return (isCLION) ? com.jetbrains.cmake.psi.CMakeElementTypes.KEYWORDS : TokenSet.EMPTY;
   }

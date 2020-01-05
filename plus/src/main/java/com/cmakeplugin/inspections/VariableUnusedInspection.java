@@ -2,7 +2,6 @@ package com.cmakeplugin.inspections;
 
 import com.cmakeplugin.utils.CMakePDC;
 import com.cmakeplugin.utils.CMakePSITreeSearch;
-import com.cmakeplugin.utils.CMakePlusPDC;
 import com.cmakeplugin.utils.CMakeVarStringUtil;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -22,9 +21,12 @@ public class VariableUnusedInspection extends LocalInspectionTool {
         if (!InspectionUtils.isCommandName(element, "set")) return;
         PsiElement commandArguments =
             PsiTreeUtil.getNextSiblingOfType(element, CMakePDC.ARGUMENTS_CLASS);
-        final PsiElement firstArgument =
+        PsiElement firstArgument =
             PsiTreeUtil.getChildOfAnyType(commandArguments, CMakePDC.COMMAND_ARGUMENT_CLASSES);
-        if (CMakePlusPDC.VARDEF_CLASS.isInstance(firstArgument)
+        if (firstArgument == null) return;
+        firstArgument = CMakePDC.transformToLiteral(firstArgument);
+        if (CMakePDC.isClassOfVarDef(firstArgument)
+            && CMakeVarStringUtil.couldBeVarName(firstArgument.getText())
             && !CMakeVarStringUtil.isPredefinedCMakeVar(firstArgument.getText())
             && !CMakePSITreeSearch.existReferenceTo(firstArgument))
           holder.registerProblem(firstArgument, "Variable is set but never used.");
