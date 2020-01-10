@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.File;
 import java.util.List;
 
 import static com.cmakeplugin.utils.CMakeIFWHILEcheck.*;
@@ -50,10 +51,12 @@ public class CMakePsiImplUtil {
       @Nullable
       public String getPresentableText() {
         PsiElement argumentsElement = PsiTreeUtil.getParentOfType(o, ARGUMENTS_CLASS);
-        Document document =  o.getContainingFile().getViewProvider().getDocument();
+        PsiFile file = o.getContainingFile();
+        Document document =  file.getViewProvider().getDocument();
+        String filePath = file.getContainingDirectory() + File.separator + file.getName();
         return (argumentsElement!=null && argumentsElement.getParent()!=null && document!=null)
-                ? String.format("%20.20s:%4d  %s",
-                                o.getContainingFile().getName(),
+                ? String.format("%30.30s:%4d  %s",
+                                (filePath.length() > 30) ? filePath.substring(filePath.length() - 30) : filePath,
                                 document.getLineNumber(o.getTextOffset()) + 1,
                                 argumentsElement.getParent().getText().replaceAll(" {2,}"," ") )
                 : o.getText();
