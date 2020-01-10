@@ -33,6 +33,7 @@ final public class CMakeKeywords {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CMakeKeywords.class);
   private static final String varRegexp = "[A-Za-z0-9/_.+-]+";
+  private static final String cmakeVersion = "3_16_2";
 
   private static Map<String, String> commands;
   private static final Set<String> commands_Deprecated = new HashSet<>();
@@ -175,13 +176,13 @@ final public class CMakeKeywords {
   }
 
   static {
-    commands = deSerializeMap("/HashMaps/command2helptext.hashmap");
+    commands = deSerializeMap("/HashMaps/command2helptext." + cmakeVersion + ".hashmap");
     Collections.addAll(commands_Deprecated,"build_name","exec_program","export_library_dependencies","install_files","install_programs","install_targets","load_command","make_directory","output_required_files","remove","subdir_depends","subdirs","use_mangled_mesa","utility_source","variable_requires","write_file" );
 
-    modules = deSerializeMap("/HashMaps/module2helptext.hashmap");
-    policies = deSerializeMap("/HashMaps/policy2helptext.hashmap");
-    deSerializeMapWithRegexp("/HashMaps/property2helptext.hashmap", properties, properties_regexp);
-    deSerializeMapWithRegexp("/HashMaps/variable2helptext.hashmap", variables, variables_regexp);
+    modules = deSerializeMap("/HashMaps/module2helptext." + cmakeVersion + ".hashmap");
+    policies = deSerializeMap("/HashMaps/policy2helptext." + cmakeVersion + ".hashmap");
+    deSerializeMapWithRegexp("/HashMaps/property2helptext." + cmakeVersion + ".hashmap", properties, properties_regexp);
+    deSerializeMapWithRegexp("/HashMaps/variable2helptext." + cmakeVersion + ".hashmap", variables, variables_regexp);
 
     // fixme: Macro Argument Caveats https://cmake.org/cmake/help/latest/command/macro.html
     variables_regexp.put(
