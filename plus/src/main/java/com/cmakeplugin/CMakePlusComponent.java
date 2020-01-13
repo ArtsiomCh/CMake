@@ -29,11 +29,11 @@ public class CMakePlusComponent implements ApplicationComponent {
     CMakeComponent.isCMakePlusActive = checkVersionOfCmakeSimpleHighlighter();
     if (!CMakeComponent.isCMakePlusActive) {
       final String message =
-          "Update CMake Simple Highlighter plugin above "
+          "Update CMake Simple Highlighter plugin to "
               + FROM_BRANCH
               + "."
               + FROM_BUILD
-              + " please, to enable CMake Plus functionality.";
+              + " (or above) please, to enable CMake Plus functionality.";
       LOGGER.warn(message);
       new Notification("CMake Plus", "CMake Plus", message, NotificationType.WARNING).notify(null);
       return;
@@ -44,7 +44,7 @@ public class CMakePlusComponent implements ApplicationComponent {
   }
 
   private static final int FROM_BRANCH = 193;
-  private static final int FROM_BUILD = 1;
+  private static final int FROM_BUILD = 3;
 
   private boolean checkVersionOfCmakeSimpleHighlighter() {
     final IdeaPluginDescriptor pluginDescriptor =

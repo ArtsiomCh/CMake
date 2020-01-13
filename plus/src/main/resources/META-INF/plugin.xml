@@ -7,6 +7,11 @@
   <product-descriptor code="PCMAKEPLUS" release-date="20190810" release-version="1921"/>
 
   <description><![CDATA[
+     <b>Require <a href="https://plugins.jetbrains.com/plugin/10089-cmake-simple-highlighter">CMake simple highlighter</a></b> to be installed! <br><br>
+
+     Plugin is <b>paid</b> for commercial IDEs: IntelliJ IDEA Ultimate, CLion, etc. <br>
+     Plugin is <b>free</b>(for now) for community/free IDEs: IntelliJ IDEA Community, Android Studio, etc. <br><br>
+
      Extend CMake language support in the IDE's Editor:<br>
      - Variables navigation (Go to definition / Find usages) and renaming(*see Notes). <br>
      - User variables definition/reference completion added (no scopes, very little semantic checks yet). <br>
@@ -20,22 +25,17 @@
           &emsp; * Variable (re)definitions; <br>
           &emsp; * Filtering by Functions, Macros, Variables and Sorting alphabetical; <br>
           &emsp; * Navigation in both directions (Structure View &lt;-> Editor). <br>
-     - Quick Documentation for CMake commands, modules, policies, properties, and variables. <br><br>
-
-     <b>Require <a href="https://plugins.jetbrains.com/plugin/10089-cmake-simple-highlighter">CMake simple highlighter</a></b> to be installed! <br><br>
-
-     Plugin is <b>paid</b> for commercial IDEs: IntelliJ IDEA Ultimate, CLion, etc. <br>
-     Plugin is <b>free</b>(for now) for community/free IDEs: IntelliJ IDEA Community, Android Studio, etc. <br><br>
-
-     <b>Plans for the future</b> [no commitments ;) ] functionality:<br>
-     - First priority: Variable's scope of visibility. <br>
-     - ENV variables navigation/renaming. <br>
-     - function's declaration and references navigation/renaming. <br> <br>
+     - Quick Documentation for CMake commands, modules, policies, properties, and variables. <br>
+     - Syntax and Operation inspections. <br><br>
 
      *Note: Variable's scope of visibility is not implemented yet, i.e. all variables withing Project are shown as global. Variable's rename refactoring (Shift+F6) works fine for variables with single declaration. For multi declared (re-defined, amended) variables rename refactoring works only from variable declaration side (i.e. caret should be on variable declaration, not reference) and will change all visible references and only current declaration. Use with caution. <br>
 ]]></description>
 
   <change-notes><![CDATA[
+      193.3.1 - Operation inspection added: "Variable is set but never used". <br>
+       &emsp; - QuickDoc for IF FOREACH WHILE FUNCTION MACRO added. <br>
+       &emsp; - QuickDoc updated to Cmake 3.16.2 for commands, modules, policies, properties, variables. <br>
+       &emsp; - Find Variable declarations: show part of file path to distinguish different CMakeLists.txt files. <br>
       193.2.1 - fix bug: QuickDoc for VarRefs not shown (2019.3 RC and above). <br>
        &emsp; - fix bug: Plugin did not work properly on CLion under Windows OS. <br>
       193.1.1 - Quick Documentation for CMake commands, modules, policies, properties, and variables: Ctrl+Q and mouse hover (if enabled) <br>
@@ -68,6 +68,7 @@
   <depends>com.intellij.modules.androidstudio</depends>
   <depends>com.intellij.modules.cmake</depends>
   <depends optional="true" config-file="marketplace_required.xml">com.intellij.modules.androidstudio</depends>
+  <depends>com.intellij.marketplace</depends>
   -->
   <depends>com.intellij.modules.lang</depends>
   <depends>artsiomch.cmake</depends>

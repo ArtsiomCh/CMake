@@ -22,12 +22,14 @@
           &emsp; * Variable (re)definitions; <br>
           &emsp; * Filtering by Functions, Macros, Variables and Sorting alphabetical; <br>
           &emsp; * Navigation in both directions (Structure View &lt;-> Editor). <br>
-     - Quick Documentation for CMake commands, modules, policies, properties, and variables. <br><br>
+     - Quick Documentation for CMake commands, modules, policies, properties, and variables. <br>
+     - Syntax and Operation inspections. <br><br>
 
 
 ]]></description>
 
   <change-notes><![CDATA[
+      193.3.1 - Update to Cmake 3.16.2 for predefined commands, modules, policies, properties, variables. <br>
       193.2.1 - enhancement: Highlighting of not defined VarRefs moved to inspections, i.e. could be disabled if too many annoying false-positive cases (see screencast at plugin's homepage). <br>
        &emsp; - fix bug: ARGV variable recognition. <br>
       193.1.1 - Update to the latest list of predefined CMake commands, properties, and variables. List of CMake modules and policies added. Modules highlighting. <br>

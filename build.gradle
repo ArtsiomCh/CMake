@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '193.3.0.dev'
+    version '193.3.1'
     sourceCompatibility = 1.8
 
     repositories {
@@ -69,6 +69,14 @@ subprojects {
         ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-1\\193.5662.53'
     }
 
+    task runIC_193_latest(type: RunIdeTask){
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-1\\193.6015.11'
+    }
+
+    task runUltimate_193(type: RunIdeTask){
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-U\\ch-0\\193.6015.11'
+    }
+
     task CopyPlugins(type: Copy) {
         dependsOn(prepareSandbox)
         from "${intellij.sandboxDirectory}/plugins_to_add"
@@ -77,7 +85,7 @@ subprojects {
 
     task run_AI_4_193(type: RunIdeTask){
         ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\AndroidStudio\\ch-0\\193.6085562'
-        dependsOn(CopyPlugins)
+//        dependsOn(CopyPlugins)
     }
 
 /*
