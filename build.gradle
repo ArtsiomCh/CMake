@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '193.3.1'
+    version '193.3.2.dev'
     sourceCompatibility = 1.8
 
     repositories {
@@ -62,7 +62,8 @@ subprojects {
     }
 
     task runCLion_193(type: RunIdeTask){
-        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\193.5233.56'
+//        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\193.5233.56'
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\193.5662.56'
     }
 
     task runIC_193_5662(type: RunIdeTask){

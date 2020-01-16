@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,6 +40,7 @@ final public class CMakeKeywords {
   private static final Set<String> commands_Deprecated = new HashSet<>();
 
   private static Map<String, String> modules;
+  private static Map<String, String> moduleNamesLowerCased;
   private static Map<String, String> policies;
 
   private static Map<String, String> properties = new HashMap<>();
@@ -58,11 +60,11 @@ final public class CMakeKeywords {
   private static List<Pattern> boolValues_regexp;
 
   public static boolean isCommand(String text){
-    return commands.containsKey(text);
+    return commands.containsKey(text.toLowerCase());
   }
 
   public static boolean isCommandDeprecated(String text){
-    return commands_Deprecated.contains(text);
+    return commands_Deprecated.contains(text.toLowerCase());
   }
 
   public static boolean isVariableENV(String text){
@@ -90,12 +92,13 @@ final public class CMakeKeywords {
   }
 
   public static boolean isModule(String text){
-    return modules.containsKey(text);
+    return moduleNamesLowerCased.containsKey(text.toLowerCase());
   }
 
   public static boolean isBoolValue(String text){
-    return boolValues.contains(text)
-        || boolValues_regexp.stream().anyMatch(p -> p.matcher(text).matches());
+    final String textUpperCased = text.toUpperCase();
+    return boolValues.contains(textUpperCased)
+        || boolValues_regexp.stream().anyMatch(p -> p.matcher(textUpperCased).matches());
   }
 
   public static Set<String> getAllVariables(){
@@ -104,11 +107,11 @@ final public class CMakeKeywords {
 
 
   public static String getCommandHelp(String commandName) {
-    return commands.get(commandName);
+    return commands.get(commandName.toLowerCase());
   }
 
   public static String getModuleHelp(String moduleName) {
-    return modules.get(moduleName);
+    return modules.get(moduleNamesLowerCased.get(moduleName.toLowerCase()));
   }
 
   public static String getPolicyHelp(String policyNum) {
@@ -180,6 +183,9 @@ final public class CMakeKeywords {
     Collections.addAll(commands_Deprecated,"build_name","exec_program","export_library_dependencies","install_files","install_programs","install_targets","load_command","make_directory","output_required_files","remove","subdir_depends","subdirs","use_mangled_mesa","utility_source","variable_requires","write_file" );
 
     modules = deSerializeMap("/HashMaps/module2helptext." + cmakeVersion + ".hashmap");
+    // https://stackoverflow.com/questions/20363719/java-8-listv-into-mapk-v
+    moduleNamesLowerCased = modules.keySet().stream().collect(Collectors.toMap(String::toLowerCase, Function.identity()));
+
     policies = deSerializeMap("/HashMaps/policy2helptext." + cmakeVersion + ".hashmap");
     deSerializeMapWithRegexp("/HashMaps/property2helptext." + cmakeVersion + ".hashmap", properties, properties_regexp);
     deSerializeMapWithRegexp("/HashMaps/variable2helptext." + cmakeVersion + ".hashmap", variables, variables_regexp);
@@ -246,9 +252,9 @@ final public class CMakeKeywords {
 //Boolean values in CMake https://cmake.org/Wiki/CMake:VariablesListsStrings
     Collections.addAll(boolValues,
 // false
-            "NO","N","OFF","FALSE","NOTFOUND",
+            "NO","N","OFF","FALSE","IGNORE","NOTFOUND",
 //true
-            "TRUE","ON","Y","YE","YES"
+            "TRUE","ON","Y","YES"
     );
     boolValues_regexp = Stream.of(
         varRegexp +"-NOTFOUND"

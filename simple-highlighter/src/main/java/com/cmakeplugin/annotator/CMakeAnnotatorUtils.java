@@ -90,7 +90,7 @@ class CMakeAnnotatorUtils {
   }
 
   static void annotateCommand(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-    String commandName = element.getText().toLowerCase();
+    String commandName = element.getText();
     if (CMakeKeywords.isCommandDeprecated(commandName)) {
       createDeprecatedAnnotation(element, holder, "Deprecated command");
     } else if (CMakeKeywords.isCommand(commandName)) {
