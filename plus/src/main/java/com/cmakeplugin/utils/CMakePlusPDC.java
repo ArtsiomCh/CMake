@@ -6,6 +6,7 @@ import com.cmakeplugin.CMakeLanguage;
 import com.cmakeplugin.psi.*;
 import com.cmakeplugin.psi.impl.*;
 import com.intellij.lang.Language;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiComment;
@@ -13,10 +14,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PlatformIcons;
-import java.lang.reflect.InvocationTargetException;
 import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /** Provide Platform Dependent Code (IDEA/CLion) encapsulation into API */
 public class CMakePlusPDC {
@@ -117,6 +120,25 @@ public class CMakePlusPDC {
                   CMakeTypes.MACRO, CMakeTypes.ENDMACRO
           );
 
+  public static final TokenSet END_OF_COMMAND_KEYWORD_ELEMENT_TYPES =
+          (isCLION)
+                  ? TokenSet.create(
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_ELSE_COMMAND,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_IF_COMMAND,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_FOREACH_COMMAND,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_WHILE_COMMAND,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_FUNCTION_COMMAND,
+                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_MACRO_COMMAND
+          )
+                  : TokenSet.create(
+                  CMakeTypes.ELSE_EXPR,
+                  CMakeTypes.ENDIF_EXPR,
+                  CMakeTypes.FOREND,
+                  CMakeTypes.WHILEEND,
+                  CMakeTypes.FEND,
+                  CMakeTypes.MEND
+          );
+
   public static Language getLanguageInstance() {
     try {
       return (isCLION)
@@ -137,4 +159,23 @@ public class CMakePlusPDC {
       (isCLION) ? icons.CMakeIcons.CMake_Function : PlatformIcons.FUNCTION_ICON;
 
   public static final Icon ICON_VAR = PlatformIcons.VARIABLE_ICON;
+
+  @NotNull
+  public static PsiElement createCommandName(@NotNull Project project, @NotNull String newCommandName) {
+    return (isCLION)
+            ? com.jetbrains.cmake.psi.CMakeElementFactory.createCommandName(project, newCommandName)
+            : CMakePsiElementFactory.createCommandName(project, newCommandName);
+  }
+
+  @NotNull
+  public static PsiElement createEmptyArguments(@NotNull Project project) {
+    PsiElement result;
+    String text = "if() \n endif()";
+    PsiFile tempFile = (isCLION)
+            ? com.jetbrains.cmake.psi.CMakeElementFactory.createFile(project, text)
+            : CMakePsiElementFactory.createFile(project, text);
+    result = PsiTreeUtil.findChildOfType(tempFile, CMakePDC.ARGUMENTS_CLASS);
+    return Objects.requireNonNull(result);
+  }
+
 }

@@ -1,5 +1,6 @@
 package com.cmakeplugin.inspections;
 
+import com.cmakeplugin.CMakeKeywords;
 import com.cmakeplugin.utils.CMakePDC;
 import com.intellij.psi.PsiElement;
 
@@ -11,6 +12,11 @@ public class InspectionUtils {
   public static boolean isCommandName(PsiElement element, String commandName) {
     return CMakePDC.COMMAND_NAME_CLASS.isInstance(element)
         && element.getText().toLowerCase().equals(commandName);
+  }
+
+  public static boolean isBuiltinCommand(PsiElement element) {
+    return CMakePDC.COMMAND_NAME_CLASS.isInstance(element)
+        && CMakeKeywords.isCommand(element.getText());
   }
 
   private static final Map<String, List<String>> mapCommandToSignatures = new ConcurrentHashMap<>();

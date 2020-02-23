@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '193.3.2'
+    version '201.1.0'
     sourceCompatibility = 1.8
 
     repositories {
@@ -41,17 +41,17 @@ subprojects {
     intellij {
         pluginName "$rootProject.name-$project.name"
 //        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
-        localPath 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-0\\193.5233.12'
+        localPath 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-0\\193.6015.39'
 //        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-2/192.6817.14'
         downloadSources false
-//        plugins += 'PsiViewer:192-SNAPSHOT'
         plugins += 'PsiViewer:193-SNAPSHOT'
+//        plugins += 'PsiViewer:201-SNAPSHOT'
         plugins += 'java'
         sameSinceUntilBuild true
     }
 
     patchPluginXml.sinceBuild 192
-    patchPluginXml.untilBuild 194
+    patchPluginXml.untilBuild 202
 
     jar {
         archivesBaseName = intellij.pluginName
@@ -62,16 +62,15 @@ subprojects {
     }
 
     task runCLion_193(type: RunIdeTask){
-//        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\193.5233.56'
-        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\193.5662.56'
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\193.6015.37'
     }
 
-    task runIC_193_5662(type: RunIdeTask){
-        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-1\\193.5662.53'
+    task runCLion_201(type: RunIdeTask){
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\201.4865.10'
     }
 
-    task runIC_193_latest(type: RunIdeTask){
-        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-1\\193.6015.11'
+    task runIC_201(type: RunIdeTask){
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-1\\201.3803.71'
     }
 
     task runUltimate_193(type: RunIdeTask){

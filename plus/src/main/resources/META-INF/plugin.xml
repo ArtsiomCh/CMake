@@ -2,7 +2,7 @@
   <id>artsiomch.cmake.plus</id>
   <name>CMake Plus</name>
   <version>GRADLE.BUILD</version>
-  <vendor email="achapialiou@gmail.com" url="http://github.com/ArtsiomCh/CMake">Artsiom Chapialiou</vendor>
+  <vendor>achapialiou</vendor>
 
   <product-descriptor code="PCMAKEPLUS" release-date="20190810" release-version="1921"/>
 
@@ -32,6 +32,7 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      201.0.1 - Experimental support of IntelliJ IDEA 2020.1. <br>
       193.3.1 - Operation inspection added: "Variable is set but never used". <br>
        &emsp; - QuickDoc for IF FOREACH WHILE FUNCTION MACRO added. <br>
        &emsp; - QuickDoc updated to Cmake 3.16.2 for commands, modules, policies, properties, variables. <br>
@@ -118,6 +119,24 @@
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      implementationClass="com.cmakeplugin.inspections.VariableUnusedInspection" />
+
+    <localInspection language="CMake"
+                     displayName="CMake: Builtin commands should be used in lowercase"
+                     groupPath="CMake"
+                     groupBundle="messages.InspectionsBundle"
+                     groupKey="group.names.naming.conventions"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     implementationClass="com.cmakeplugin.inspections.BuiltinCommandLowercaseInspection" />
+
+    <localInspection language="CMake"
+                     displayName="CMake: End-of-block commands should not take arguments"
+                     groupPath="CMake"
+                     groupBundle="messages.InspectionsBundle"
+                     groupKey="group.names.naming.conventions"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     implementationClass="com.cmakeplugin.inspections.EndOfBlockCommandArgumentsInspection" />
 
   </extensions>
 

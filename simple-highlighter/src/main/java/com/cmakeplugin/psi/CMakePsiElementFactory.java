@@ -7,11 +7,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class CMakePsiElementFactory {
 
-  private static PsiFile createFile(@NotNull Project project, @NotNull String text) {
+  public static PsiFile createFile(@NotNull Project project, @NotNull String text) {
     return PsiFileFactory.getInstance(project)
             .createFileFromText("a.cmake", CMakeLanguage.INSTANCE, text, false, false);
   }
@@ -24,6 +27,13 @@ public class CMakePsiElementFactory {
             : "set(" + text + ")";
     return CMakePsiImplUtil.computeElementsOfClass( createFile( element.getProject(), fileText), aClass)
             .get(0).getFirstChild();
+  }
+
+  @NotNull
+  public static CMakeCommandName createCommandName(@NotNull Project project, @NotNull String newCommandName) {
+    PsiFile tempFile = createFile(project, newCommandName + "()\n");
+    CMakeCommandName commandName = PsiTreeUtil.findChildOfType(tempFile, CMakeCommandName.class);
+    return Objects.requireNonNull(commandName);
   }
 
 }

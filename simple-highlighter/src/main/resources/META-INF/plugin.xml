@@ -29,6 +29,7 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      201.0.1 - Experimental support of IntelliJ IDEA 2020.1. <br>
       193.3.2 - bug fix: added(improved) case-insensitivity for commands, modules and boolean constants. <br>
       193.3.1 - Update to Cmake 3.16.2 for predefined commands, modules, policies, properties, variables. <br>
       193.2.1 - enhancement: Highlighting of not defined VarRefs moved to inspections, i.e. could be disabled if too many annoying false-positive cases (see screencast at plugin's homepage). <br>
