@@ -99,8 +99,7 @@ public class CheckLicense {
   public static boolean isLicensed() {
     final LicensingFacade facade = LicensingFacade.getInstance();
     if (facade == null) {
-      // TODO `false` when license mechanism become supported at IntelliJ IDEA Community
-      return true;
+      return false;
     }
     final String cstamp = facade.getConfirmationStamp(PRODUCT_CODE);
     if (cstamp == null) {

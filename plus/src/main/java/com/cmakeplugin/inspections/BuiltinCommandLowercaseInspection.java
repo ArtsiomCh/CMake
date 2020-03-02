@@ -1,5 +1,6 @@
 package com.cmakeplugin.inspections;
 
+import com.cmakeplugin.CMakeComponent;
 import com.cmakeplugin.utils.CMakePlusPDC;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -22,6 +23,7 @@ public class BuiltinCommandLowercaseInspection extends LocalInspectionTool {
       @Override
       public void visitElement(PsiElement element) {
         super.visitElement(element);
+        if (!CMakeComponent.isCMakePlusActive) return;
         if (InspectionUtils.isBuiltinCommand(element)) {
           String commandName = element.getText();
           if (!commandName.toLowerCase().equals(commandName))

@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '201.1.0'
+    version '201.1.1'
     sourceCompatibility = 1.8
 
     repositories {
@@ -50,7 +50,7 @@ subprojects {
         sameSinceUntilBuild true
     }
 
-    patchPluginXml.sinceBuild 192
+    patchPluginXml.sinceBuild 193.5662
     patchPluginXml.untilBuild 202
 
     jar {
@@ -62,15 +62,15 @@ subprojects {
     }
 
     task runCLion_193(type: RunIdeTask){
-        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\193.6015.37'
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-0\\193.6494.38'
     }
 
     task runCLion_201(type: RunIdeTask){
-        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\201.4865.10'
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\201.5616.31'
     }
 
     task runIC_201(type: RunIdeTask){
-        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-1\\201.3803.71'
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-1\\201.5616.10'
     }
 
     task runUltimate_193(type: RunIdeTask){
@@ -84,7 +84,7 @@ subprojects {
     }
 
     task run_AI_4_193(type: RunIdeTask){
-        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\AndroidStudio\\ch-0\\193.6085562'
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\AndroidStudio\\ch-0\\193.6137316'
 //        dependsOn(CopyPlugins)
     }
 

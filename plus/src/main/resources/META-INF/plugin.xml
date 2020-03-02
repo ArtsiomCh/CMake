@@ -7,11 +7,6 @@
   <product-descriptor code="PCMAKEPLUS" release-date="20190810" release-version="1921"/>
 
   <description><![CDATA[
-     <b>Require <a href="https://plugins.jetbrains.com/plugin/10089-cmake-simple-highlighter">CMake simple highlighter</a></b> to be installed! <br><br>
-
-     Plugin is <b>paid</b> for commercial IDEs: IntelliJ IDEA Ultimate, CLion, etc. <br>
-     Plugin is <b>free</b>(for now) for community/free IDEs: IntelliJ IDEA Community, Android Studio, etc. <br><br>
-
      Extend CMake language support in the IDE's Editor:<br>
      - Variables navigation (Go to definition / Find usages) and renaming(*see Notes). <br>
      - User variables definition/reference completion added (no scopes, very little semantic checks yet). <br>
@@ -26,12 +21,28 @@
           &emsp; * Filtering by Functions, Macros, Variables and Sorting alphabetical; <br>
           &emsp; * Navigation in both directions (Structure View &lt;-> Editor). <br>
      - Quick Documentation for CMake commands, modules, policies, properties, and variables. <br>
-     - Syntax and Operation inspections. <br><br>
+     - Syntax and Operation inspections: <br>
+          &emsp; * Variable is set but never used; <br>
+          &emsp; * Builtin commands should be used in lowercase; <br>
+          &emsp; * End-of-block commands (else, endif, etc.) should not take arguments. <br>
+      <br>
+
+     <b>Require <a href="https://plugins.jetbrains.com/plugin/10089-cmake-simple-highlighter">CMake simple highlighter</a></b> to be installed! <br>
+     <br>
+
+     Plugin became <b>paid</b> for all IntelliJ IDEs (both commercial and community) starting from 2019.3.1 (193.5662) <br>
+     <a href="https://plugins.jetbrains.com/plugin/13407-jetbrains-marketplace-licensing-support">JetBrains Marketplace Licensing Support</a> plugin
+     should automatically prompt to be installed if CMakePlus is installed from Marketplace. In case of installing CMakePlus from the disk you'll need to install
+     JetBrains Marketplace Licensing Support plugin from the disk first. <br>
+     <br>
 
      *Note: Variable's scope of visibility is not implemented yet, i.e. all variables withing Project are shown as global. Variable's rename refactoring (Shift+F6) works fine for variables with single declaration. For multi declared (re-defined, amended) variables rename refactoring works only from variable declaration side (i.e. caret should be on variable declaration, not reference) and will change all visible references and only current declaration. Use with caution. <br>
 ]]></description>
 
   <change-notes><![CDATA[
+      201.1.1 - Inspections by Daniel Pfeifer suggestions added (see and take part in the <a href="https://github.com/ArtsiomCh/CMake/issues/11">discussion</a> for more details): <br>
+       &emsp; - Builtin commands should be used in lowercase. <br>
+       &emsp; - Commands else, endif, endforeach, endwhile, endfunction, endmacro should not take arguments. <br>
       201.0.1 - Experimental support of IntelliJ IDEA 2020.1. <br>
       193.3.1 - Operation inspection added: "Variable is set but never used". <br>
        &emsp; - QuickDoc for IF FOREACH WHILE FUNCTION MACRO added. <br>

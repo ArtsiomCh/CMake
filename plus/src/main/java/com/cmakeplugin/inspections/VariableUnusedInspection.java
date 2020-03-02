@@ -1,5 +1,6 @@
 package com.cmakeplugin.inspections;
 
+import com.cmakeplugin.CMakeComponent;
 import com.cmakeplugin.utils.CMakePDC;
 import com.cmakeplugin.utils.CMakePSITreeSearch;
 import com.cmakeplugin.utils.CMakeVarStringUtil;
@@ -18,6 +19,7 @@ public class VariableUnusedInspection extends LocalInspectionTool {
       @Override
       public void visitElement(PsiElement element) {
         super.visitElement(element);
+        if (!CMakeComponent.isCMakePlusActive) return;
         if (!InspectionUtils.isCommandName(element, "set")) return;
         PsiElement commandArguments =
             PsiTreeUtil.getNextSiblingOfType(element, CMakePDC.ARGUMENTS_CLASS);

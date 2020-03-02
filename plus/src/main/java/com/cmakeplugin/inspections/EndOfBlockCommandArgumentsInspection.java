@@ -1,5 +1,6 @@
 package com.cmakeplugin.inspections;
 
+import com.cmakeplugin.CMakeComponent;
 import com.cmakeplugin.utils.CMakePDC;
 import com.cmakeplugin.utils.CMakePlusPDC;
 import com.intellij.codeInspection.LocalInspectionTool;
@@ -25,6 +26,7 @@ public class EndOfBlockCommandArgumentsInspection extends LocalInspectionTool {
       @Override
       public void visitElement(PsiElement element) {
         super.visitElement(element);
+        if (!CMakeComponent.isCMakePlusActive) return;
         if (CMakePlusPDC.END_OF_COMMAND_KEYWORD_ELEMENT_TYPES.contains(
             element.getNode().getElementType())) {
           PsiElement arguments = PsiTreeUtil.getChildOfType(element, CMakePDC.ARGUMENTS_CLASS);
