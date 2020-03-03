@@ -45,8 +45,14 @@ public class CMakePlusPDC {
 
   public static boolean isLineComment(PsiComment comment) {
     return (isCLION)
-        ? !comment.getText().matches("(#\\[=*\\[)(.|\n|\r)*(]=*])")
+        ? !isCLionBracketComment(comment.getText())
         : comment.getNode().getElementType() == CMakeTypes.LINE_COMMENT;
+  }
+
+  private static boolean isCLionBracketComment(String commentText) {
+    return (commentText.startsWith("#[=") && commentText.endsWith("=]"))
+        || (commentText.startsWith("#[[") && commentText.endsWith("]]"));
+    //            commentText.matches("(#\\[=*\\[)(.|\n|\r)*(]=*])");
   }
 
   public static boolean isSubsequentLineCommentsGlueElement(PsiElement element) {
@@ -97,47 +103,50 @@ public class CMakePlusPDC {
           : TokenSet.create(CMakeTypes.UNQUOTED_ARGUMENT, CMakeTypes.QUOTED_ARGUMENT);
 
   public static final TokenSet COMMAND_KEYWORD_ELEMENT_TYPES =
-          (isCLION)
-                  ? TokenSet.create(
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_IF_COMMAND_CALL_NAME,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_ELSE_IF_COMMAND_CALL_NAME,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_ELSE_COMMAND_CALL_NAME,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_IF_COMMAND_CALL_NAME,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_FOREACH_COMMAND_CALL_NAME,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_FOREACH_COMMAND_CALL_NAME,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_WHILE_COMMAND_CALL_NAME,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_WHILE_COMMAND_CALL_NAME,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_FUNCTION_COMMAND_CALL_NAME,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_FUNCTION_COMMAND_CALL_NAME,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_MACRO_COMMAND_CALL_NAME,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_MACRO_COMMAND_CALL_NAME
-          )
-                  : TokenSet.create(
-                  CMakeTypes.IF, CMakeTypes.ELSE, CMakeTypes.ELSEIF, CMakeTypes.ENDIF,
-                  CMakeTypes.FOREACH, CMakeTypes.ENDFOREACH,
-                  CMakeTypes.WHILE, CMakeTypes.ENDWHILE,
-                  CMakeTypes.FUNCTION, CMakeTypes.ENDFUNCTION,
-                  CMakeTypes.MACRO, CMakeTypes.ENDMACRO
-          );
+      (isCLION)
+          ? TokenSet.create(
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_IF_COMMAND_CALL_NAME,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_ELSE_IF_COMMAND_CALL_NAME,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_ELSE_COMMAND_CALL_NAME,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_IF_COMMAND_CALL_NAME,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_FOREACH_COMMAND_CALL_NAME,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_FOREACH_COMMAND_CALL_NAME,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_WHILE_COMMAND_CALL_NAME,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_WHILE_COMMAND_CALL_NAME,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_FUNCTION_COMMAND_CALL_NAME,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_FUNCTION_COMMAND_CALL_NAME,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_MACRO_COMMAND_CALL_NAME,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_MACRO_COMMAND_CALL_NAME)
+          : TokenSet.create(
+              CMakeTypes.IF,
+              CMakeTypes.ELSE,
+              CMakeTypes.ELSEIF,
+              CMakeTypes.ENDIF,
+              CMakeTypes.FOREACH,
+              CMakeTypes.ENDFOREACH,
+              CMakeTypes.WHILE,
+              CMakeTypes.ENDWHILE,
+              CMakeTypes.FUNCTION,
+              CMakeTypes.ENDFUNCTION,
+              CMakeTypes.MACRO,
+              CMakeTypes.ENDMACRO);
 
   public static final TokenSet END_OF_COMMAND_KEYWORD_ELEMENT_TYPES =
-          (isCLION)
-                  ? TokenSet.create(
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_ELSE_COMMAND,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_IF_COMMAND,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_FOREACH_COMMAND,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_WHILE_COMMAND,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_FUNCTION_COMMAND,
-                  com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_MACRO_COMMAND
-          )
-                  : TokenSet.create(
-                  CMakeTypes.ELSE_EXPR,
-                  CMakeTypes.ENDIF_EXPR,
-                  CMakeTypes.FOREND,
-                  CMakeTypes.WHILEEND,
-                  CMakeTypes.FEND,
-                  CMakeTypes.MEND
-          );
+      (isCLION)
+          ? TokenSet.create(
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_ELSE_COMMAND,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_IF_COMMAND,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_FOREACH_COMMAND,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_WHILE_COMMAND,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_FUNCTION_COMMAND,
+              com.jetbrains.cmake.psi.CMakeTokenTypes.C_MAKE_END_MACRO_COMMAND)
+          : TokenSet.create(
+              CMakeTypes.ELSE_EXPR,
+              CMakeTypes.ENDIF_EXPR,
+              CMakeTypes.FOREND,
+              CMakeTypes.WHILEEND,
+              CMakeTypes.FEND,
+              CMakeTypes.MEND);
 
   public static Language getLanguageInstance() {
     try {
@@ -161,21 +170,22 @@ public class CMakePlusPDC {
   public static final Icon ICON_VAR = PlatformIcons.VARIABLE_ICON;
 
   @NotNull
-  public static PsiElement createCommandName(@NotNull Project project, @NotNull String newCommandName) {
+  public static PsiElement createCommandName(
+      @NotNull Project project, @NotNull String newCommandName) {
     return (isCLION)
-            ? com.jetbrains.cmake.psi.CMakeElementFactory.createCommandName(project, newCommandName)
-            : CMakePsiElementFactory.createCommandName(project, newCommandName);
+        ? com.jetbrains.cmake.psi.CMakeElementFactory.createCommandName(project, newCommandName)
+        : CMakePsiElementFactory.createCommandName(project, newCommandName);
   }
 
   @NotNull
   public static PsiElement createEmptyArguments(@NotNull Project project) {
     PsiElement result;
     String text = "if() \n endif()";
-    PsiFile tempFile = (isCLION)
+    PsiFile tempFile =
+        (isCLION)
             ? com.jetbrains.cmake.psi.CMakeElementFactory.createFile(project, text)
             : CMakePsiElementFactory.createFile(project, text);
     result = PsiTreeUtil.findChildOfType(tempFile, CMakePDC.ARGUMENTS_CLASS);
     return Objects.requireNonNull(result);
   }
-
 }
