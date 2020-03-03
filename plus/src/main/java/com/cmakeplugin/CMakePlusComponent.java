@@ -23,7 +23,7 @@ public class CMakePlusComponent implements ApplicationComponent {
       final String message =
           "CMake Plus plugin License not found. Plugin functionality will be disabled.";
       LOGGER.warn(message);
-      new Notification("CMake Plus", "CMake Plus", message, NotificationType.WARNING).notify(null);
+      new Notification("CMake Plus", "CMake Plus", message, NotificationType.ERROR).notify(null);
       return;
     }
     CMakeComponent.isCMakePlusActive = checkVersionOfCmakeSimpleHighlighter();
@@ -35,7 +35,7 @@ public class CMakePlusComponent implements ApplicationComponent {
               + FROM_BUILD
               + " (or above) please, to enable CMake Plus functionality.";
       LOGGER.warn(message);
-      new Notification("CMake Plus", "CMake Plus", message, NotificationType.WARNING).notify(null);
+      new Notification("CMake Plus", "CMake Plus", message, NotificationType.ERROR).notify(null);
       return;
     }
     if (CMakePDC.isCLION) {

@@ -16,6 +16,8 @@ patchPluginXml {
 */
 intellij {
     plugins += project(':simple-highlighter')
+//    plugins += "com.intellij.marketplace:193.5662.53"
+    plugins += "com.intellij.marketplace:201.5616.34"
 }
 
 jar {

@@ -33,6 +33,7 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      201.1.2 - fix: long bracket comment markup could break lexer. <br>
       201.1.1 - Some bug fixes and optimisations. <br>
       201.0.1 - Experimental support of IntelliJ IDEA 2020.1. <br>
       193.3.2 - bug fix: added(improved) case-insensitivity for commands, modules and boolean constants. <br>

@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '201.1.1'
+    version '201.1.2'
     sourceCompatibility = 1.8
 
     repositories {
@@ -40,12 +40,11 @@ subprojects {
 
     intellij {
         pluginName "$rootProject.name-$project.name"
-//        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-0/191.7141.44'
-        localPath 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-0\\193.6015.39'
-//        localPath '/home/artem/.local/share/JetBrains/Toolbox/apps/IDEA-C/ch-2/192.6817.14'
+//        localPath 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-0\\193.6015.39'
+        localPath 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-1\\201.5616.10'
         downloadSources false
-        plugins += 'PsiViewer:193-SNAPSHOT'
-//        plugins += 'PsiViewer:201-SNAPSHOT'
+//        plugins += 'PsiViewer:193-SNAPSHOT'
+        plugins += 'PsiViewer:201-SNAPSHOT'
         plugins += 'java'
         sameSinceUntilBuild true
     }
