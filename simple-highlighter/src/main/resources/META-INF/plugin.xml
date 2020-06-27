@@ -33,6 +33,7 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      202.0.1 - Compatibility with 2020.2 <br>
       201.1.2 - fix: long bracket comment markup could break lexer. <br>
       201.1.1 - Some bug fixes and optimisations. <br>
       201.0.1 - Experimental support of IntelliJ IDEA 2020.1. <br>
@@ -97,9 +98,12 @@
     <fileTypeFactory implementation="com.cmakeplugin.CMakeFileTypeFactory"/>
     <colorSettingsPage implementation="com.cmakeplugin.CMakeColorSettingsPage"/>
 
+    <annotator language="CMake" implementationClass="com.cmakeplugin.annotator.CMakeAnnotator" />
+<!--
     <annotator language="CMake"
                factoryArgument="Annotator"
                factoryClass="com.cmakeplugin.CMakeExtensionFactory"  />
+-->
 
     <localInspection language="CMake"
                      displayName="CMake: Possibly not defined Variable"
