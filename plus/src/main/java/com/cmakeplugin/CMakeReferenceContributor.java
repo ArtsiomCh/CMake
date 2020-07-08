@@ -1,16 +1,19 @@
 package com.cmakeplugin;
 
-import static com.cmakeplugin.utils.CMakeIFWHILEcheck.getInnerVars;
-import static com.cmakeplugin.utils.CMakeProxyToJB.getCMakeLiteralClass;
-
 import com.cmakeplugin.utils.CMakePDC;
 import com.cmakeplugin.utils.CMakePSITreeSearch;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
+import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ProcessingContext;
-import java.util.List;
+import com.jetbrains.cmake.psi.CMakeElementFactory;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+import static com.cmakeplugin.utils.CMakeIFWHILEcheck.getInnerVars;
+import static com.cmakeplugin.utils.CMakeProxyToJB.getCMakeLiteralClass;
 
 public class CMakeReferenceContributor extends PsiReferenceContributor {
 
@@ -57,6 +60,21 @@ public class CMakeReferenceContributor extends PsiReferenceContributor {
     @Override
     public Object[] getVariants() {
       return EMPTY_ARRAY;
+    }
+
+    // todo: make rename refactoring for var refs/defs
+    @Override
+    public PsiElement handleElementRename(@NotNull String newElementName)
+        throws IncorrectOperationException {
+      if (getCMakeLiteralClass().isInstance(getElement())) {
+        return getElement().getParent()
+            .replace(
+                CMakeElementFactory.createArgument(
+                    getElement().getProject(),
+                    getRangeInElement().replace(getElement().getText(), newElementName)));
+      } else
+        throw new IncorrectOperationException(
+            "Unknown type of Argument to replace: " + getElement().getClass());
     }
   }
 }
