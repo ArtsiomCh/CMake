@@ -34,7 +34,7 @@ final public class CMakeKeywords {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CMakeKeywords.class);
   private static final String varRegexp = "[A-Za-z0-9/_.+-]+";
-  private static final String cmakeVersion = "3_16_2";
+  private static final String cmakeVersion = "3_18_4";
 
   private static Map<String, String> commands;
   private static final Set<String> commands_Deprecated = new HashSet<>();

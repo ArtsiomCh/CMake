@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '202.0.2_EAP'
+    version '203.0.1'
     sourceCompatibility = 1.8
 
     repositories {
@@ -40,17 +40,16 @@ subprojects {
 
     intellij {
         pluginName "$rootProject.name-$project.name"
-//        localPath 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-0\\193.6015.39'
-        localPath 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-0\\202.5958.24'
-        downloadSources false
-//        plugins += 'PsiViewer:193-SNAPSHOT'
+//        localPath 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-0\\202.5958.24'
+//        downloadSources false
+        version = '202-EAP-SNAPSHOT'
         plugins += 'PsiViewer:202-SNAPSHOT'
         plugins += 'java'
-        sameSinceUntilBuild true
+//        sameSinceUntilBuild true
     }
 
     patchPluginXml.sinceBuild 193.5662
-    patchPluginXml.untilBuild 203
+    patchPluginXml.untilBuild 204
 
     jar {
         archivesBaseName = intellij.pluginName
@@ -75,6 +74,11 @@ subprojects {
         ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\202.6109.21'
     }
 
+    task runCLion_203(type: RunIdeTask){
+//        jbrVersion '11_0_4b304.69'
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\203.4203.24'
+    }
+
     task runIC_201(type: RunIdeTask){
         jbrVersion '11_0_4b304.69'
         ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-1\\201.7846.76'
@@ -83,6 +87,11 @@ subprojects {
     task runIC_202(type: RunIdeTask){
         jbrVersion '11_0_4b304.69'
         ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-0\\202.5958.24'
+    }
+
+    task runIC_203(type: RunIdeTask){
+//        jbrVersion '11_0_4b304.69'
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-3\\203.4449.2'
     }
 
     task runUltimate_193(type: RunIdeTask){

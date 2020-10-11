@@ -40,6 +40,7 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      203.0.1 - QuickDoc updated to Cmake 3.18.4 for commands, modules, policies, properties, variables; Compatibility with 2020.3 <br>
       202.0.2 - fix (workaround) <a href="https://github.com/ArtsiomCh/CMake/issues/18">issue</a> with exception due to <a href="https://youtrack.jetbrains.com/issue/IDEA-243988">IDEA-243988</a> <br>
       202.0.1 - Compatibility with 2020.2 <br>
       201.1.2 - fix: large bracket comment cause [almost] infinite Loading file state. <a href="https://github.com/ArtsiomCh/CMake/issues/15">issue</a> <br>
