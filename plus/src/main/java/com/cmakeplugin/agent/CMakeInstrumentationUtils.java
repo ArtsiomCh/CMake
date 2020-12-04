@@ -40,6 +40,12 @@ public class CMakeInstrumentationUtils {
       return;
     }
 
+    String bundledCmakeFilePath = PathManager.getJarPathForClass(CMakePDC.ARGUMENTS_CLASS);
+    if (bundledCmakeFilePath == null || !new File(bundledCmakeFilePath).isFile()) {
+      LOGGER.warn("Bundled JB Cmake not found at: {}", bundledCmakeFilePath);
+      return;
+    }
+
     try {
       // initialize classes for patching to be visible by agent
       Class.forName(CLASS_TO_TRANSFORM_REFERENCES);
@@ -55,6 +61,15 @@ public class CMakeInstrumentationUtils {
       method.setAccessible(true);
       method.invoke(cl, new File(agentFilePath).toURI().toURL());
       method.invoke(cl, new File(simpleHighlighterFilePath).toURI().toURL());
+      // make bundled JB cmake classes visible inside patched IDEA classes
+      method.invoke(cl, new File(bundledCmakeFilePath).toURI().toURL());
+
+      //make com.cmakeplugin classes visible inside patched JB Cmake classes
+      ClassLoader cl2 = Class.forName("com.jetbrains.cmake.resolve.CMakeElementEvaluator").getClassLoader();
+      Method method2 = cl2.getClass().getMethod("addURL", URL.class);
+      method2.setAccessible(true);
+      method2.invoke(cl2, new File(agentFilePath).toURI().toURL());
+      method2.invoke(cl2, new File(simpleHighlighterFilePath).toURI().toURL());
 
     } catch (IllegalAccessException
         | InvocationTargetException
@@ -82,9 +97,15 @@ public class CMakeInstrumentationUtils {
 
   @Nullable
   public static ItemPresentation getPresentation(PsiElement o, ItemPresentation prevResult) {
-    return CMakePDC.isClassOfVarDef(o) && prevResult == null
+    return isClassOfVarDef(o) && prevResult == null
         ? CMakePsiImplUtil.getPresentation(o)
         : prevResult;
+  }
+
+  private static boolean isClassOfVarDef(PsiElement o) {
+    return o.getClass().getName().equals("com.jetbrains.cmake.psi.CMakeLiteralImpl") &&
+            o.getParent() != null &&
+            !o.getParent().getFirstChild().textMatches("\"");
   }
 
   public static PsiElement addNameIdentifierIfVarDef(PsiElement originalCMakeLiteral) {

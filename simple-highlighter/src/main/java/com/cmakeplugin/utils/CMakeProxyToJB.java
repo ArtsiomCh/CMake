@@ -1,12 +1,11 @@
 package com.cmakeplugin.utils;
 
-import com.intellij.lexer.FlexAdapter;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.lexer.Lexer;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
-import java.io.Reader;
+
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -17,14 +16,17 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class CMakeProxyToJB {
   static final boolean hasOldCmake = false;// isClass("com.jetbrains.cidr.cpp.cmake.");
-  static final boolean hasNewCmake = isClass("com.jetbrains.cmake.");
+  static final boolean hasNewCmake = isClass();
 
-  private static boolean isClass(String cmakePath) {
+  public static final boolean isCLION = hasOldCmake || hasNewCmake;
+
+  private static boolean isClass() {
     try  {
-      Class.forName(cmakePath + "CMakeLanguage");
+      Class.forName("com.jetbrains.cmake.psi.CMakeArgument");
       return true;
-    }  catch (ClassNotFoundException e) {
-      return false;
+    } catch (ClassNotFoundException e) {
+      // since 203 cmake support moved to the plugin, see https://github.com/ArtsiomCh/CMake/issues/21
+      return PluginManagerCore.getPlugin(PluginId.getId("com.intellij.clion")) != null;
     }
   }
 

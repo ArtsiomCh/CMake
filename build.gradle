@@ -24,7 +24,7 @@ subprojects {
 
     apply plugin: 'org.jetbrains.intellij'
 
-    version '203.0.1'
+    version '203.0.2'
     sourceCompatibility = 1.8
 
     repositories {
@@ -42,8 +42,8 @@ subprojects {
         pluginName "$rootProject.name-$project.name"
 //        localPath 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-C\\ch-0\\202.5958.24'
 //        downloadSources false
-        version = '202-EAP-SNAPSHOT'
-        plugins += 'PsiViewer:202-SNAPSHOT'
+        version = '203-EAP-SNAPSHOT'
+        plugins += 'PsiViewer:203-SNAPSHOT'
         plugins += 'java'
 //        sameSinceUntilBuild true
     }
@@ -71,12 +71,13 @@ subprojects {
 
     task runCLion_202(type: RunIdeTask){
         jbrVersion '11_0_4b304.69'
-        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\202.6109.21'
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-3\\202.7660.37'
     }
 
     task runCLion_203(type: RunIdeTask){
-//        jbrVersion '11_0_4b304.69'
-        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\203.4203.24'
+        jbrVersion '11_0_4b304.69'
+        jvmArgs '-Xmx2G'
+        ideDirectory 'C:\\Users\\artem\\AppData\\Local\\JetBrains\\Toolbox\\apps\\CLion\\ch-1\\203.5981.166'
     }
 
     task runIC_201(type: RunIdeTask){

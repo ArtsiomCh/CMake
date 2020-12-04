@@ -1,7 +1,7 @@
 package com.cmakeplugin;
 
-import com.cmakeplugin.utils.CMakePDC;
 import com.cmakeplugin.utils.CMakePSITreeSearch;
+import com.cmakeplugin.utils.CMakeProxyToJB;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
@@ -19,7 +19,7 @@ public class CMakeReferenceContributor extends PsiReferenceContributor {
 
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
-    if (!CMakePDC.isCLION || !CMakeComponent.isCMakePlusActive) return;
+    if (!CMakeProxyToJB.isCLION || !CMakeComponent.isCMakePlusActive) return;
     registrar.registerReferenceProvider(
         PlatformPatterns.psiElement(getCMakeLiteralClass()), //getCMakeArgumentClass()),
         new PsiReferenceProvider() {

@@ -1,6 +1,6 @@
 package com.cmakeplugin;
 
-import com.cmakeplugin.utils.CMakePDC;
+import com.cmakeplugin.utils.CMakeProxyToJB;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.*;
@@ -114,7 +114,7 @@ public class CMakeColorSettingsPage implements ColorSettingsPage {
   @NotNull
   @Override
   public AttributesDescriptor[] getAttributeDescriptors() {
-    return CMakePDC.isCLION
+    return CMakeProxyToJB.isCLION
         ? ANNOTATOR_DESCRIPTORS
         : Stream.concat(Arrays.stream(LEXER_DESCRIPTORS), Arrays.stream(ANNOTATOR_DESCRIPTORS))
             .toArray(AttributesDescriptor[]::new); // LEXER_DESCRIPTORS + ANNOTATOR_DESCRIPTORS
@@ -129,6 +129,6 @@ public class CMakeColorSettingsPage implements ColorSettingsPage {
   @NotNull
   @Override
   public String getDisplayName() {
-    return CMakePDC.isCLION ? "CMake additional syntax" : "CMake";
+    return CMakeProxyToJB.isCLION ? "CMake additional syntax" : "CMake";
   }
 }

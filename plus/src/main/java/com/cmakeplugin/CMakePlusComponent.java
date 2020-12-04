@@ -1,7 +1,7 @@
 package com.cmakeplugin;
 
 import com.cmakeplugin.agent.CMakeInstrumentationUtils;
-import com.cmakeplugin.utils.CMakePDC;
+import com.cmakeplugin.utils.CMakeProxyToJB;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.Notification;
@@ -38,7 +38,7 @@ public class CMakePlusComponent implements ApplicationComponent {
       new Notification("CMake Plus", "CMake Plus", message, NotificationType.ERROR).notify(null);
       return;
     }
-    if (CMakePDC.isCLION) {
+    if (CMakeProxyToJB.isCLION) {
       CMakeInstrumentationUtils.patchJBclasses();
     }
   }

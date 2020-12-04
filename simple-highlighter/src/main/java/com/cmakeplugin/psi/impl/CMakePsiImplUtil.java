@@ -50,16 +50,19 @@ public class CMakePsiImplUtil {
       @Override
       @Nullable
       public String getPresentableText() {
-        PsiElement argumentsElement = PsiTreeUtil.getParentOfType(o, ARGUMENTS_CLASS);
         PsiFile file = o.getContainingFile();
         Document document =  file.getViewProvider().getDocument();
-        String filePath = file.getContainingDirectory() + File.separator + file.getName();
-        return (argumentsElement!=null && argumentsElement.getParent()!=null && document!=null)
-                ? String.format("%30.30s:%4d  %s",
-                                (filePath.length() > 30) ? filePath.substring(filePath.length() - 30) : filePath,
-                                document.getLineNumber(o.getTextOffset()) + 1,
-                                argumentsElement.getParent().getText().replaceAll(" {2,}"," ") )
-                : o.getText();
+        if ((document == null))  return o.getText();
+
+        final String filePath = file.getContainingDirectory() + File.separator + file.getName();
+        final String shortFilePath = (filePath.length() > 30) ? filePath.substring(filePath.length() - 30) : filePath;
+        final int lineNumber = document.getLineNumber(o.getTextOffset());
+        final TextRange lineRange = new TextRange(
+                document.getLineStartOffset(lineNumber),
+                document.getLineEndOffset(lineNumber));
+        final String lineText = document.getText(lineRange).replaceAll(" {2,}"," ");
+
+        return String.format("%30.30s:%4d  %s", shortFilePath, lineNumber, lineText );
       }
 
       @Override

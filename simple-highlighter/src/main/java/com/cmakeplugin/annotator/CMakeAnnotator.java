@@ -16,7 +16,7 @@ public class CMakeAnnotator implements Annotator {
 
   @Override
   public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {
-    if (CMakePDC.isCLION) {
+    if (isCLION) {
       annotateCLion(element, holder);
     } else {
       annotateIdea(element, holder);

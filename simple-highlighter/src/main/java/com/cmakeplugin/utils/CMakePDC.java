@@ -17,7 +17,6 @@ import static com.cmakeplugin.utils.CMakeProxyToJB.*;
 
 /** Provide Platform Dependent Code (IDEA/CLion) encapsulation into API */
 public class CMakePDC {
-  public static final boolean isCLION = hasOldCmake || hasNewCmake;
 
   public static final Class<? extends NavigatablePsiElement> MACRO_CLASS =
       (isCLION) ? com.jetbrains.cmake.psi.CMakeMacroCommandImpl.class : CMakeMacroDefImpl.class;

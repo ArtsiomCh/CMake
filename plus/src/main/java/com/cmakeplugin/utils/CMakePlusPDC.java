@@ -1,6 +1,6 @@
 package com.cmakeplugin.utils;
 
-import static com.cmakeplugin.utils.CMakePDC.isCLION;
+import static com.cmakeplugin.utils.CMakeProxyToJB.isCLION;
 
 import com.cmakeplugin.CMakeLanguage;
 import com.cmakeplugin.psi.*;

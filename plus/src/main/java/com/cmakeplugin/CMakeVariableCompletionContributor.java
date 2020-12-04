@@ -1,9 +1,6 @@
 package com.cmakeplugin;
 
-import com.cmakeplugin.utils.CMakePDC;
-import com.cmakeplugin.utils.CMakePSITreeSearch;
-import com.cmakeplugin.utils.CMakePlusPDC;
-import com.cmakeplugin.utils.SemanticChecks;
+import com.cmakeplugin.utils.*;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
@@ -109,7 +106,7 @@ public class CMakeVariableCompletionContributor extends CompletionContributor {
                 .map(it -> it.withInsertHandler(getVarRefInsertHandler()))
                 .collect(Collectors.toList()));
 
-        if (!CMakePDC.isCLION)
+        if (!CMakeProxyToJB.isCLION)
           resultSet.addAllElements(
               CMakeKeywords.getAllVariables().stream()
                   .map(LookupElementBuilder::create)

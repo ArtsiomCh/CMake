@@ -33,6 +33,7 @@
 ]]></description>
 
   <change-notes><![CDATA[
+      203.0.2 - fix: <a href="https://github.com/ArtsiomCh/CMake/issues/21">Preventing CLion 2020.3 from starting</a> <br>
       203.0.1 - Compatibility with 2020.3 <br>
       202.0.1 - Compatibility with 2020.2 <br>
       201.1.2 - fix: long bracket comment markup could break lexer. <br>
@@ -83,6 +84,7 @@
   <depends>com.intellij.modules.cmake</depends>
   -->
   <depends>com.intellij.modules.lang</depends>
+  <depends optional="true" config-file="">com.intellij.clion</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <!--

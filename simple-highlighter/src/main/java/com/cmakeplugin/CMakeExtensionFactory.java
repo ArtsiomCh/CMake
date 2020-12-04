@@ -2,13 +2,8 @@ package com.cmakeplugin;
 
 import com.cmakeplugin.annotator.CMakeCLionAnnotator;
 import com.cmakeplugin.annotator.CMakeIdeaAnnotator;
-import com.cmakeplugin.utils.CMakePDC;
-import com.intellij.lang.findUsages.EmptyFindUsagesProvider;
-import com.intellij.lang.refactoring.RefactoringSupportProvider;
+import com.cmakeplugin.utils.CMakeProxyToJB;
 import com.intellij.openapi.extensions.ExtensionFactory;
-import com.intellij.psi.PsiReferenceContributor;
-import com.intellij.psi.PsiReferenceRegistrar;
-import org.jetbrains.annotations.NotNull;
 
 public class CMakeExtensionFactory implements ExtensionFactory {
   @Override
@@ -31,7 +26,7 @@ public class CMakeExtensionFactory implements ExtensionFactory {
     //    return result;
     switch (factoryArgument) {
       case "Annotator":
-        return CMakePDC.isCLION ? new CMakeCLionAnnotator() : new CMakeIdeaAnnotator();
+        return CMakeProxyToJB.isCLION ? new CMakeCLionAnnotator() : new CMakeIdeaAnnotator();
       default:
         throw new java.lang.RuntimeException(
             "Unknown factoryArgument for CMakeExtensionFactory: " + factoryArgument);

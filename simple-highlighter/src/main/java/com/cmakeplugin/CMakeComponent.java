@@ -1,6 +1,6 @@
 package com.cmakeplugin;
 
-import com.cmakeplugin.utils.CMakePDC;
+import com.cmakeplugin.utils.CMakeProxyToJB;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
@@ -28,7 +28,7 @@ public class CMakeComponent implements ApplicationComponent {
 
   @Override
   public void initComponent() {
-    if (CMakePDC.isCLION) {
+    if (CMakeProxyToJB.isCLION) {
 
     } else {
       LanguageParserDefinitions.INSTANCE.addExplicitExtension(
